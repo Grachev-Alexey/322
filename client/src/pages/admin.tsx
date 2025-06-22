@@ -24,6 +24,29 @@ interface AdminPageProps {
   onLogout: () => void;
 }
 
+interface PackageType {
+  id: number;
+  type: string;
+  name: string;
+  discount: string;
+  minCost: string;
+  minDownPaymentPercent: string;
+  requiresFullPayment: boolean;
+  giftSessions: number;
+  isActive: boolean;
+}
+
+interface PackagePerk {
+  id?: number;
+  packageType: string;
+  name: string;
+  icon: string;
+  displayType?: string;
+  textColor?: string;
+  iconColor?: string;
+  isActive: boolean;
+}
+
 export default function AdminPage({ user, onLogout }: AdminPageProps) {
   const [yclientsConfig, setYclientsConfig] = useState({
     token: '',
@@ -33,8 +56,8 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
     branchIds: [] as string[]
   });
   
-  const [packages, setPackages] = useState<any[]>([]);
-  const [packagePerks, setPackagePerks] = useState<any[]>([]);
+  const [packages, setPackages] = useState<PackageType[]>([]);
+  const [packagePerks, setPackagePerks] = useState<PackagePerk[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -70,20 +93,32 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
           // Remove invalid IDs (timestamps) for new perks
           const perkToSave = { ...perk };
           if (perkToSave.id && perkToSave.id > 2147483647) {
-            delete perkToSave.id;
-          }
-          
-          const response = await fetch("/api/admin/package-perks", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            credentials: "include",
-            body: JSON.stringify(perkToSave)
-          });
+            const { id, ...perkWithoutId } = perkToSave;
+            const response = await fetch("/api/admin/package-perks", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              credentials: "include",
+              body: JSON.stringify(perkWithoutId)
+            });
 
-          if (!response.ok) {
-            throw new Error(`Failed to save perk ${perk.name}`);
+            if (!response.ok) {
+              throw new Error(`Failed to save perk ${perk.name}`);
+            }
+          } else {
+            const response = await fetch("/api/admin/package-perks", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              credentials: "include",
+              body: JSON.stringify(perkToSave)
+            });
+
+            if (!response.ok) {
+              throw new Error(`Failed to save perk ${perk.name}`);
+            }
           }
         }
       }
@@ -701,7 +736,14 @@ function ServicesManagement() {
 }
 
 // Packages Management Component
-function PackagesManagement({ packages, packagePerks, setPackages, setPackagePerks, loading, setLoading }: any) {
+function PackagesManagement({ packages, packagePerks, setPackages, setPackagePerks, loading, setLoading }: {
+  packages: PackageType[];
+  packagePerks: PackagePerk[];
+  setPackages: (packages: PackageType[]) => void;
+  setPackagePerks: (perks: PackagePerk[]) => void;
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
+}) {
   const { toast } = useToast();
 
   const savePackages = async () => {
@@ -736,20 +778,32 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
           // Remove invalid IDs (timestamps) for new perks
           const perkToSave = { ...perk };
           if (perkToSave.id && perkToSave.id > 2147483647) {
-            delete perkToSave.id;
-          }
-          
-          const response = await fetch("/api/admin/package-perks", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            credentials: "include",
-            body: JSON.stringify(perkToSave)
-          });
+            const { id, ...perkWithoutId } = perkToSave;
+            const response = await fetch("/api/admin/package-perks", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              credentials: "include",
+              body: JSON.stringify(perkWithoutId)
+            });
 
-          if (!response.ok) {
-            throw new Error(`Failed to save perk ${perk.name}`);
+            if (!response.ok) {
+              throw new Error(`Failed to save perk ${perk.name}`);
+            }
+          } else {
+            const response = await fetch("/api/admin/package-perks", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              credentials: "include",
+              body: JSON.stringify(perkToSave)
+            });
+
+            if (!response.ok) {
+              throw new Error(`Failed to save perk ${perk.name}`);
+            }
           }
         }
       }
@@ -775,7 +829,7 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
         Настройка пакетов услуг и их преимуществ.
       </p>
       
-      {packages.map((pkg) => (
+      {packages.map((pkg: PackageType) => (
         <Card key={pkg.type}>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -793,7 +847,7 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
                     id={`${pkg.type}-name`}
                     value={pkg.name}
                     onChange={(e) => {
-                      const updatedPackages = packages.map(p => 
+                      const updatedPackages = packages.map((p: PackageType) => 
                         p.type === pkg.type ? { ...p, name: e.target.value } : p
                       );
                       setPackages(updatedPackages);
@@ -807,7 +861,7 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
                     type="number"
                     value={parseFloat(pkg.discount) * 100}
                     onChange={(e) => {
-                      const updatedPackages = packages.map(p => 
+                      const updatedPackages = packages.map((p: PackageType) => 
                         p.type === pkg.type ? { ...p, discount: (parseFloat(e.target.value) / 100).toString() } : p
                       );
                       setPackages(updatedPackages);
@@ -821,7 +875,7 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
                     type="number"
                     value={pkg.minCost}
                     onChange={(e) => {
-                      const updatedPackages = packages.map(p => 
+                      const updatedPackages = packages.map((p: PackageType) => 
                         p.type === pkg.type ? { ...p, minCost: e.target.value } : p
                       );
                       setPackages(updatedPackages);
@@ -836,7 +890,7 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
                     min="0"
                     value={pkg.giftSessions || 0}
                     onChange={(e) => {
-                      const updatedPackages = packages.map(p => 
+                      const updatedPackages = packages.map((p: PackageType) => 
                         p.type === pkg.type ? { ...p, giftSessions: parseInt(e.target.value) || 0 } : p
                       );
                       setPackages(updatedPackages);
@@ -854,7 +908,7 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
                     step="1"
                     value={(parseFloat(pkg.minDownPaymentPercent) * 100).toFixed(0)}
                     onChange={(e) => {
-                      const updatedPackages = packages.map(p => 
+                      const updatedPackages = packages.map((p: PackageType) => 
                         p.type === pkg.type ? { ...p, minDownPaymentPercent: (parseFloat(e.target.value) / 100).toString() } : p
                       );
                       setPackages(updatedPackages);
@@ -865,7 +919,7 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
                   <Switch
                     checked={pkg.requiresFullPayment}
                     onCheckedChange={(checked) => {
-                      const updatedPackages = packages.map(p => 
+                      const updatedPackages = packages.map((p: PackageType) => 
                         p.type === pkg.type ? { ...p, requiresFullPayment: checked } : p
                       );
                       setPackages(updatedPackages);
@@ -880,13 +934,13 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
                 <Label className="text-lg font-semibold">Преимущества пакета</Label>
                 <div className="mt-3 space-y-3">
                   {packagePerks
-                    .filter(perk => perk.packageType === pkg.type)
-                    .map((perk, index) => (
+                    .filter((perk: PackagePerk) => perk.packageType === pkg.type)
+                    .map((perk: PackagePerk, index: number) => (
                       <div key={perk.id || index} className="flex items-center gap-3 p-3 border rounded-lg">
                         <Switch
                           checked={perk.isActive}
                           onCheckedChange={(checked) => {
-                            const updatedPerks = packagePerks.map(p => 
+                            const updatedPerks = packagePerks.map((p: PackagePerk) => 
                               p.id === perk.id ? { ...p, isActive: checked } : p
                             );
                             setPackagePerks(updatedPerks);
@@ -897,7 +951,7 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
                             placeholder="Название преимущества"
                             value={perk.name}
                             onChange={(e) => {
-                              const updatedPerks = packagePerks.map(p => 
+                              const updatedPerks = packagePerks.map((p: PackagePerk) => 
                                 p.id === perk.id ? { ...p, name: e.target.value } : p
                               );
                               setPackagePerks(updatedPerks);
@@ -906,7 +960,7 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
                           <Select
                             value={perk.icon}
                             onValueChange={(value) => {
-                              const updatedPerks = packagePerks.map(p => 
+                              const updatedPerks = packagePerks.map((p: PackagePerk) => 
                                 p.id === perk.id ? { ...p, icon: value } : p
                               );
                               setPackagePerks(updatedPerks);
@@ -929,7 +983,7 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
                           <Select
                             value={perk.displayType || "simple"}
                             onValueChange={(value) => {
-                              const updatedPerks = packagePerks.map(p => 
+                              const updatedPerks = packagePerks.map((p: PackagePerk) => 
                                 p.id === perk.id ? { ...p, displayType: value } : p
                               );
                               setPackagePerks(updatedPerks);
@@ -948,7 +1002,7 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
                             placeholder="#3B82F6"
                             value={perk.iconColor || ""}
                             onChange={(e) => {
-                              const updatedPerks = packagePerks.map(p => 
+                              const updatedPerks = packagePerks.map((p: PackagePerk) => 
                                 p.id === perk.id ? { ...p, iconColor: e.target.value } : p
                               );
                               setPackagePerks(updatedPerks);
@@ -958,7 +1012,7 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
                             placeholder="#374151"
                             value={perk.textColor || ""}
                             onChange={(e) => {
-                              const updatedPerks = packagePerks.map(p => 
+                              const updatedPerks = packagePerks.map((p: PackagePerk) => 
                                 p.id === perk.id ? { ...p, textColor: e.target.value } : p
                               );
                               setPackagePerks(updatedPerks);
@@ -978,7 +1032,7 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
                                   console.error('Failed to delete perk:', error);
                                 }
                               }
-                              const updatedPerks = packagePerks.filter(p => p.id !== perk.id);
+                              const updatedPerks = packagePerks.filter((p: PackagePerk) => p.id !== perk.id);
                               setPackagePerks(updatedPerks);
                             }}
                           >
@@ -990,7 +1044,8 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
                   <Button
                     variant="outline"
                     onClick={() => {
-                      const newPerk = {
+                      const newPerk: PackagePerk = {
+                        id: Date.now(), // Temporary ID
                         packageType: pkg.type,
                         name: '',
                         icon: 'UserCheck',

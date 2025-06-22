@@ -27,12 +27,31 @@ interface Calculation {
   freeZonesValue: number;
 }
 
+interface Package {
+  id: number;
+  type: string;
+  name: string;
+  discount: string;
+  giftSessions: number;
+}
+
 interface PackageCardsProps {
   calculation: Calculation;
   selectedPackage: string | null;
   onPackageSelect: (packageType: string) => void;
   procedureCount: number;
-  packages: any[];
+  packages: Package[];
+}
+
+interface PackagePerk {
+  id: number;
+  packageType: string;
+  name: string;
+  icon: string;
+  displayType?: string;
+  textColor?: string;
+  iconColor?: string;
+  isActive: boolean;
 }
 
 const packageInfo = {
@@ -87,7 +106,7 @@ export default function PackageCards({
   const getPackageCard = (packageType: keyof typeof packageInfo) => {
     const info = packageInfo[packageType];
     const data = calculation.packages[packageType];
-    const packageData = packages.find(p => p.type === packageType);
+    const packageData = packages.find((p: Package) => p.type === packageType);
     const Icon = info.icon;
     const isSelected = selectedPackage === packageType;
     const isPopular = packageType === 'standard';
@@ -96,7 +115,7 @@ export default function PackageCards({
     const discountPercent = packageData ? Math.round(parseFloat(packageData.discount) * 100) : 0;
     
     // Fetch real perks from database
-    const { data: realPerks = [] } = useQuery({
+    const { data: realPerks = [] } = useQuery<PackagePerk[]>({
       queryKey: [`/api/packages/${packageType}/perks`],
       enabled: true,
       staleTime: 0
@@ -186,8 +205,8 @@ export default function PackageCards({
         {/* Benefits */}
         <div className="space-y-3 mb-6">
           {realPerks.length > 0 ? (
-            realPerks.filter((perk: any) => perk.isActive).map((perk: any, index: number) => {
-              const IconComponent = Icons[perk.icon as keyof typeof Icons] || Check;
+            realPerks.filter((perk: PackagePerk) => perk.isActive).map((perk: PackagePerk, index: number) => {
+              const IconComponent = (Icons as any)[perk.icon] as React.ComponentType<any> || Check;
               const iconColor = perk.iconColor || (packageType === 'vip' ? '#8B5CF6' : packageType === 'standard' ? '#3B82F6' : '#10B981');
               const textColor = perk.textColor || '#374151';
               

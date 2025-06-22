@@ -21,6 +21,14 @@ interface CalculatorPageProps {
   onLogout: () => void;
 }
 
+interface Package {
+  id: number;
+  type: string;
+  name: string;
+  discount: string;
+  giftSessions: number;
+}
+
 export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) {
   const [showClientModal, setShowClientModal] = useState(false);
   const {
@@ -172,7 +180,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
             selectedPackage={selectedPackage}
             onPackageSelect={setSelectedPackage}
             procedureCount={procedureCount}
-            packages={packages}
+            packages={packages as Package[]}
           />
         )}
 

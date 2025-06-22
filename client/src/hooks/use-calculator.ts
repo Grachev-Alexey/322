@@ -40,6 +40,17 @@ interface PackageData {
   appliedDiscounts: Array<{ type: string; amount: number }>;
 }
 
+interface Package {
+  id: number;
+  type: string;
+  name: string;
+  discount: string;
+  minCost: string;
+  minDownPaymentPercent: string;
+  requiresFullPayment: boolean;
+  giftSessions: number;
+}
+
 export function useCalculator() {
   const [selectedServices, setSelectedServices] = useState<SelectedService[]>([]);
   const [procedureCount, setProcedureCount] = useState(10);
@@ -56,11 +67,11 @@ export function useCalculator() {
     enabled: true
   });
 
-  const { data: packages = [] } = useQuery<any[]>({
+  const { data: packages = [] } = useQuery<Package[]>({
     queryKey: ['/api/packages'],
     enabled: true,
-    staleTime: 0, // Always fetch fresh data
-    cacheTime: 0  // Don't cache
+    staleTime: 0,
+    gcTime: 0  // Updated from cacheTime to gcTime
   });
 
   // Calculate total procedures
@@ -96,7 +107,7 @@ export function useCalculator() {
       }
 
       // Convert packages array to config object
-      const packageConfig = packages.reduce((acc: any, pkg: any) => {
+      const packageConfig = packages.reduce((acc: any, pkg: Package) => {
         acc[pkg.type] = {
           discount: parseFloat(pkg.discount),
           minCost: parseFloat(pkg.minCost),

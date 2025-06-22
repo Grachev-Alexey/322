@@ -12,6 +12,8 @@ interface User {
   id: number;
   name: string;
   role: 'master' | 'admin';
+  pin: string;
+  isActive: boolean;
 }
 
 function App() {

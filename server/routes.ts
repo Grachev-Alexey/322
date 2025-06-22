@@ -14,6 +14,14 @@ declare module 'express-session' {
   }
 }
 
+interface YclientsConfig {
+  token: string;
+  authCookie: string;
+  chainId: string;
+  categoryId: string;
+  branchIds: string[];
+}
+
 const authSchema = z.object({
   pin: z.string().min(4).max(6)
 });
@@ -66,7 +74,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         user: { 
           id: user.id, 
           name: user.name, 
-          role: user.role 
+          role: user.role,
+          pin: user.pin,
+          isActive: user.isActive
         } 
       });
     } catch (error) {
@@ -95,7 +105,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         user: { 
           id: session.userId, 
           name: session.userName || 'Пользователь', 
-          role: session.userRole 
+          role: session.userRole,
+          pin: '',
+          isActive: true
         } 
       });
     } else {
@@ -137,7 +149,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Настройки Yclients не найдены" });
       }
 
-      const yclientsService = createYclientsService(yclientsConfig.value);
+      const yclientsService = createYclientsService(yclientsConfig.value as YclientsConfig);
       const services = await yclientsService.getServices();
       
       for (const service of services) {
@@ -370,7 +382,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Настройки Yclients не найдены" });
       }
 
-      const yclientsService = createYclientsService(yclientsConfig.value);
+      const yclientsService = createYclientsService(yclientsConfig.value as YclientsConfig);
       
       // Try to find existing subscription type
       let subscriptionType = await storage.findSubscriptionType(
