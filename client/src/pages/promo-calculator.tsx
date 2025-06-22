@@ -414,7 +414,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             <div className="flex-1 overflow-hidden">
               <div className="h-full overflow-y-auto pb-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 lg:gap-3 xl:gap-4 px-1">
-                  {(['economy', 'standard', 'vip'] as const).map((packageType) => {
+                  {(['vip', 'standard', 'economy'] as const).map((packageType) => {
                     const info = packageInfo[packageType];
                     const data = getPackageData(packageType);
                     const packageData = (packages as Package[]).find((p: Package) => p.type === packageType);
