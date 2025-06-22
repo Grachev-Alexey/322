@@ -193,15 +193,15 @@ const IntegratedPackageComparison = ({
                   : ''
               }`}
             >
-              <div className={`p-4 text-center relative transition-all duration-300 ${
+              <div className={`p-2 text-center relative transition-all duration-300 ${
                 isSelected 
                   ? 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-blue-900/20 dark:via-purple-900/20 dark:to-pink-900/20' 
                   : 'bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900'
               }`}>
                 {/* Popular badge */}
                 {isPopular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
-                    <span className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-full text-xs font-bold shadow-xl">
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20">
+                    <span className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-2 py-1 rounded-full text-xs font-bold">
                       Популярный
                     </span>
                   </div>
@@ -209,21 +209,21 @@ const IntegratedPackageComparison = ({
                 
                 {/* VIP Crown */}
                 {packageType === 'vip' && (
-                  <div className="absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-xl z-10">
-                    <Crown className="text-white" size={16} />
+                  <div className="absolute -top-1 -right-1 w-8 h-8 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center z-10">
+                    <Crown className="text-white" size={12} />
                   </div>
                 )}
                 
                 {/* Package Icon and Title */}
-                <div className={`w-12 h-12 mx-auto mb-2 bg-gradient-to-r ${info.gradient} rounded-2xl flex items-center justify-center shadow-lg`}>
-                  <Icon className="text-white" size={20} />
+                <div className={`w-8 h-8 mx-auto mb-1 bg-gradient-to-r ${info.gradient} rounded-lg flex items-center justify-center`}>
+                  <Icon className="text-white" size={14} />
                 </div>
                 
-                <h4 className="text-lg font-bold text-gray-900 dark:text-white">
+                <h4 className="text-sm font-bold text-gray-900 dark:text-white">
                   {packageData?.name || info.title}
                 </h4>
                 
-                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                <p className="text-xs text-gray-600 dark:text-gray-400">
                   {info.subtitle}
                 </p>
               </div>
@@ -240,18 +240,18 @@ const IntegratedPackageComparison = ({
             const isEven = index % 2 === 0;
             
             return (
-              <div key={perk.id} className={`grid grid-cols-4 gap-4 py-4 px-2 ${!isEven ? 'bg-gray-50/50 dark:bg-gray-800/30' : ''}`}>
+              <div key={perk.id} className={`grid grid-cols-4 gap-2 py-2 px-1 ${!isEven ? 'bg-gray-50/50 dark:bg-gray-800/30' : ''}`}>
                 {/* Perk Name Column */}
-                <div className="p-4 flex items-center space-x-3">
-                  <div className="p-2 rounded-xl bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 flex-shrink-0 shadow-md">
-                    <IconComponent className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <div className="p-2 flex items-center space-x-2">
+                  <div className="p-1.5 rounded-lg bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 flex-shrink-0">
+                    <IconComponent className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div className="min-w-0">
-                    <div className="font-semibold text-gray-900 dark:text-white text-sm">
+                    <div className="font-medium text-gray-900 dark:text-white text-xs leading-tight">
                       {perk.name}
                     </div>
                     {perk.description && (
-                      <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                      <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5 leading-tight">
                         {perk.description}
                       </div>
                     )}
@@ -264,51 +264,51 @@ const IntegratedPackageComparison = ({
                   const isSelected = selectedPackage === packageType;
                   
                   return (
-                    <div key={packageType} className={`p-4 flex items-center justify-center min-h-[80px] transition-all duration-300 ${
-                      isSelected ? 'bg-gradient-to-br from-blue-50/70 to-purple-50/70 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl' : ''
+                    <div key={packageType} className={`p-2 flex items-center justify-center min-h-[50px] transition-all duration-300 ${
+                      isSelected ? 'bg-gradient-to-br from-blue-50/70 to-purple-50/70 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg' : ''
                     }`}>
                       {!perkValue || !perkValue.isActive ? (
-                        <div className="flex flex-col items-center space-y-1">
-                          <span className="text-red-400 font-bold text-2xl">–</span>
+                        <div className="flex flex-col items-center">
+                          <span className="text-red-400 font-bold text-lg">–</span>
                           <span className="text-xs text-gray-400">Нет</span>
                         </div>
                       ) : (
-                        <div className="flex flex-col items-center space-y-2">
+                        <div className="flex flex-col items-center space-y-1">
                           {perkValue.valueType === 'boolean' ? (
                             perkValue.booleanValue ? (
                               <>
-                                <div className={`p-3 rounded-xl shadow-xl ${
-                                  packageType === 'vip' ? 'bg-purple-500 text-white shadow-purple-300' :
-                                  packageType === 'standard' ? 'bg-blue-500 text-white shadow-blue-300' :
-                                  'bg-green-500 text-white shadow-green-300'
+                                <div className={`p-1.5 rounded-lg ${
+                                  packageType === 'vip' ? 'bg-purple-500 text-white' :
+                                  packageType === 'standard' ? 'bg-blue-500 text-white' :
+                                  'bg-green-500 text-white'
                                 }`}>
-                                  <Check className="h-6 w-6" />
+                                  <Check className="h-4 w-4" />
                                 </div>
-                                <span className="text-xs font-semibold text-green-600">Да</span>
+                                <span className="text-xs font-medium text-green-600">Да</span>
                               </>
                             ) : (
                               <>
-                                <span className="text-red-400 font-bold text-2xl">–</span>
+                                <span className="text-red-400 font-bold text-lg">–</span>
                                 <span className="text-xs text-gray-400">Нет</span>
                               </>
                             )
                           ) : (
                             <>
-                              <div className={`px-4 py-2 rounded-xl text-center min-w-[80px] shadow-xl ${
+                              <div className={`px-2 py-1 rounded-lg text-center min-w-[60px] text-xs ${
                                 perkValue.isHighlighted 
-                                  ? packageType === 'vip' ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-purple-300' :
-                                    packageType === 'standard' ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-blue-300' :
-                                    'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-green-300'
+                                  ? packageType === 'vip' ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' :
+                                    packageType === 'standard' ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white' :
+                                    'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
                                   : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
                               }`}>
-                                <span className="font-bold text-sm">
+                                <span className="font-bold">
                                   {perkValue.displayValue}
                                 </span>
                               </div>
                               {perkValue.isHighlighted && (
                                 <div className="flex items-center space-x-1">
-                                  <Sparkles className="h-3 w-3 text-yellow-500" />
-                                  <span className="text-xs text-yellow-600 dark:text-yellow-400 font-bold">Лучшее</span>
+                                  <Sparkles className="h-2.5 w-2.5 text-yellow-500" />
+                                  <span className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">Лучшее</span>
                                 </div>
                               )}
                             </>
