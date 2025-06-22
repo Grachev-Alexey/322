@@ -64,6 +64,9 @@ export const packagePerks = pgTable("package_perks", {
   packageType: text("package_type").notNull().references(() => packages.type),
   name: text("name").notNull(),
   icon: text("icon").notNull(), // Lucide icon name
+  displayType: text("display_type").default("simple"), // 'simple' | 'highlighted' | 'with_value'
+  textColor: text("text_color").default("#6B7280"), // Default gray
+  iconColor: text("icon_color").default("#6B7280"), // Default gray
   isActive: boolean("is_active").default(true),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

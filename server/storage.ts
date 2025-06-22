@@ -183,6 +183,9 @@ export class DatabaseStorage implements IStorage {
           packageType: perk.packageType,
           name: perk.name,
           icon: perk.icon,
+          displayType: perk.displayType || 'simple',
+          textColor: perk.textColor || '#6B7280',
+          iconColor: perk.iconColor || '#6B7280',
           isActive: perk.isActive
         })
         .where(eq(packagePerks.id, perk.id))
@@ -195,6 +198,9 @@ export class DatabaseStorage implements IStorage {
       packageType: perk.packageType,
       name: perk.name,
       icon: perk.icon,
+      displayType: perk.displayType || 'simple',
+      textColor: perk.textColor || '#6B7280',
+      iconColor: perk.iconColor || '#6B7280',
       isActive: perk.isActive
     }).returning();
     return created;

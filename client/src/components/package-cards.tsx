@@ -189,13 +189,21 @@ export default function PackageCards({
           {realPerks.length > 0 ? (
             realPerks.map((perk: any, index: number) => {
               const IconComponent = Icons[perk.icon as keyof typeof Icons] || Check;
+              const iconColor = perk.iconColor || (packageType === 'vip' ? '#8B5CF6' : packageType === 'standard' ? '#3B82F6' : '#10B981');
+              const textColor = perk.textColor || '#374151';
+              
               return (
-                <div key={index} className="flex items-center justify-between text-sm">
+                <div key={index} className={`flex items-center justify-between text-sm ${
+                  perk.displayType === 'highlighted' ? 'bg-gradient-to-r from-blue-50 to-purple-50 p-2 rounded-lg border border-blue-200' : ''
+                }`}>
                   <div className="flex items-center">
-                    <IconComponent className={`text-${packageType === 'vip' ? 'purple' : packageType === 'standard' ? 'blue' : 'green'}-600 mr-3`} size={16} />
-                    <span>{perk.name}</span>
+                    <IconComponent 
+                      style={{ color: iconColor }}
+                      className="mr-3" 
+                      size={16} 
+                    />
+                    <span style={{ color: textColor }} className={perk.displayType === 'highlighted' ? 'font-medium' : ''}>{perk.name}</span>
                   </div>
-
                 </div>
               );
             })
@@ -231,10 +239,13 @@ export default function PackageCards({
           </div>
         )}
 
+        {/* Spacer to push button to bottom */}
+        <div className="flex-grow"></div>
+
         {/* Action Button */}
         {data.isAvailable ? (
           <Button
-            className={`w-full ${
+            className={`w-full mt-4 ${
               packageType === 'vip' ? 'btn-primary' :
               packageType === 'standard' ? 'btn-secondary' :
               'btn-accent'
@@ -244,13 +255,19 @@ export default function PackageCards({
             {isSelected ? 'Выбрано' : 'Выбрать пакет'}
           </Button>
         ) : (
-          <div className="text-center">
-            <div className="text-sm text-red-600 mb-2 font-medium">
-              <AlertCircle className="inline mr-1" size={14} />
-              Недоступен
-            </div>
-            <div className="text-xs text-red-500">
-              {data.unavailableReason}
+          <div className="mt-4 bg-gradient-to-br from-gray-100 to-gray-200 border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
+            <div className="flex flex-col items-center">
+              <div className="bg-gray-300 rounded-full p-3 mb-3">
+                <svg className="w-8 h-8 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="text-sm font-semibold text-gray-700 mb-1">
+                Пакет недоступен
+              </div>
+              <div className="text-xs text-gray-600">
+                {data.unavailableReason}
+              </div>
             </div>
           </div>
         )}

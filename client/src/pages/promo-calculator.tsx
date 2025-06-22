@@ -96,11 +96,20 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
         
         {realPerks.map((perk: any, index: number) => {
           const IconComponent = Icons[perk.icon as keyof typeof Icons] || Icons.Check;
+          const iconColor = perk.iconColor || '#6B7280';
+          const textColor = perk.textColor || '#6B7280';
+          
           return (
-            <div key={index} className="flex items-center justify-between text-sm">
+            <div key={index} className={`flex items-center justify-between text-sm ${
+              perk.displayType === 'highlighted' ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-2 rounded-lg border border-blue-200 dark:border-blue-700' : ''
+            }`}>
               <div className="flex items-center">
-                <IconComponent className="text-gray-400 dark:text-gray-500 mr-2" size={14} />
-                <span className="text-gray-600 dark:text-gray-300">{perk.name}</span>
+                <IconComponent 
+                  style={{ color: iconColor }}
+                  className="mr-2" 
+                  size={14} 
+                />
+                <span style={{ color: textColor }} className={perk.displayType === 'highlighted' ? 'font-medium' : ''}>{perk.name}</span>
               </div>
 
             </div>

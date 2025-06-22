@@ -158,6 +158,9 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
               packageType: perk.packageType,
               name: perk.name,
               icon: perk.icon,
+              displayType: perk.displayType || 'simple',
+              textColor: perk.textColor || '#6B7280',
+              iconColor: perk.iconColor || '#6B7280',
               isActive: perk.isActive
             })
           });
@@ -453,7 +456,7 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
                                   setPackagePerks(updatedPerks);
                                 }}
                               />
-                              <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
+                              <div className="flex-1 grid grid-cols-1 md:grid-cols-6 gap-3">
                                 <Input
                                   placeholder="Название преимущества"
                                   value={perk.name}
@@ -477,57 +480,76 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
                                     <SelectValue placeholder="Выберите иконку" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="Calendar">📅 Calendar</SelectItem>
-                                    <SelectItem value="Clock">🕐 Clock</SelectItem>
-                                    <SelectItem value="User">👤 User</SelectItem>
-                                    <SelectItem value="Users">👥 Users</SelectItem>
-                                    <SelectItem value="MessageCircle">💬 MessageCircle</SelectItem>
-                                    <SelectItem value="Phone">📞 Phone</SelectItem>
-                                    <SelectItem value="Mail">✉️ Mail</SelectItem>
-                                    <SelectItem value="Settings">⚙️ Settings</SelectItem>
-                                    <SelectItem value="Shield">🛡️ Shield</SelectItem>
-                                    <SelectItem value="Heart">❤️ Heart</SelectItem>
-                                    <SelectItem value="Star">⭐ Star</SelectItem>
-                                    <SelectItem value="Crown">👑 Crown</SelectItem>
-                                    <SelectItem value="Award">🏆 Award</SelectItem>
-                                    <SelectItem value="Trophy">🏆 Trophy</SelectItem>
-                                    <SelectItem value="Target">🎯 Target</SelectItem>
-                                    <SelectItem value="CheckCircle">✅ CheckCircle</SelectItem>
-                                    <SelectItem value="CheckSquare">☑️ CheckSquare</SelectItem>
-                                    <SelectItem value="Sparkles">✨ Sparkles</SelectItem>
-                                    <SelectItem value="Zap">⚡ Zap</SelectItem>
-                                    <SelectItem value="Flame">🔥 Flame</SelectItem>
-                                    <SelectItem value="Sun">☀️ Sun</SelectItem>
-                                    <SelectItem value="Moon">🌙 Moon</SelectItem>
-                                    <SelectItem value="Coffee">☕ Coffee</SelectItem>
-                                    <SelectItem value="Smile">😊 Smile</SelectItem>
-                                    <SelectItem value="ThumbsUp">👍 ThumbsUp</SelectItem>
-                                    <SelectItem value="Handshake">🤝 Handshake</SelectItem>
-                                    <SelectItem value="Headphones">🎧 Headphones</SelectItem>
-                                    <SelectItem value="Mic">🎤 Mic</SelectItem>
-                                    <SelectItem value="Camera">📷 Camera</SelectItem>
-                                    <SelectItem value="Video">📹 Video</SelectItem>
-                                    <SelectItem value="Monitor">🖥️ Monitor</SelectItem>
-                                    <SelectItem value="Smartphone">📱 Smartphone</SelectItem>
-                                    <SelectItem value="Laptop">💻 Laptop</SelectItem>
-                                    <SelectItem value="Tablet">📱 Tablet</SelectItem>
-                                    <SelectItem value="Wifi">📶 Wifi</SelectItem>
-                                    <SelectItem value="Globe">🌍 Globe</SelectItem>
-                                    <SelectItem value="MapPin">📍 MapPin</SelectItem>
-                                    <SelectItem value="Navigation">🧭 Navigation</SelectItem>
-                                    <SelectItem value="Compass">🧭 Compass</SelectItem>
-                                    <SelectItem value="Map">🗺️ Map</SelectItem>
-                                    <SelectItem value="Home">🏠 Home</SelectItem>
-                                    <SelectItem value="Building">🏢 Building</SelectItem>
-                                    <SelectItem value="Store">🏪 Store</SelectItem>
-                                    <SelectItem value="Car">🚗 Car</SelectItem>
-                                    <SelectItem value="Plane">✈️ Plane</SelectItem>
-                                    <SelectItem value="Train">🚂 Train</SelectItem>
-                                    <SelectItem value="Bike">🚲 Bike</SelectItem>
-                                    <SelectItem value="Walk">🚶 Walk</SelectItem>
-                                    <SelectItem value="Run">🏃 Run</SelectItem>
+                                    <SelectItem value="Calendar">📅 Calendar (Рассрочка)</SelectItem>
+                                    <SelectItem value="Clock">⏰ Clock (Гибкий график)</SelectItem>
+                                    <SelectItem value="User">👤 User (Консультант)</SelectItem>
+                                    <SelectItem value="MessageCircle">💬 MessageCircle (Консультации)</SelectItem>
+                                    <SelectItem value="Shield">🛡️ Shield (Гарантия)</SelectItem>
+                                    <SelectItem value="Heart">❤️ Heart (Забота)</SelectItem>
+                                    <SelectItem value="Star">⭐ Star (Приоритет)</SelectItem>
+                                    <SelectItem value="Crown">👑 Crown (VIP)</SelectItem>
+                                    <SelectItem value="Award">🏆 Award (Премиум)</SelectItem>
+                                    <SelectItem value="CheckCircle">✅ CheckCircle (Гарантия)</SelectItem>
+                                    <SelectItem value="Sparkles">✨ Sparkles (Премиум)</SelectItem>
+                                    <SelectItem value="Zap">⚡ Zap (Быстро)</SelectItem>
+                                    <SelectItem value="Headphones">🎧 Headphones (Поддержка)</SelectItem>
+                                    <SelectItem value="Phone">📞 Phone (Связь)</SelectItem>
+                                    <SelectItem value="Mail">✉️ Mail (Уведомления)</SelectItem>
+                                    <SelectItem value="CreditCard">💳 CreditCard (Оплата)</SelectItem>
+                                    <SelectItem value="Wallet">💰 Wallet (Скидки)</SelectItem>
+                                    <SelectItem value="DollarSign">💵 DollarSign (Экономия)</SelectItem>
+                                    <SelectItem value="TrendingUp">📈 TrendingUp (Рост)</SelectItem>
+                                    <SelectItem value="Smile">😊 Smile (Комфорт)</SelectItem>
+                                    <SelectItem value="ThumbsUp">👍 ThumbsUp (Качество)</SelectItem>
+                                    <SelectItem value="HandHeart">💝 HandHeart (Забота)</SelectItem>
+                                    <SelectItem value="Gem">💎 Gem (Эксклюзив)</SelectItem>
+                                    <SelectItem value="Scissors">✂️ Scissors (Услуги)</SelectItem>
+                                    <SelectItem value="Palette">🎨 Palette (Красота)</SelectItem>
+                                    <SelectItem value="Flower">🌸 Flower (Красота)</SelectItem>
+                                    <SelectItem value="Butterfly">🦋 Butterfly (Преображение)</SelectItem>
+                                    <SelectItem value="Sun">☀️ Sun (Сияние)</SelectItem>
+                                    <SelectItem value="Moon">🌙 Moon (Нежность)</SelectItem>
+                                    <SelectItem value="Leaf">🍃 Leaf (Натуральность)</SelectItem>
                                   </SelectContent>
                                 </Select>
+                                <Select
+                                  value={perk.displayType || "simple"}
+                                  onValueChange={(value) => {
+                                    const updatedPerks = packagePerks.map(p => 
+                                      p.id === perk.id ? { ...p, displayType: value } : p
+                                    );
+                                    setPackagePerks(updatedPerks);
+                                  }}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Стиль отображения" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="simple">🔹 Простой</SelectItem>
+                                    <SelectItem value="highlighted">⭐ Выделенный</SelectItem>
+                                    <SelectItem value="with_value">💰 С ценностью</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                <Input
+                                  placeholder="#3B82F6"
+                                  value={perk.iconColor || ""}
+                                  onChange={(e) => {
+                                    const updatedPerks = packagePerks.map(p => 
+                                      p.id === perk.id ? { ...p, iconColor: e.target.value } : p
+                                    );
+                                    setPackagePerks(updatedPerks);
+                                  }}
+                                />
+                                <Input
+                                  placeholder="#374151"
+                                  value={perk.textColor || ""}
+                                  onChange={(e) => {
+                                    const updatedPerks = packagePerks.map(p => 
+                                      p.id === perk.id ? { ...p, textColor: e.target.value } : p
+                                    );
+                                    setPackagePerks(updatedPerks);
+                                  }}
+                                />
                                 <Button
                                   variant="outline"
                                   size="sm"
