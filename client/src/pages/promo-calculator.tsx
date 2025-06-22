@@ -40,6 +40,175 @@ interface Package {
   giftSessions: number;
 }
 
+// Perks Comparison Table Component
+const PerksComparisonTable = ({ packages }: { packages: Package[] }) => {
+  const { data: allPerkValues = [] } = usePackagePerks();
+  
+  // Get unique perks ordered by displayOrder
+  const uniquePerks = allPerkValues
+    .filter(pv => pv.perk.isActive)
+    .reduce((acc, pv) => {
+      if (!acc.find(p => p.id === pv.perk.id)) {
+        acc.push(pv.perk);
+      }
+      return acc;
+    }, [] as any[])
+    .sort((a, b) => a.displayOrder - b.displayOrder);
+
+  // Package types in correct order
+  const packageTypes = ['vip', 'standard', 'economy'] as const;
+  
+  // Get perk value for specific package
+  const getPerkValue = (perkId: number, packageType: string) => {
+    return allPerkValues.find(pv => pv.perk.id === perkId && pv.packageType === packageType);
+  };
+
+  // Render perk value cell
+  const renderPerkValue = (perkId: number, packageType: string) => {
+    const perkValue = getPerkValue(perkId, packageType);
+    if (!perkValue || !perkValue.isActive) {
+      return (
+        <div className="flex flex-col items-center justify-center p-3 space-y-1">
+          <div className="p-1.5 rounded-full bg-red-100 dark:bg-red-900">
+            <X className="h-3 w-3 text-red-500 dark:text-red-400" />
+          </div>
+          <span className="text-xs text-gray-500 dark:text-gray-400">Нет</span>
+        </div>
+      );
+    }
+    
+    const isHighlighted = perkValue.isHighlighted;
+    const packageColors = {
+      vip: 'from-purple-500 to-purple-600',
+      standard: 'from-blue-500 to-blue-600', 
+      economy: 'from-green-500 to-green-600'
+    };
+    
+    if (perkValue.valueType === 'boolean') {
+      return (
+        <div className="flex flex-col items-center justify-center p-3 space-y-1">
+          {perkValue.booleanValue ? (
+            <>
+              <div className={`p-1.5 rounded-full bg-gradient-to-r ${packageColors[packageType as keyof typeof packageColors]} text-white`}>
+                <Check className="h-3 w-3" />
+              </div>
+              <span className="text-xs font-medium text-green-700 dark:text-green-400">Да</span>
+            </>
+          ) : (
+            <>
+              <div className="p-1.5 rounded-full bg-red-100 dark:bg-red-900">
+                <X className="h-3 w-3 text-red-500 dark:text-red-400" />
+              </div>
+              <span className="text-xs text-gray-500 dark:text-gray-400">Нет</span>
+            </>
+          )}
+        </div>
+      );
+    }
+    
+    return (
+      <div className="flex flex-col items-center justify-center p-3 space-y-1">
+        <div className={`px-2 py-1 rounded-lg text-center min-w-[60px] ${
+          isHighlighted 
+            ? `bg-gradient-to-r ${packageColors[packageType as keyof typeof packageColors]} text-white shadow-md` 
+            : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+        }`}>
+          <span className={`text-xs font-bold ${isHighlighted ? 'text-white' : ''}`}>
+            {perkValue.displayValue}
+          </span>
+        </div>
+        {isHighlighted && (
+          <div className="flex items-center space-x-1">
+            <Sparkles className="h-2 w-2 text-yellow-500" />
+            <span className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">Топ</span>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  if (uniquePerks.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="floating-card-enhanced bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-xl lg:rounded-2xl p-4 lg:p-6 border border-white/20 dark:border-gray-700/20">
+      <div className="text-center mb-6">
+        <h3 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white mb-2">
+          Сравнение преимуществ
+        </h3>
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          Выберите пакет с нужными возможностями
+        </p>
+      </div>
+      
+      <div className="overflow-x-auto">
+        <div className="min-w-full">
+          {/* Header Row */}
+          <div className="grid grid-cols-4 gap-0 mb-4">
+            <div className="p-3 font-semibold text-gray-900 dark:text-white">
+              Преимущества
+            </div>
+            {packageTypes.map((packageType) => {
+              const info = packageInfo[packageType];
+              const Icon = info.icon;
+              return (
+                <div key={packageType} className="p-3 text-center">
+                  <div className="flex flex-col items-center space-y-2">
+                    <div className={`p-2 rounded-full bg-gradient-to-r ${info.gradient} text-white`}>
+                      <Icon className="h-4 w-4" />
+                    </div>
+                    <div className="font-bold text-sm text-gray-900 dark:text-white">
+                      {info.title}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          
+          {/* Perks Rows */}
+          <div className="space-y-2">
+            {uniquePerks.map((perk, index) => {
+              const IconComponent = (Icons as any)[perk.icon] || Check;
+              const isEven = index % 2 === 0;
+              return (
+                <div key={perk.id} className={`grid grid-cols-4 gap-0 rounded-lg overflow-hidden ${isEven ? 'bg-gray-50/50 dark:bg-gray-800/50' : 'bg-white/50 dark:bg-gray-900/50'}`}>
+                  {/* Perk Name Column */}
+                  <div className="p-3 border-r border-gray-200 dark:border-gray-700">
+                    <div className="flex items-center space-x-3">
+                      <div className="p-1.5 rounded-lg bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900">
+                        <IconComponent className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <div>
+                        <div className="font-medium text-gray-900 dark:text-white text-sm">
+                          {perk.name}
+                        </div>
+                        {perk.description && (
+                          <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                            {perk.description}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Package Value Columns */}
+                  {packageTypes.map((packageType) => (
+                    <div key={packageType} className="border-r border-gray-200 dark:border-gray-700 last:border-r-0 flex items-center justify-center min-h-[60px]">
+                      {renderPerkValue(perk.id, packageType)}
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorPageProps) {
   const [showClientModal, setShowClientModal] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
@@ -508,6 +677,13 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                     );
                   })}
                 </div>
+                
+                {/* Perks Comparison Table */}
+                {calculation && (
+                  <div className="mt-6">
+                    <PerksComparisonTable packages={packages as Package[]} />
+                  </div>
+                )}
               </div>
             </div>
           )}
