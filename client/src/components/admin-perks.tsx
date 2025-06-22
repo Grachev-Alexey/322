@@ -141,7 +141,12 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
     });
   };
 
-  const renderPerkValueEditor = (perkId: number, packageType: string, currentValue?: PackagePerkValue) => {
+  // Create a separate component for perk value editor to avoid hooks issues
+  const PerkValueEditor = ({ perkId, packageType, currentValue }: { 
+    perkId: number; 
+    packageType: string; 
+    currentValue?: PackagePerkValue 
+  }) => {
     const [editing, setEditing] = useState(false);
     const [valueType, setValueType] = useState(currentValue?.valueType || 'boolean');
     const [displayValue, setDisplayValue] = useState(currentValue?.displayValue || 'Не включено');
@@ -315,7 +320,11 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
                         <Label className="font-medium text-center block">
                           {packageNames[packageType]}
                         </Label>
-                        {renderPerkValueEditor(perk.id, packageType, value)}
+                        <PerkValueEditor 
+                          perkId={perk.id} 
+                          packageType={packageType} 
+                          currentValue={value} 
+                        />
                       </div>
                     ))}
                   </div>
