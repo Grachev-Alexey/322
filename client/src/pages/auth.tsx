@@ -24,10 +24,10 @@ export default function AuthPage({ onLogin }: AuthPageProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (pin.length !== 6) {
+    if (pin.length !== 4) {
       toast({
         title: "Ошибка",
-        description: "PIN-код должен содержать 6 цифр",
+        description: "PIN-код должен содержать 4 цифры",
         variant: "destructive"
       });
       return;
@@ -72,38 +72,49 @@ export default function AuthPage({ onLogin }: AuthPageProps) {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-white p-4">
-      <Card className="w-full max-w-md shadow-2xl">
+    <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'var(--gradient-background)' }}>
+      <Card className="w-full max-w-md shadow-2xl border-0 bg-white/80 backdrop-blur-sm">
         <CardContent className="p-8">
           <div className="text-center mb-8">
-            <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: 'var(--gradient-premium)' }}>
               <Lock className="text-white text-2xl" size={24} />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Вход в систему</h2>
-            <p className="text-gray-600">Введите PIN-код для доступа к калькулятору</p>
+            <h2 className="text-2xl font-bold mb-2" style={{ color: 'var(--graphite)' }}>Вход в систему</h2>
+            <p className="text-gray-600 mb-4">Введите 4-значный PIN-код для доступа</p>
+            
+            <div className="text-xs text-gray-500 bg-gray-50 rounded-lg p-3 mb-4">
+              <div className="font-medium mb-1">Тестовые аккаунты:</div>
+              <div>1234 - Администратор</div>
+              <div>5678 - Мастер Анна</div>
+              <div>9999 - Мастер Олег</div>
+            </div>
           </div>
           
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <Label htmlFor="pin" className="block text-sm font-medium text-gray-700 mb-2">
+              <Label htmlFor="pin" className="block text-sm font-medium mb-2" style={{ color: 'var(--graphite)' }}>
                 PIN-код
               </Label>
               <Input
                 id="pin"
                 type="password"
-                maxLength={6}
+                maxLength={4}
                 value={pin}
                 onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
-                className="text-center text-xl font-mono tracking-widest"
-                placeholder="••••••"
+                className="text-center text-2xl font-mono tracking-widest border-2 focus:border-pink-400 focus:ring-pink-400/20 transition-colors duration-200 rounded-xl py-4"
+                placeholder="••••"
                 disabled={loading}
               />
             </div>
             
             <Button 
               type="submit" 
-              disabled={loading || pin.length !== 6}
-              className="w-full btn-primary"
+              disabled={loading || pin.length !== 4}
+              className="w-full py-4 text-lg font-semibold rounded-xl transition-all duration-200 hover:shadow-lg disabled:opacity-50"
+              style={{ 
+                background: loading || pin.length !== 4 ? 'var(--muted)' : 'var(--gradient-premium)',
+                color: 'white'
+              }}
             >
               {loading ? "Вход..." : "Войти"}
             </Button>
