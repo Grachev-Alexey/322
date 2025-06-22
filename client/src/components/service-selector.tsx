@@ -128,7 +128,7 @@ export default function ServiceSelector({
       </div>
       
       {/* Selected Services */}
-      <div className="space-y-2">
+      <div className="max-h-60 overflow-y-auto custom-scrollbar space-y-2">
         {selectedServices.map((service) => (
           <div
             key={service.yclientsId}
@@ -162,7 +162,7 @@ export default function ServiceSelector({
             <span className="text-sm font-medium text-green-700">Бесплатные зоны</span>
           </div>
           
-          <div className="space-y-2">
+          <div className="max-h-32 overflow-y-auto custom-scrollbar space-y-2">
             {freeZones.map((zone) => (
               <div
                 key={zone.serviceId}

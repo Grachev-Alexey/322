@@ -106,18 +106,11 @@ export default function PackageCards({
       <div
         key={packageType}
         className={`
-          relative bg-white/90 backdrop-blur-sm rounded-2xl border-0 p-8 transition-all duration-300 cursor-pointer flex flex-col
-          shadow-2xl hover:shadow-3xl hover:-translate-y-2
-          ${isSelected ? 'ring-2 ring-offset-2 shadow-3xl' : ''}
-          ${isPopular ? 'transform scale-105 shadow-3xl' : ''}
+          relative bg-white/90 backdrop-blur-sm rounded-2xl border-0 p-8 cursor-pointer flex flex-col package-card
+          ${isSelected ? 'selected' : ''}
+          ${isPopular ? 'transform scale-105' : ''}
           ${!data.isAvailable ? 'opacity-75' : ''}
         `}
-        style={{
-          ringColor: isSelected ? 'hsl(338, 55%, 68%)' : undefined,
-          boxShadow: isSelected 
-            ? '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px hsl(338, 55%, 68%)' 
-            : '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
-        }}
         onClick={() => data.isAvailable && onPackageSelect(packageType)}
       >
         {/* Popular Badge */}
