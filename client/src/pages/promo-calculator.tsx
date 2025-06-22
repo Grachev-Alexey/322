@@ -40,6 +40,49 @@ interface Package {
   giftSessions: number;
 }
 
+// Package info definition
+const packageInfo = {
+  vip: {
+    title: "VIP",
+    subtitle: "Максимум привилегий",
+    icon: Crown,
+    gradient: "from-purple-500 via-pink-500 to-orange-400",
+    benefits: [
+      { text: "Скидка 30%", value: "30%" },
+      { text: "3 подарочных сеанса", value: "9 000₽" },
+      { text: "Гарантия возврата денег", value: "∞" },
+      { text: "Клубная карта 'Золотая 35%'", value: "35%" },
+      { text: "Бессрочная заморозка", value: "∞" },
+      { text: "Персональный менеджер", value: "VIP" }
+    ]
+  },
+  standard: {
+    title: "Стандарт",
+    subtitle: "Лучшее соотношение",
+    icon: Star,
+    gradient: "from-blue-500 via-purple-500 to-pink-500",
+    benefits: [
+      { text: "Скидка 25%", value: "25%" },
+      { text: "1 подарочный сеанс", value: "3 000₽" },
+      { text: "Гарантия качества", value: "100%" },
+      { text: "Клубная карта 'Серебряная 30%'", value: "30%" },
+      { text: "Заморозка до 6 месяцев", value: "6 мес" },
+      { text: "Курс массажа", value: "5 000₽" }
+    ]
+  },
+  economy: {
+    title: "Эконом",
+    subtitle: "Оптимальный старт",
+    icon: Leaf,
+    gradient: "from-green-500 via-emerald-500 to-teal-500",
+    benefits: [
+      { text: "Скидка 20%", value: "20%" },
+      { text: "Заморозка до 3 месяцев", value: "3 мес" },
+      { text: "Курс массажа", value: "3 000₽" }
+    ]
+  }
+};
+
 // Perks Comparison Table Component
 const PerksComparisonTable = ({ packages }: { packages: Package[] }) => {
   const { data: allPerkValues = [] } = usePackagePerks();
@@ -304,48 +347,6 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
         })}
       </div>
     );
-  };
-
-  const packageInfo = {
-    vip: {
-      title: "VIP",
-      subtitle: "Максимум привилегий",
-      icon: Crown,
-      gradient: "from-purple-500 via-pink-500 to-orange-400",
-      benefits: [
-        { text: "Скидка 30%", value: "30%" },
-        { text: "3 подарочных сеанса", value: "9 000₽" },
-        { text: "Гарантия возврата денег", value: "∞" },
-        { text: "Клубная карта 'Золотая 35%'", value: "35%" },
-        { text: "Бессрочная заморозка", value: "∞" },
-        { text: "Персональный менеджер", value: "VIP" }
-      ]
-    },
-    standard: {
-      title: "Стандарт",
-      subtitle: "Лучшее соотношение",
-      icon: Star,
-      gradient: "from-blue-500 via-purple-500 to-pink-500",
-      benefits: [
-        { text: "Скидка 25%", value: "25%" },
-        { text: "1 подарочный сеанс", value: "3 000₽" },
-        { text: "Гарантия качества", value: "100%" },
-        { text: "Клубная карта 'Серебряная 30%'", value: "30%" },
-        { text: "Заморозка до 6 месяцев", value: "6 мес" },
-        { text: "Курс массажа", value: "5 000₽" }
-      ]
-    },
-    economy: {
-      title: "Эконом",
-      subtitle: "Оптимальный старт",
-      icon: Leaf,
-      gradient: "from-green-500 via-emerald-500 to-teal-500",
-      benefits: [
-        { text: "Скидка 20%", value: "20%" },
-        { text: "Заморозка до 3 месяцев", value: "3 мес" },
-        { text: "Курс массажа", value: "3 000₽" }
-      ]
-    }
   };
 
   const handleProceedToOrder = () => {
