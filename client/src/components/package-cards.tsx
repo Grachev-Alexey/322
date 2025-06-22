@@ -186,7 +186,7 @@ export default function PackageCards({
         {/* Benefits */}
         <div className="space-y-3 mb-6">
           {realPerks.length > 0 ? (
-            realPerks.map((perk: any, index: number) => {
+            realPerks.filter((perk: any) => perk.isActive).map((perk: any, index: number) => {
               const IconComponent = Icons[perk.icon as keyof typeof Icons] || Check;
               const iconColor = perk.iconColor || (packageType === 'vip' ? '#8B5CF6' : packageType === 'standard' ? '#3B82F6' : '#10B981');
               const textColor = perk.textColor || '#374151';

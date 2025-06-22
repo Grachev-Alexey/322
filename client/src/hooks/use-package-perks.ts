@@ -5,12 +5,15 @@ export interface PackagePerk {
   packageType: string;
   name: string;
   icon: string;
+  displayType?: string;
+  textColor?: string;
+  iconColor?: string;
   isActive: boolean;
 }
 
 export function usePackagePerks(packageType: string) {
   return useQuery<PackagePerk[]>({
-    queryKey: ['/api/packages', packageType, 'perks'],
+    queryKey: [`/api/packages/${packageType}/perks`],
     enabled: !!packageType
   });
 }
