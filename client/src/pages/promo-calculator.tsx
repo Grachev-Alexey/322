@@ -170,9 +170,9 @@ const IntegratedPackageComparison = ({
   };
 
   return (
-    <div className="floating-card-enhanced bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-3xl border border-white/20 dark:border-gray-700/20 overflow-hidden shadow-2xl">
+    <div className="space-y-4">
       {/* Package Headers Row - Names Only */}
-      <div className="grid grid-cols-4 gap-0 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700">
+      <div className="grid grid-cols-4 gap-4 pt-8">
         {/* Empty space for perk names column */}
         <div className="p-4"></div>
         
@@ -187,271 +187,241 @@ const IntegratedPackageComparison = ({
           return (
             <div 
               key={packageType}
-              className={`p-4 text-center relative transition-all duration-300 border-x border-gray-200 dark:border-gray-600 first:border-l-0 last:border-r-0 ${
+              className={`floating-card-enhanced bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-gray-700/20 overflow-visible shadow-xl hover:shadow-2xl transition-all duration-300 ${
                 isSelected 
-                  ? 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-blue-900/20 dark:via-purple-900/20 dark:to-pink-900/20' 
+                  ? 'border-purple-400 shadow-purple-200 dark:shadow-purple-900/50 transform scale-105' 
                   : ''
               }`}
             >
-              {/* Popular badge */}
-              {isPopular && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
-                  <span className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                    Популярный
-                  </span>
+              <div className={`p-4 text-center relative transition-all duration-300 ${
+                isSelected 
+                  ? 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-blue-900/20 dark:via-purple-900/20 dark:to-pink-900/20' 
+                  : 'bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900'
+              }`}>
+                {/* Popular badge */}
+                {isPopular && (
+                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-20">
+                    <span className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-2 rounded-full text-xs font-bold shadow-xl">
+                      Популярный
+                    </span>
+                  </div>
+                )}
+                
+                {/* VIP Crown */}
+                {packageType === 'vip' && (
+                  <div className="absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center shadow-xl z-10">
+                    <Crown className="text-white" size={16} />
+                  </div>
+                )}
+                
+                {/* Package Icon and Title */}
+                <div className={`w-12 h-12 mx-auto mb-2 bg-gradient-to-r ${info.gradient} rounded-2xl flex items-center justify-center shadow-lg`}>
+                  <Icon className="text-white" size={20} />
                 </div>
-              )}
-              
-              {/* VIP Crown */}
-              {packageType === 'vip' && (
-                <div className="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-bl-3xl rounded-tr-lg flex items-end justify-start pl-2 pb-2">
-                  <Crown className="text-white" size={14} />
-                </div>
-              )}
-              
-              {/* Package Icon and Title */}
-              <div className={`w-12 h-12 mx-auto mb-2 bg-gradient-to-r ${info.gradient} rounded-2xl flex items-center justify-center shadow-lg`}>
-                <Icon className="text-white" size={20} />
+                
+                <h4 className="text-lg font-bold text-gray-900 dark:text-white">
+                  {packageData?.name || info.title}
+                </h4>
+                
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                  {info.subtitle}
+                </p>
               </div>
-              
-              <h4 className="text-lg font-bold text-gray-900 dark:text-white">
-                {packageData?.name || info.title}
-              </h4>
-              
-              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                {info.subtitle}
-              </p>
             </div>
           );
         })}
       </div>
       
       {/* Perks Comparison Rows */}
-      <div className="divide-y divide-gray-100 dark:divide-gray-800">
-        {uniquePerks.map((perk, index) => {
-          const IconComponent = (Icons as any)[perk.icon] || Check;
-          const isEven = index % 2 === 0;
-          
-          return (
-            <div key={perk.id} className={`grid grid-cols-4 gap-0 ${!isEven ? 'bg-gray-50/50 dark:bg-gray-800/30' : ''}`}>
-              {/* Perk Name Column */}
-              <div className="p-4 flex items-center space-x-3 border-r border-gray-100 dark:border-gray-700">
-                <div className="p-2 rounded-xl bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 flex-shrink-0">
-                  <IconComponent className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div className="min-w-0">
-                  <div className="font-semibold text-gray-900 dark:text-white text-sm">
-                    {perk.name}
+      <div className="floating-card-enhanced bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-gray-700/20 shadow-xl overflow-hidden">
+        <div className="divide-y divide-gray-100 dark:divide-gray-800">
+          {uniquePerks.map((perk, index) => {
+            const IconComponent = (Icons as any)[perk.icon] || Check;
+            const isEven = index % 2 === 0;
+            
+            return (
+              <div key={perk.id} className={`grid grid-cols-4 gap-4 py-4 px-2 ${!isEven ? 'bg-gray-50/50 dark:bg-gray-800/30' : ''}`}>
+                {/* Perk Name Column */}
+                <div className="p-4 flex items-center space-x-3">
+                  <div className="p-2 rounded-xl bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 flex-shrink-0 shadow-md">
+                    <IconComponent className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                   </div>
-                  {perk.description && (
-                    <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                      {perk.description}
+                  <div className="min-w-0">
+                    <div className="font-semibold text-gray-900 dark:text-white text-sm">
+                      {perk.name}
                     </div>
-                  )}
-                </div>
-              </div>
-              
-              {/* Package Value Columns */}
-              {packageTypes.map((packageType) => {
-                const perkValue = getPerkValue(perk.id, packageType);
-                const isSelected = selectedPackage === packageType;
-                
-                return (
-                  <div key={packageType} className={`p-4 flex items-center justify-center min-h-[80px] border-x border-gray-100 dark:border-gray-700 first:border-l-0 last:border-r-0 transition-all duration-300 ${
-                    isSelected ? 'bg-gradient-to-br from-blue-50/70 to-purple-50/70 dark:from-blue-900/20 dark:to-purple-900/20' : ''
-                  }`}>
-                    {!perkValue || !perkValue.isActive ? (
-                      <div className="flex flex-col items-center space-y-1">
-                        <span className="text-red-400 font-bold text-2xl">–</span>
-                        <span className="text-xs text-gray-400">Нет</span>
-                      </div>
-                    ) : (
-                      <div className="flex flex-col items-center space-y-2">
-                        {perkValue.valueType === 'boolean' ? (
-                          perkValue.booleanValue ? (
-                            <>
-                              <div className={`p-3 rounded-xl ${
-                                packageType === 'vip' ? 'bg-purple-500 text-white' :
-                                packageType === 'standard' ? 'bg-blue-500 text-white' :
-                                'bg-green-500 text-white'
-                              } shadow-lg`}>
-                                <Check className="h-6 w-6" />
-                              </div>
-                              <span className="text-xs font-semibold text-green-600">Да</span>
-                            </>
-                          ) : (
-                            <>
-                              <span className="text-red-400 font-bold text-2xl">–</span>
-                              <span className="text-xs text-gray-400">Нет</span>
-                            </>
-                          )
-                        ) : (
-                          <>
-                            <div className={`px-4 py-2 rounded-xl text-center min-w-[80px] shadow-md ${
-                              perkValue.isHighlighted 
-                                ? packageType === 'vip' ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' :
-                                  packageType === 'standard' ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white' :
-                                  'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
-                                : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
-                            }`}>
-                              <span className="font-bold text-sm">
-                                {perkValue.displayValue}
-                              </span>
-                            </div>
-                            {perkValue.isHighlighted && (
-                              <div className="flex items-center space-x-1">
-                                <Sparkles className="h-3 w-3 text-yellow-500" />
-                                <span className="text-xs text-yellow-600 dark:text-yellow-400 font-bold">Лучшее</span>
-                              </div>
-                            )}
-                          </>
-                        )}
+                    {perk.description && (
+                      <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                        {perk.description}
                       </div>
                     )}
                   </div>
-                );
-              })}
-            </div>
-          );
-        })}
+                </div>
+                
+                {/* Package Value Columns */}
+                {packageTypes.map((packageType) => {
+                  const perkValue = getPerkValue(perk.id, packageType);
+                  const isSelected = selectedPackage === packageType;
+                  
+                  return (
+                    <div key={packageType} className={`p-4 flex items-center justify-center min-h-[80px] transition-all duration-300 ${
+                      isSelected ? 'bg-gradient-to-br from-blue-50/70 to-purple-50/70 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl' : ''
+                    }`}>
+                      {!perkValue || !perkValue.isActive ? (
+                        <div className="flex flex-col items-center space-y-1">
+                          <span className="text-red-400 font-bold text-2xl">–</span>
+                          <span className="text-xs text-gray-400">Нет</span>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center space-y-2">
+                          {perkValue.valueType === 'boolean' ? (
+                            perkValue.booleanValue ? (
+                              <>
+                                <div className={`p-3 rounded-xl shadow-xl ${
+                                  packageType === 'vip' ? 'bg-purple-500 text-white shadow-purple-300' :
+                                  packageType === 'standard' ? 'bg-blue-500 text-white shadow-blue-300' :
+                                  'bg-green-500 text-white shadow-green-300'
+                                }`}>
+                                  <Check className="h-6 w-6" />
+                                </div>
+                                <span className="text-xs font-semibold text-green-600">Да</span>
+                              </>
+                            ) : (
+                              <>
+                                <span className="text-red-400 font-bold text-2xl">–</span>
+                                <span className="text-xs text-gray-400">Нет</span>
+                              </>
+                            )
+                          ) : (
+                            <>
+                              <div className={`px-4 py-2 rounded-xl text-center min-w-[80px] shadow-xl ${
+                                perkValue.isHighlighted 
+                                  ? packageType === 'vip' ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-purple-300' :
+                                    packageType === 'standard' ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-blue-300' :
+                                    'bg-gradient-to-r from-green-500 to-emerald-500 text-white shadow-green-300'
+                                  : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                              }`}>
+                                <span className="font-bold text-sm">
+                                  {perkValue.displayValue}
+                                </span>
+                              </div>
+                              {perkValue.isHighlighted && (
+                                <div className="flex items-center space-x-1">
+                                  <Sparkles className="h-3 w-3 text-yellow-500" />
+                                  <span className="text-xs text-yellow-600 dark:text-yellow-400 font-bold">Лучшее</span>
+                                </div>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
       </div>
       
       {/* Package Details and Pricing Section */}
-      <div className="grid grid-cols-4 gap-0 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 border-t border-gray-200 dark:border-gray-600">
+      <div className="grid grid-cols-4 gap-4">
         {/* Empty space for perk names column */}
-        <div className="p-4 border-r border-gray-200 dark:border-gray-600">
-          <div className="font-bold text-gray-900 dark:text-white text-sm">Скидка:</div>
-        </div>
+        <div className="p-4"></div>
         
-        {/* Package Discount Info */}
+        {/* Package Details Cards */}
         {packageTypes.map((packageType) => {
           const packageData = packages.find((p: Package) => p.type === packageType);
+          const data = getPackageData(packageType);
           const discountPercent = packageData ? Math.round(parseFloat(packageData.discount) * 100) : 0;
           const info = packageInfo[packageType];
           const isSelected = selectedPackage === packageType;
 
-          return (
-            <div key={packageType} className={`p-4 text-center border-x border-gray-200 dark:border-gray-600 first:border-l-0 last:border-r-0 ${
-              isSelected ? 'bg-gradient-to-br from-blue-50/70 to-purple-50/70 dark:from-blue-900/20 dark:to-purple-900/20' : ''
-            }`}>
-              <div className={`inline-block px-4 py-2 rounded-xl text-sm font-bold text-white bg-gradient-to-r ${info.gradient} shadow-lg`}>
-                {discountPercent}%
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      
-      {/* Pricing Section */}
-      <div className="grid grid-cols-4 gap-0">
-        <div className="space-y-0">
-          {/* Base cost row */}
-          <div className="p-4 border-r border-gray-200 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-800/30">
-            <div className="font-semibold text-gray-900 dark:text-white text-sm">Без скидки:</div>
-          </div>
-          
-          {/* Final cost row */}
-          <div className="p-4 border-r border-gray-200 dark:border-gray-600">
-            <div className="font-bold text-gray-900 dark:text-white text-sm">Итого:</div>
-          </div>
-          
-          {/* Savings row */}
-          <div className="p-4 border-r border-gray-200 dark:border-gray-600 bg-gray-50/50 dark:bg-gray-800/30">
-            <div className="font-semibold text-gray-900 dark:text-white text-sm">Экономия:</div>
-          </div>
-        </div>
-        
-        {/* Package Pricing Columns */}
-        {packageTypes.map((packageType) => {
-          const data = getPackageData(packageType);
-          const packageData = packages.find((p: Package) => p.type === packageType);
-          const isSelected = selectedPackage === packageType;
-
           if (!data) return null;
 
           return (
-            <div key={packageType} className="space-y-0">
-              {/* Base cost */}
-              <div className={`p-4 text-center border-x border-gray-200 dark:border-gray-600 first:border-l-0 last:border-r-0 bg-gray-50/50 dark:bg-gray-800/30 ${
+            <div 
+              key={packageType} 
+              className={`floating-card-enhanced bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-gray-700/20 shadow-xl overflow-hidden transition-all duration-300 ${
+                isSelected ? 'border-purple-400 shadow-purple-200 dark:shadow-purple-900/50 transform scale-105' : 'hover:shadow-2xl'
+              }`}
+            >
+              {/* Discount Section */}
+              <div className={`p-4 text-center bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 ${
                 isSelected ? 'bg-gradient-to-br from-blue-50/70 to-purple-50/70 dark:from-blue-900/20 dark:to-purple-900/20' : ''
               }`}>
-                <div className="text-sm text-gray-500 line-through">
-                  {formatPrice(calculation.baseCost)}
+                <div className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Скидка</div>
+                <div className={`inline-block px-4 py-2 rounded-xl text-sm font-bold text-white bg-gradient-to-r ${info.gradient} shadow-xl`}>
+                  {discountPercent}%
                 </div>
               </div>
               
-              {/* Final cost */}
-              <div className={`p-4 text-center border-x border-gray-200 dark:border-gray-600 first:border-l-0 last:border-r-0 ${
-                isSelected ? 'bg-gradient-to-br from-blue-50/70 to-purple-50/70 dark:from-blue-900/20 dark:to-purple-900/20' : ''
-              }`}>
-                <div className="text-xl font-bold text-gray-900 dark:text-white">
-                  {formatPrice(data.finalCost)}
+              {/* Pricing Details */}
+              <div className="p-4 space-y-4">
+                {/* Base cost */}
+                <div className="text-center">
+                  <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Без скидки</div>
+                  <div className="text-sm text-gray-500 line-through">
+                    {formatPrice(calculation.baseCost)}
+                  </div>
                 </div>
                 
-                {/* Additional info */}
-                <div className="space-y-1 text-xs mt-2">
-                  {/* Gift sessions */}
-                  {packageData && packageData.giftSessions > 0 && (
-                    <div className="text-pink-600 font-medium">
-                      +{packageData.giftSessions} сеанс{packageData.giftSessions === 1 ? '' : packageData.giftSessions < 5 ? 'а' : 'ов'}
-                    </div>
-                  )}
-                  
-                  {/* Monthly payment info */}
-                  {data.monthlyPayment > 0 && (
-                    <div className="text-blue-600 font-medium">
-                      {formatPrice(data.monthlyPayment)}/мес
-                    </div>
-                  )}
-                </div>
-              </div>
-              
-              {/* Savings */}
-              <div className={`p-4 text-center border-x border-gray-200 dark:border-gray-600 first:border-l-0 last:border-r-0 bg-gray-50/50 dark:bg-gray-800/30 ${
-                isSelected ? 'bg-gradient-to-br from-blue-50/70 to-purple-50/70 dark:from-blue-900/20 dark:to-purple-900/20' : ''
-              }`}>
-                <div className="text-lg font-bold text-green-600">
-                  {formatPrice(data.totalSavings)}
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      
-      {/* Action Buttons Row */}
-      <div className="grid grid-cols-4 gap-0 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 border-t border-gray-200 dark:border-gray-600">
-        {/* Empty space for perk names column */}
-        <div className="p-4"></div>
-        
-        {/* Package Action Buttons */}
-        {packageTypes.map((packageType) => {
-          const data = getPackageData(packageType);
-          const isSelected = selectedPackage === packageType;
-
-          if (!data) return null;
-
-          return (
-            <div key={packageType} className="p-4 border-x border-gray-200 dark:border-gray-600 first:border-l-0 last:border-r-0">
-              <Button
-                className={`w-full py-3 text-sm font-bold ${
-                  isSelected ? 'btn-premium' : 'btn-outline-premium'
-                } shadow-lg hover:shadow-xl transition-all duration-300`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onPackageSelect(packageType);
-                }}
-                disabled={!data.isAvailable}
-              >
-                {isSelected ? (
-                  <div className="flex items-center justify-center space-x-2">
-                    <Check className="h-4 w-4" />
-                    <span>Выбрано</span>
+                {/* Final cost */}
+                <div className="text-center border-t border-gray-100 dark:border-gray-700 pt-4">
+                  <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Итого к оплате</div>
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+                    {formatPrice(data.finalCost)}
                   </div>
-                ) : (
-                  'Выбрать'
-                )}
-              </Button>
+                  
+                  {/* Additional info */}
+                  <div className="space-y-1 text-xs">
+                    {/* Gift sessions */}
+                    {packageData && packageData.giftSessions > 0 && (
+                      <div className="bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-400 px-3 py-1 rounded-lg font-medium">
+                        +{packageData.giftSessions} подарочн{packageData.giftSessions === 1 ? 'ый сеанс' : packageData.giftSessions < 5 ? 'ых сеанса' : 'ых сеансов'}
+                      </div>
+                    )}
+                    
+                    {/* Monthly payment info */}
+                    {data.monthlyPayment > 0 && (
+                      <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-3 py-1 rounded-lg font-medium">
+                        {formatPrice(data.monthlyPayment)}/мес
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Savings */}
+                <div className="text-center border-t border-gray-100 dark:border-gray-700 pt-4">
+                  <div className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Ваша экономия</div>
+                  <div className="text-xl font-bold text-green-600">
+                    {formatPrice(data.totalSavings)}
+                  </div>
+                </div>
+                
+                {/* Action Button */}
+                <div className="pt-4">
+                  <Button
+                    className={`w-full py-3 text-sm font-bold ${
+                      isSelected ? 'btn-premium' : 'btn-outline-premium'
+                    } shadow-xl hover:shadow-2xl transition-all duration-300`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onPackageSelect(packageType);
+                    }}
+                    disabled={!data.isAvailable}
+                  >
+                    {isSelected ? (
+                      <div className="flex items-center justify-center space-x-2">
+                        <Check className="h-4 w-4" />
+                        <span>Выбрано</span>
+                      </div>
+                    ) : (
+                      'Выбрать пакет'
+                    )}
+                  </Button>
+                </div>
+              </div>
             </div>
           );
         })}
