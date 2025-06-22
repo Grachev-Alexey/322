@@ -240,7 +240,7 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
               <TabsTrigger value="yclients">Yclients API</TabsTrigger>
             </TabsList>
 
-            <div className="flex-1 overflow-y-auto mt-6">
+            <div className="flex-1 overflow-y-auto mt-6 max-h-[calc(100vh-200px)]">
               <TabsContent value="dashboard">
                 <AdminDashboard />
               </TabsContent>
@@ -250,7 +250,7 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
               </TabsContent>
 
               <TabsContent value="services">
-                <div className="space-y-6">
+                <div className="space-y-6 max-h-[calc(100vh-250px)] overflow-y-auto">
                   <Card>
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2">
@@ -280,14 +280,15 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
               </TabsContent>
 
               <TabsContent value="yclients">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Settings size={20} />
-                      Настройки Yclients API
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
+                <div className="max-h-[calc(100vh-250px)] overflow-y-auto">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Settings size={20} />
+                        Настройки Yclients API
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
                     <div className="space-y-4">
                       <div>
                         <Label htmlFor="token">API Token</Label>
@@ -311,7 +312,7 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
                         />
                       </div>
                       
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
                           <Label htmlFor="chainId">Chain ID</Label>
                           <Input
@@ -331,6 +332,19 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
                             placeholder="ID категории"
                           />
                         </div>
+
+                        <div>
+                          <Label htmlFor="branchIds">Branch IDs (через запятую)</Label>
+                          <Input
+                            id="branchIds"
+                            value={yclientsConfig.branchIds?.join(', ') || ''}
+                            onChange={(e) => setYclientsConfig({
+                              ...yclientsConfig, 
+                              branchIds: e.target.value.split(',').map((id: string) => id.trim()).filter(Boolean)
+                            })}
+                            placeholder="ID филиалов: 1, 2, 3"
+                          />
+                        </div>
                       </div>
                       
                       <Button onClick={saveYclientsConfig} disabled={loading} className="btn-primary">
@@ -339,6 +353,7 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
                     </div>
                   </CardContent>
                 </Card>
+                </div>
               </TabsContent>
             </div>
           </Tabs>
@@ -477,7 +492,7 @@ function UsersManagement() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-h-[calc(100vh-250px)] overflow-y-auto">
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -743,7 +758,7 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 max-h-[calc(100vh-250px)] overflow-y-auto">
       <p className="text-gray-600">
         Настройка пакетов услуг и их преимуществ.
       </p>
