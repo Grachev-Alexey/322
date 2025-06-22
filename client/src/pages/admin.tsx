@@ -67,13 +67,19 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
 
       for (const perk of packagePerks) {
         if (perk.name && perk.name.trim()) {
+          // Remove invalid IDs (timestamps) for new perks
+          const perkToSave = { ...perk };
+          if (perkToSave.id && perkToSave.id > 2147483647) {
+            delete perkToSave.id;
+          }
+          
           const response = await fetch("/api/admin/package-perks", {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
             },
             credentials: "include",
-            body: JSON.stringify(perk)
+            body: JSON.stringify(perkToSave)
           });
 
           if (!response.ok) {
@@ -727,13 +733,19 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
 
       for (const perk of packagePerks) {
         if (perk.name && perk.name.trim()) {
+          // Remove invalid IDs (timestamps) for new perks
+          const perkToSave = { ...perk };
+          if (perkToSave.id && perkToSave.id > 2147483647) {
+            delete perkToSave.id;
+          }
+          
           const response = await fetch("/api/admin/package-perks", {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
             },
             credentials: "include",
-            body: JSON.stringify(perk)
+            body: JSON.stringify(perkToSave)
           });
 
           if (!response.ok) {
@@ -979,7 +991,6 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
                     variant="outline"
                     onClick={() => {
                       const newPerk = {
-                        id: Date.now(),
                         packageType: pkg.type,
                         name: '',
                         icon: 'UserCheck',

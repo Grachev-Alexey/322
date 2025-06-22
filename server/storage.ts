@@ -207,8 +207,8 @@ export class DatabaseStorage implements IStorage {
         throw new Error(`Missing required fields. packageType: ${perk.packageType}, name: ${perk.name}, icon: ${perk.icon}`);
       }
 
-      // If we have a valid ID, update existing perk
-      if (perk.id && typeof perk.id === 'number' && perk.id > 0) {
+      // If we have a valid ID (not a timestamp), update existing perk
+      if (perk.id && typeof perk.id === 'number' && perk.id > 0 && perk.id < 2147483647) {
         const [updated] = await db.update(packagePerks)
           .set({
             packageType: perk.packageType,
