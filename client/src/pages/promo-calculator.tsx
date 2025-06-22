@@ -8,6 +8,7 @@ import { useCalculator } from "@/hooks/use-calculator";
 import { formatPrice } from "@/lib/utils";
 import ServiceSelector from "@/components/service-selector";
 import ClientModal from "@/components/client-modal";
+import { usePackagePerks, type PackagePerkValue } from "@/hooks/use-package-perks";
 
 interface User {
   id: number;
