@@ -29,16 +29,7 @@ interface PackageData {
   appliedDiscounts: Array<{ type: string; amount: number }>;
 }
 
-interface PackagePerk {
-  id: number;
-  packageType: string;
-  name: string;
-  icon: string;
-  displayType?: string;
-  textColor?: string;
-  iconColor?: string;
-  isActive: boolean;
-}
+
 
 interface Package {
   id: number;
@@ -84,12 +75,8 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
     calculation: any;
     procedureCount: number;
   }) => {
-    const { data: realPerks = [] } = useQuery<PackagePerk[]>({
-      queryKey: [`/api/packages/${packageType}/perks`],
-      enabled: true,
-      staleTime: 0,
-      gcTime: 0
-    });
+    const { data: allPerkValues = [] } = usePackagePerks();
+    const realPerks = allPerkValues.filter(pv => pv.packageType === packageType && pv.isActive);
 
     // Get package data for gift sessions
     const packageData = packages.find((p: Package) => p.type === packageType);
@@ -127,21 +114,21 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
           </div>
         )}
         
-        {realPerks.slice(0, 4).map((perk: PackagePerk, index: number) => {
-          const IconComponent = (Icons as any)[perk.icon] || Check;
-          const iconColor = perk.iconColor || '#6B7280';
-          const textColor = perk.textColor || '#6B7280';
+        {realPerks.slice(0, 4).map((perkValue: PackagePerkValue, index: number) => {
+          const IconComponent = (Icons as any)[perkValue.perk.icon] || Check;
+          const isHighlighted = perkValue.isHighlighted;
           
           return (
             <div key={index} className={`flex items-center text-xs ${
-              perk.displayType === 'highlighted' ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-1 rounded-lg border border-blue-200 dark:border-blue-700' : ''
+              isHighlighted ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-1 rounded-lg border border-blue-200 dark:border-blue-700' : ''
             }`}>
               <IconComponent 
-                style={{ color: iconColor }}
-                className="mr-2 flex-shrink-0" 
+                className="mr-2 flex-shrink-0 text-gray-500" 
                 size={12} 
               />
-              <span style={{ color: textColor }} className={`${perk.displayType === 'highlighted' ? 'font-medium' : ''} truncate`}>{perk.name}</span>
+              <span className={`${isHighlighted ? 'font-medium text-blue-700 dark:text-blue-300' : 'text-gray-600 dark:text-gray-400'} truncate`}>
+                {perkValue.perk.name}: {perkValue.displayValue}
+              </span>
             </div>
           );
         })}

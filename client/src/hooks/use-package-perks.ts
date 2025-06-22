@@ -1,19 +1,30 @@
 import { useQuery } from "@tanstack/react-query";
 
-export interface PackagePerk {
+export interface Perk {
   id: number;
-  packageType: string;
   name: string;
+  description?: string;
   icon: string;
-  displayType?: string;
-  textColor?: string;
-  iconColor?: string;
+  displayOrder: number;
   isActive: boolean;
 }
 
-export function usePackagePerks(packageType: string) {
-  return useQuery<PackagePerk[]>({
-    queryKey: [`/api/packages/${packageType}/perks`],
-    enabled: !!packageType
+export interface PackagePerkValue {
+  id: number;
+  packageType: string;
+  perkId: number;
+  valueType: 'boolean' | 'text' | 'number';
+  booleanValue?: boolean;
+  textValue?: string;
+  numberValue?: number;
+  displayValue: string;
+  isHighlighted: boolean;
+  isActive: boolean;
+  perk: Perk;
+}
+
+export function usePackagePerks() {
+  return useQuery<PackagePerkValue[]>({
+    queryKey: ['/api/perks']
   });
 }

@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Check, Crown, Star, Leaf, AlertCircle, Gift } from "lucide-react";
 import * as Icons from "lucide-react";
 import { formatPrice, getPackageIcon, getPackageColor } from "@/lib/utils";
-import { usePackagePerks } from "@/hooks/use-package-perks";
+import { usePackagePerks, type PackagePerkValue } from "@/hooks/use-package-perks";
 import { useQuery } from "@tanstack/react-query";
 
 interface PackageData {
@@ -43,16 +43,7 @@ interface PackageCardsProps {
   packages: Package[];
 }
 
-interface PackagePerk {
-  id: number;
-  packageType: string;
-  name: string;
-  icon: string;
-  displayType?: string;
-  textColor?: string;
-  iconColor?: string;
-  isActive: boolean;
-}
+
 
 const packageInfo = {
   vip: {
@@ -115,11 +106,8 @@ export default function PackageCards({
     const discountPercent = packageData ? Math.round(parseFloat(packageData.discount) * 100) : 0;
     
     // Fetch real perks from database
-    const { data: realPerks = [] } = useQuery<PackagePerk[]>({
-      queryKey: [`/api/packages/${packageType}/perks`],
-      enabled: true,
-      staleTime: 0
-    });
+    const { data: allPerkValues = [] } = usePackagePerks();
+    const realPerks = allPerkValues.filter(pv => pv.packageType === packageType && pv.isActive);
 
     return (
       <div
@@ -205,23 +193,26 @@ export default function PackageCards({
         {/* Benefits */}
         <div className="space-y-3 mb-6">
           {realPerks.length > 0 ? (
-            realPerks.filter((perk: PackagePerk) => perk.isActive).map((perk: PackagePerk, index: number) => {
-              const IconComponent = (Icons as any)[perk.icon] as React.ComponentType<any> || Check;
-              const iconColor = perk.iconColor || (packageType === 'vip' ? '#8B5CF6' : packageType === 'standard' ? '#3B82F6' : '#10B981');
-              const textColor = perk.textColor || '#374151';
+            realPerks.map((perkValue, index: number) => {
+              const IconComponent = (Icons as any)[perkValue.perk.icon] as React.ComponentType<any> || Check;
+              const isHighlighted = perkValue.isHighlighted;
               
               return (
                 <div key={index} className={`flex items-center justify-between text-sm ${
-                  perk.displayType === 'highlighted' ? 'bg-gradient-to-r from-blue-50 to-purple-50 p-2 rounded-lg border border-blue-200' : ''
+                  isHighlighted ? 'bg-gradient-to-r from-blue-50 to-purple-50 p-2 rounded-lg border border-blue-200' : ''
                 }`}>
                   <div className="flex items-center">
                     <IconComponent 
-                      style={{ color: iconColor }}
-                      className="mr-3" 
+                      className="mr-3 text-gray-600" 
                       size={16} 
                     />
-                    <span style={{ color: textColor }} className={perk.displayType === 'highlighted' ? 'font-medium' : ''}>{perk.name}</span>
+                    <span className={isHighlighted ? 'font-medium text-blue-700' : 'text-gray-700'}>
+                      {perkValue.perk.name}
+                    </span>
                   </div>
+                  <span className={isHighlighted ? 'font-bold text-blue-800' : 'font-medium text-gray-600'}>
+                    {perkValue.displayValue}
+                  </span>
                 </div>
               );
             })

@@ -1,8 +1,9 @@
 import { 
-  users, config, services, subscriptionTypes, clients, sales, packages, packagePerks,
+  users, config, services, subscriptionTypes, clients, sales, packages, perks, packagePerkValues,
   type User, type InsertUser, type Config, type InsertConfig,
   type Service, type InsertService, type SubscriptionType, type InsertSubscriptionType,
-  type Package, type InsertPackage, type PackagePerk, type InsertPackagePerk,
+  type Package, type InsertPackage, type Perk, type InsertPerk,
+  type PackagePerkValue, type InsertPackagePerkValue,
   type Client, type InsertClient, type Sale, type InsertSale
 } from "@shared/schema";
 import { db } from "./db";
@@ -35,9 +36,15 @@ export interface IStorage {
   // Packages
   getPackages(): Promise<Package[]>;
   upsertPackage(pkg: InsertPackage): Promise<Package>;
-  getPackagePerks(packageType: string): Promise<PackagePerk[]>;
-  upsertPackagePerk(perk: InsertPackagePerk): Promise<PackagePerk>;
   getPackageCount(): Promise<number>;
+  
+  // Perks
+  getPerks(): Promise<Perk[]>;
+  createPerk(perk: InsertPerk): Promise<Perk>;
+  updatePerk(id: number, updates: Partial<InsertPerk>): Promise<Perk | null>;
+  getPackagePerkValues(): Promise<(PackagePerkValue & { perk: Perk })[]>;
+  createPackagePerkValue(perkValue: InsertPackagePerkValue): Promise<PackagePerkValue>;
+  updatePackagePerkValue(id: number, updates: Partial<InsertPackagePerkValue>): Promise<PackagePerkValue | null>;
   
   // Initialization
   initializeDefaultData(): Promise<void>;
@@ -195,59 +202,66 @@ export class DatabaseStorage implements IStorage {
     }
   }
 
-  async getPackagePerks(packageType: string): Promise<PackagePerk[]> {
-    return await db.select().from(packagePerks)
-      .where(and(eq(packagePerks.packageType, packageType), eq(packagePerks.isActive, true)));
+  // Universal Perks
+  async getPerks(): Promise<Perk[]> {
+    return await db.select().from(perks)
+      .where(eq(perks.isActive, true))
+      .orderBy(perks.displayOrder, perks.id);
   }
 
-  async upsertPackagePerk(perk: InsertPackagePerk & { id?: number }): Promise<PackagePerk> {
-    try {
-      // Validate required fields
-      if (!perk.packageType || !perk.name || !perk.icon) {
-        throw new Error(`Missing required fields. packageType: ${perk.packageType}, name: ${perk.name}, icon: ${perk.icon}`);
-      }
-
-      // If we have a valid ID (not a timestamp), update existing perk
-      if (perk.id && typeof perk.id === 'number' && perk.id > 0 && perk.id < 2147483647) {
-        const [updated] = await db.update(packagePerks)
-          .set({
-            packageType: perk.packageType,
-            name: perk.name,
-            icon: perk.icon,
-            displayType: perk.displayType || 'simple',
-            textColor: perk.textColor || '#6B7280',
-            iconColor: perk.iconColor || '#6B7280',
-            isActive: perk.isActive !== undefined ? perk.isActive : true,
-            updatedAt: new Date()
-          })
-          .where(eq(packagePerks.id, perk.id))
-          .returning();
-        
-        if (updated) {
-          return updated;
-        }
-      }
-      
-      // Create new perk
-      const [created] = await db.insert(packagePerks).values({
-        packageType: perk.packageType,
-        name: perk.name,
-        icon: perk.icon,
-        displayType: perk.displayType || 'simple',
-        textColor: perk.textColor || '#6B7280',
-        iconColor: perk.iconColor || '#6B7280',
-        isActive: perk.isActive !== undefined ? perk.isActive : true
-      }).returning();
-      return created;
-    } catch (error) {
-      console.error('Error in upsertPackagePerk:', error);
-      console.error('Perk data:', perk);
-      throw error;
-    }
+  async createPerk(perk: InsertPerk): Promise<Perk> {
+    const [newPerk] = await db.insert(perks).values(perk).returning();
+    return newPerk;
   }
 
-  async deletePackagePerk(id: number): Promise<void> {
-    await db.delete(packagePerks).where(eq(packagePerks.id, id));
+  async updatePerk(id: number, updates: Partial<InsertPerk>): Promise<Perk | null> {
+    const [updated] = await db.update(perks)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(perks.id, id))
+      .returning();
+    return updated || null;
+  }
+
+  async getPackagePerkValues(): Promise<(PackagePerkValue & { perk: Perk })[]> {
+    return await db.select({
+      id: packagePerkValues.id,
+      packageType: packagePerkValues.packageType,
+      perkId: packagePerkValues.perkId,
+      valueType: packagePerkValues.valueType,
+      booleanValue: packagePerkValues.booleanValue,
+      textValue: packagePerkValues.textValue,
+      numberValue: packagePerkValues.numberValue,
+      displayValue: packagePerkValues.displayValue,
+      isHighlighted: packagePerkValues.isHighlighted,
+      isActive: packagePerkValues.isActive,
+      updatedAt: packagePerkValues.updatedAt,
+      perk: {
+        id: perks.id,
+        name: perks.name,
+        description: perks.description,
+        icon: perks.icon,
+        displayOrder: perks.displayOrder,
+        isActive: perks.isActive,
+        updatedAt: perks.updatedAt,
+      }
+    })
+    .from(packagePerkValues)
+    .innerJoin(perks, eq(packagePerkValues.perkId, perks.id))
+    .where(and(eq(packagePerkValues.isActive, true), eq(perks.isActive, true)))
+    .orderBy(perks.displayOrder, perks.id);
+  }
+
+  async createPackagePerkValue(perkValue: InsertPackagePerkValue): Promise<PackagePerkValue> {
+    const [newPerkValue] = await db.insert(packagePerkValues).values(perkValue).returning();
+    return newPerkValue;
+  }
+
+  async updatePackagePerkValue(id: number, updates: Partial<InsertPackagePerkValue>): Promise<PackagePerkValue | null> {
+    const [updated] = await db.update(packagePerkValues)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(packagePerkValues.id, id))
+      .returning();
+    return updated || null;
   }
 
   async getPackageCount(): Promise<number> {
@@ -306,50 +320,7 @@ export class DatabaseStorage implements IStorage {
         isActive: true
       });
 
-      // Create default perks for VIP
-      const vipPerks = [
-        { name: "Бесплатная консультация", icon: "UserCheck", displayType: "simple", textColor: "#10B981", iconColor: "#10B981" },
-        { name: "2 бесплатные процедуры", icon: "Gift", displayType: "highlighted", textColor: "#F59E0B", iconColor: "#F59E0B" },
-        { name: "Скидка 25%", icon: "Percent", displayType: "with_value", textColor: "#EF4444", iconColor: "#EF4444" },
-        { name: "Приоритетная запись", icon: "Clock", displayType: "simple", textColor: "#8B5CF6", iconColor: "#8B5CF6" }
-      ];
-
-      for (const perk of vipPerks) {
-        await this.upsertPackagePerk({
-          packageType: "vip",
-          ...perk,
-          isActive: true
-        });
-      }
-
-      // Create default perks for Standard
-      const standardPerks = [
-        { name: "Бесплатная консультация", icon: "UserCheck", displayType: "simple", textColor: "#10B981", iconColor: "#10B981" },
-        { name: "1 бесплатная процедура", icon: "Gift", displayType: "highlighted", textColor: "#F59E0B", iconColor: "#F59E0B" },
-        { name: "Скидка 15%", icon: "Percent", displayType: "with_value", textColor: "#3B82F6", iconColor: "#3B82F6" }
-      ];
-
-      for (const perk of standardPerks) {
-        await this.upsertPackagePerk({
-          packageType: "standard",
-          ...perk,
-          isActive: true
-        });
-      }
-
-      // Create default perks for Economy
-      const economyPerks = [
-        { name: "Бесплатная консультация", icon: "UserCheck", displayType: "simple", textColor: "#10B981", iconColor: "#10B981" },
-        { name: "Скидка 10%", icon: "Percent", displayType: "with_value", textColor: "#6B7280", iconColor: "#6B7280" }
-      ];
-
-      for (const perk of economyPerks) {
-        await this.upsertPackagePerk({
-          packageType: "economy",
-          ...perk,
-          isActive: true
-        });
-      }
+      // Default perks and values are now created via SQL inserts above
     }
   }
 }

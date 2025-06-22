@@ -198,14 +198,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get package perks (public endpoint for all users)
-  app.get("/api/packages/:type/perks", requireAuth, async (req, res) => {
+  // Get all perks and package values
+  app.get("/api/perks", requireAuth, async (req, res) => {
     try {
-      const { type } = req.params;
-      const perks = await storage.getPackagePerks(type);
-      res.json(perks);
+      const perkValues = await storage.getPackagePerkValues();
+      res.json(perkValues);
     } catch (error) {
-      res.status(500).json({ message: "Ошибка получения плюшек пакета" });
+      console.error("Error getting perks:", error);
+      res.status(500).json({ message: "Ошибка получения перков" });
     }
   });
 

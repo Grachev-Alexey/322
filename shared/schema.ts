@@ -58,15 +58,28 @@ export const packages = pgTable("packages", {
   updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-// Package Perks
-export const packagePerks = pgTable("package_perks", {
+// Universal Perks (shared across all packages)
+export const perks = pgTable("perks", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  description: text("description"),
+  icon: text("icon").notNull(), // Lucide icon name
+  displayOrder: integer("display_order").default(0),
+  isActive: boolean("is_active").default(true),
+  updatedAt: timestamp("updated_at").defaultNow(),
+});
+
+// Package Perk Values (how each perk applies to each package)
+export const packagePerkValues = pgTable("package_perk_values", {
   id: serial("id").primaryKey(),
   packageType: text("package_type").notNull().references(() => packages.type),
-  name: text("name").notNull(),
-  icon: text("icon").notNull(), // Lucide icon name
-  displayType: text("display_type").default("simple"), // 'simple' | 'highlighted' | 'with_value'
-  textColor: text("text_color").default("#6B7280"), // Default gray
-  iconColor: text("icon_color").default("#6B7280"), // Default gray
+  perkId: integer("perk_id").notNull().references(() => perks.id),
+  valueType: text("value_type").notNull(), // 'boolean' | 'text' | 'number'
+  booleanValue: boolean("boolean_value"), // true/false for included/not included
+  textValue: text("text_value"), // "180 дней", "Без ограничений", etc.
+  numberValue: decimal("number_value", { precision: 10, scale: 2 }), // numeric values
+  displayValue: text("display_value").notNull(), // What to show to user
+  isHighlighted: boolean("is_highlighted").default(false), // Special styling
   isActive: boolean("is_active").default(true),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -125,13 +138,21 @@ export const usersRelations = relations(users, ({ many }) => ({
 }));
 
 export const packagesRelations = relations(packages, ({ many }) => ({
-  perks: many(packagePerks),
+  perkValues: many(packagePerkValues),
 }));
 
-export const packagePerksRelations = relations(packagePerks, ({ one }) => ({
+export const perksRelations = relations(perks, ({ many }) => ({
+  packageValues: many(packagePerkValues),
+}));
+
+export const packagePerkValuesRelations = relations(packagePerkValues, ({ one }) => ({
   package: one(packages, {
-    fields: [packagePerks.packageType],
+    fields: [packagePerkValues.packageType],
     references: [packages.type],
+  }),
+  perk: one(perks, {
+    fields: [packagePerkValues.perkId],
+    references: [perks.id],
   }),
 }));
 
@@ -141,7 +162,8 @@ export const insertConfigSchema = createInsertSchema(config).omit({ id: true, up
 export const insertServiceSchema = createInsertSchema(services).omit({ id: true, updatedAt: true });
 export const insertSubscriptionTypeSchema = createInsertSchema(subscriptionTypes).omit({ id: true, updatedAt: true });
 export const insertPackageSchema = createInsertSchema(packages).omit({ id: true, updatedAt: true });
-export const insertPackagePerkSchema = createInsertSchema(packagePerks).omit({ id: true, updatedAt: true });
+export const insertPerkSchema = createInsertSchema(perks).omit({ id: true, updatedAt: true });
+export const insertPackagePerkValueSchema = createInsertSchema(packagePerkValues).omit({ id: true, updatedAt: true });
 export const insertClientSchema = createInsertSchema(clients).omit({ id: true, createdAt: true });
 export const insertSaleSchema = createInsertSchema(sales).omit({ id: true, createdAt: true });
 
@@ -156,8 +178,10 @@ export type SubscriptionType = typeof subscriptionTypes.$inferSelect;
 export type InsertSubscriptionType = z.infer<typeof insertSubscriptionTypeSchema>;
 export type Package = typeof packages.$inferSelect;
 export type InsertPackage = z.infer<typeof insertPackageSchema>;
-export type PackagePerk = typeof packagePerks.$inferSelect;
-export type InsertPackagePerk = z.infer<typeof insertPackagePerkSchema>;
+export type Perk = typeof perks.$inferSelect;
+export type InsertPerk = z.infer<typeof insertPerkSchema>;
+export type PackagePerkValue = typeof packagePerkValues.$inferSelect;
+export type InsertPackagePerkValue = z.infer<typeof insertPackagePerkValueSchema>;
 export type Client = typeof clients.$inferSelect;
 export type InsertClient = z.infer<typeof insertClientSchema>;
 export type Sale = typeof sales.$inferSelect;

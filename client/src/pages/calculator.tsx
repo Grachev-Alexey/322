@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calculator, LogOut, Star } from "lucide-react";
 import ServiceSelector from "@/components/service-selector";
-import PackageCards from "@/components/package-cards";
+import PackageComparison from "@/components/package-comparison";
 import PaymentConfig from "@/components/payment-config";
 import ClientModal from "@/components/client-modal";
 import { useCalculator } from "@/hooks/use-calculator";
@@ -175,12 +175,13 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
 
         {/* Package Comparison */}
         {calculation && (
-          <PackageCards
+          <PackageComparison
             calculation={calculation}
             selectedPackage={selectedPackage}
             onPackageSelect={setSelectedPackage}
-            procedureCount={procedureCount}
             packages={packages as Package[]}
+            downPayment={downPayment}
+            installmentMonths={installmentMonths}
           />
         )}
 
