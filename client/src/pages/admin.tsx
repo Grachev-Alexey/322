@@ -38,6 +38,66 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
+  const savePackages = async () => {
+    setLoading(true);
+    try {
+      for (const pkg of packages) {
+        const response = await fetch("/api/admin/packages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            type: pkg.type,
+            name: pkg.name,
+            discount: pkg.discount,
+            minCost: pkg.minCost,
+            minDownPaymentPercent: pkg.minDownPaymentPercent,
+            requiresFullPayment: pkg.requiresFullPayment,
+            giftSessions: pkg.giftSessions,
+            isActive: true
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to save package ${pkg.name}`);
+        }
+      }
+
+      for (const perk of packagePerks) {
+        if (perk.name && perk.name.trim()) {
+          const response = await fetch("/api/admin/package-perks", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            credentials: "include",
+            body: JSON.stringify(perk)
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to save perk ${perk.name}`);
+          }
+        }
+      }
+
+      toast({
+        title: "Успешно",
+        description: "Настройки пакетов сохранены"
+      });
+      loadConfigurations();
+    } catch (error) {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось сохранить настройки пакетов",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     loadConfigurations();
   }, []);
@@ -216,66 +276,7 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
               </TabsContent>
 
               <TabsContent value="packages">
-                <div className="space-y-6">
-                  <p className="text-gray-600">
-                    Настройка пакетов услуг и их преимуществ.
-                  </p>
-                  {packages.map((pkg) => (
-                    <Card key={pkg.type}>
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                          <Package size={20} />
-                          Пакет {pkg.name}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                          <div>
-                            <Label htmlFor={`${pkg.type}-name`}>Название пакета</Label>
-                            <Input
-                              id={`${pkg.type}-name`}
-                              value={pkg.name}
-                              onChange={(e) => {
-                                const updatedPackages = packages.map(p => 
-                                  p.type === pkg.type ? { ...p, name: e.target.value } : p
-                                );
-                                setPackages(updatedPackages);
-                              }}
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor={`${pkg.type}-discount`}>Скидка (%)</Label>
-                            <Input
-                              id={`${pkg.type}-discount`}
-                              type="number"
-                              value={parseFloat(pkg.discount) * 100}
-                              onChange={(e) => {
-                                const updatedPackages = packages.map(p => 
-                                  p.type === pkg.type ? { ...p, discount: (parseFloat(e.target.value) / 100).toString() } : p
-                                );
-                                setPackages(updatedPackages);
-                              }}
-                            />
-                          </div>
-                          <div>
-                            <Label htmlFor={`${pkg.type}-minCost`}>Минимальная стоимость</Label>
-                            <Input
-                              id={`${pkg.type}-minCost`}
-                              type="number"
-                              value={pkg.minCost}
-                              onChange={(e) => {
-                                const updatedPackages = packages.map(p => 
-                                  p.type === pkg.type ? { ...p, minCost: e.target.value } : p
-                                );
-                                setPackages(updatedPackages);
-                              }}
-                            />
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                <PackagesManagement packages={packages} packagePerks={packagePerks} setPackages={setPackages} setPackagePerks={setPackagePerks} loading={loading} setLoading={setLoading} />
               </TabsContent>
 
               <TabsContent value="yclients">
@@ -675,5 +676,318 @@ function ServicesManagement() {
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+// Packages Management Component
+function PackagesManagement({ packages, packagePerks, setPackages, setPackagePerks, loading, setLoading }: any) {
+  const { toast } = useToast();
+
+  const savePackages = async () => {
+    setLoading(true);
+    try {
+      for (const pkg of packages) {
+        const response = await fetch("/api/admin/packages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            type: pkg.type,
+            name: pkg.name,
+            discount: pkg.discount,
+            minCost: pkg.minCost,
+            minDownPaymentPercent: pkg.minDownPaymentPercent,
+            requiresFullPayment: pkg.requiresFullPayment,
+            giftSessions: pkg.giftSessions,
+            isActive: true
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Failed to save package ${pkg.name}`);
+        }
+      }
+
+      for (const perk of packagePerks) {
+        if (perk.name && perk.name.trim()) {
+          const response = await fetch("/api/admin/package-perks", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            credentials: "include",
+            body: JSON.stringify(perk)
+          });
+
+          if (!response.ok) {
+            throw new Error(`Failed to save perk ${perk.name}`);
+          }
+        }
+      }
+
+      toast({
+        title: "Успешно",
+        description: "Настройки пакетов сохранены"
+      });
+    } catch (error) {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось сохранить настройки пакетов",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <p className="text-gray-600">
+        Настройка пакетов услуг и их преимуществ.
+      </p>
+      
+      {packages.map((pkg) => (
+        <Card key={pkg.type}>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Package size={20} />
+              Пакет {pkg.name}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {/* Basic Package Settings */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div>
+                  <Label htmlFor={`${pkg.type}-name`}>Название пакета</Label>
+                  <Input
+                    id={`${pkg.type}-name`}
+                    value={pkg.name}
+                    onChange={(e) => {
+                      const updatedPackages = packages.map(p => 
+                        p.type === pkg.type ? { ...p, name: e.target.value } : p
+                      );
+                      setPackages(updatedPackages);
+                    }}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor={`${pkg.type}-discount`}>Скидка (%)</Label>
+                  <Input
+                    id={`${pkg.type}-discount`}
+                    type="number"
+                    value={parseFloat(pkg.discount) * 100}
+                    onChange={(e) => {
+                      const updatedPackages = packages.map(p => 
+                        p.type === pkg.type ? { ...p, discount: (parseFloat(e.target.value) / 100).toString() } : p
+                      );
+                      setPackages(updatedPackages);
+                    }}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor={`${pkg.type}-minCost`}>Минимальная стоимость</Label>
+                  <Input
+                    id={`${pkg.type}-minCost`}
+                    type="number"
+                    value={pkg.minCost}
+                    onChange={(e) => {
+                      const updatedPackages = packages.map(p => 
+                        p.type === pkg.type ? { ...p, minCost: e.target.value } : p
+                      );
+                      setPackages(updatedPackages);
+                    }}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor={`${pkg.type}-giftSessions`}>Подарочные сеансы</Label>
+                  <Input
+                    id={`${pkg.type}-giftSessions`}
+                    type="number"
+                    min="0"
+                    value={pkg.giftSessions || 0}
+                    onChange={(e) => {
+                      const updatedPackages = packages.map(p => 
+                        p.type === pkg.type ? { ...p, giftSessions: parseInt(e.target.value) || 0 } : p
+                      );
+                      setPackages(updatedPackages);
+                    }}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor={`${pkg.type}-minDownPayment`}>Минимальный первый взнос (%)</Label>
+                  <Input
+                    id={`${pkg.type}-minDownPayment`}
+                    type="number"
+                    step="1"
+                    value={(parseFloat(pkg.minDownPaymentPercent) * 100).toFixed(0)}
+                    onChange={(e) => {
+                      const updatedPackages = packages.map(p => 
+                        p.type === pkg.type ? { ...p, minDownPaymentPercent: (parseFloat(e.target.value) / 100).toString() } : p
+                      );
+                      setPackages(updatedPackages);
+                    }}
+                  />
+                </div>
+                <div className="flex items-center space-x-2 mt-6">
+                  <Switch
+                    checked={pkg.requiresFullPayment}
+                    onCheckedChange={(checked) => {
+                      const updatedPackages = packages.map(p => 
+                        p.type === pkg.type ? { ...p, requiresFullPayment: checked } : p
+                      );
+                      setPackages(updatedPackages);
+                    }}
+                  />
+                  <Label>Требуется полная оплата</Label>
+                </div>
+              </div>
+
+              {/* Package Perks Section */}
+              <div className="mt-6">
+                <Label className="text-lg font-semibold">Преимущества пакета</Label>
+                <div className="mt-3 space-y-3">
+                  {packagePerks
+                    .filter(perk => perk.packageType === pkg.type)
+                    .map((perk, index) => (
+                      <div key={perk.id || index} className="flex items-center gap-3 p-3 border rounded-lg">
+                        <Switch
+                          checked={perk.isActive}
+                          onCheckedChange={(checked) => {
+                            const updatedPerks = packagePerks.map(p => 
+                              p.id === perk.id ? { ...p, isActive: checked } : p
+                            );
+                            setPackagePerks(updatedPerks);
+                          }}
+                        />
+                        <div className="flex-1 grid grid-cols-1 md:grid-cols-6 gap-3">
+                          <Input
+                            placeholder="Название преимущества"
+                            value={perk.name}
+                            onChange={(e) => {
+                              const updatedPerks = packagePerks.map(p => 
+                                p.id === perk.id ? { ...p, name: e.target.value } : p
+                              );
+                              setPackagePerks(updatedPerks);
+                            }}
+                          />
+                          <Select
+                            value={perk.icon}
+                            onValueChange={(value) => {
+                              const updatedPerks = packagePerks.map(p => 
+                                p.id === perk.id ? { ...p, icon: value } : p
+                              );
+                              setPackagePerks(updatedPerks);
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Иконка" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="UserCheck">✅ UserCheck (Консультация)</SelectItem>
+                              <SelectItem value="Gift">🎁 Gift (Подарок)</SelectItem>
+                              <SelectItem value="Percent">% Percent (Скидка)</SelectItem>
+                              <SelectItem value="Clock">⏰ Clock (Время)</SelectItem>
+                              <SelectItem value="Shield">🛡️ Shield (Защита)</SelectItem>
+                              <SelectItem value="Star">⭐ Star (Качество)</SelectItem>
+                              <SelectItem value="Heart">❤️ Heart (Забота)</SelectItem>
+                              <SelectItem value="Gem">💎 Gem (Эксклюзив)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <Select
+                            value={perk.displayType || "simple"}
+                            onValueChange={(value) => {
+                              const updatedPerks = packagePerks.map(p => 
+                                p.id === perk.id ? { ...p, displayType: value } : p
+                              );
+                              setPackagePerks(updatedPerks);
+                            }}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Стиль отображения" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="simple">🔹 Простой</SelectItem>
+                              <SelectItem value="highlighted">⭐ Выделенный</SelectItem>
+                              <SelectItem value="with_value">💰 С ценностью</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <Input
+                            placeholder="#3B82F6"
+                            value={perk.iconColor || ""}
+                            onChange={(e) => {
+                              const updatedPerks = packagePerks.map(p => 
+                                p.id === perk.id ? { ...p, iconColor: e.target.value } : p
+                              );
+                              setPackagePerks(updatedPerks);
+                            }}
+                          />
+                          <Input
+                            placeholder="#374151"
+                            value={perk.textColor || ""}
+                            onChange={(e) => {
+                              const updatedPerks = packagePerks.map(p => 
+                                p.id === perk.id ? { ...p, textColor: e.target.value } : p
+                              );
+                              setPackagePerks(updatedPerks);
+                            }}
+                          />
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={async () => {
+                              if (perk.id && typeof perk.id === 'number') {
+                                try {
+                                  await fetch(`/api/admin/package-perks/${perk.id}`, {
+                                    method: "DELETE",
+                                    credentials: "include"
+                                  });
+                                } catch (error) {
+                                  console.error('Failed to delete perk:', error);
+                                }
+                              }
+                              const updatedPerks = packagePerks.filter(p => p.id !== perk.id);
+                              setPackagePerks(updatedPerks);
+                            }}
+                          >
+                            Удалить
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      const newPerk = {
+                        id: Date.now(),
+                        packageType: pkg.type,
+                        name: '',
+                        icon: 'UserCheck',
+                        displayType: 'simple',
+                        textColor: '#374151',
+                        iconColor: '#6B7280',
+                        isActive: true
+                      };
+                      setPackagePerks([...packagePerks, newPerk]);
+                    }}
+                  >
+                    Добавить преимущество
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+      
+      <Button onClick={savePackages} disabled={loading} className="btn-primary">
+        {loading ? "Сохранение..." : "Сохранить настройки пакетов"}
+      </Button>
+    </div>
   );
 }
