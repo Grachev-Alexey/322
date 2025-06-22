@@ -97,7 +97,7 @@ export default function PackageCards({
     
     // Fetch real perks from database
     const { data: realPerks = [] } = useQuery({
-      queryKey: [`/api/admin/package-perks/${packageType}`],
+      queryKey: [`/api/packages/${packageType}/perks`],
       enabled: true,
       staleTime: 0,
       cacheTime: 0

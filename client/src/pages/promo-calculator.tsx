@@ -51,15 +51,19 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
   // Benefits component for displaying database perks
   const BenefitsSection = ({ packageType, packages, calculation, procedureCount }: any) => {
     const { data: realPerks = [] } = useQuery({
-      queryKey: [`/api/admin/package-perks/${packageType}`],
+      queryKey: [`/api/packages/${packageType}/perks`],
       enabled: true,
       staleTime: 0,
       cacheTime: 0
     });
 
+    // Always show database perks if available, otherwise show fallback
+    console.log(`Package ${packageType} perks:`, realPerks);
+    
     if (realPerks.length === 0) {
       return (
         <div className="space-y-2 mb-6">
+          <div className="text-xs text-red-500">Loading perks from database...</div>
           {packageInfo[packageType as keyof typeof packageInfo].benefits.slice(0, 3).map((benefit: any, index: number) => (
             <div key={index} className="flex items-center justify-between text-sm">
               <span className="text-gray-600 dark:text-gray-300">{benefit.text}</span>

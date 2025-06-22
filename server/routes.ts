@@ -183,7 +183,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Get package perks
+  // Get package perks (public endpoint for all users)
   app.get("/api/packages/:type/perks", requireAuth, async (req, res) => {
     try {
       const { type } = req.params;
