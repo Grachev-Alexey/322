@@ -209,6 +209,71 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Admin routes - Universal Perks Management
+  app.get("/api/admin/perks", requireAdmin, async (req, res) => {
+    try {
+      const perks = await storage.getPerks();
+      res.json(perks);
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка получения перков" });
+    }
+  });
+
+  app.get("/api/admin/perk-values", requireAdmin, async (req, res) => {
+    try {
+      const perkValues = await storage.getPackagePerkValues();
+      res.json(perkValues);
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка получения значений перков" });
+    }
+  });
+
+  app.post("/api/admin/perks", requireAdmin, async (req, res) => {
+    try {
+      const perk = req.body;
+      const result = await storage.createPerk(perk);
+      res.json(result);
+    } catch (error) {
+      console.error('Error creating perk:', error);
+      res.status(500).json({ message: "Ошибка создания перка" });
+    }
+  });
+
+  app.put("/api/admin/perks/:id", requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      const result = await storage.updatePerk(parseInt(id), updates);
+      res.json(result);
+    } catch (error) {
+      console.error('Error updating perk:', error);
+      res.status(500).json({ message: "Ошибка обновления перка" });
+    }
+  });
+
+  app.post("/api/admin/perk-values", requireAdmin, async (req, res) => {
+    try {
+      const perkValue = req.body;
+      const result = await storage.createPackagePerkValue(perkValue);
+      res.json(result);
+    } catch (error) {
+      console.error('Error creating perk value:', error);
+      res.status(500).json({ message: "Ошибка создания значения перка" });
+    }
+  });
+
+  app.put("/api/admin/perk-values/:id", requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const updates = req.body;
+      const result = await storage.updatePackagePerkValue(parseInt(id), updates);
+      res.json(result);
+    } catch (error) {
+      console.error('Error updating perk value:', error);
+      res.status(500).json({ message: "Ошибка обновления значения перка" });
+    }
+  });
+
   // Admin routes - User Management
   app.get("/api/admin/users", requireAdmin, async (req, res) => {
     try {

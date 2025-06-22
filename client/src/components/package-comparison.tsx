@@ -89,7 +89,7 @@ export default function PackageComparison({
     }, [] as any[])
     .sort((a, b) => a.displayOrder - b.displayOrder);
   
-  // Package types in correct order
+  // Package types in correct order: VIP first, then Standard, then Economy
   const packageTypes = ['vip', 'standard', 'economy'] as const;
   
   // Get perk value for specific package

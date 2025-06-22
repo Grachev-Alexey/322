@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Settings, Users, Database, Package, LogOut } from "lucide-react";
 import AdminDashboard from "@/components/admin-dashboard";
+import AdminPerks from "@/components/admin-perks";
 
 interface User {
   id: number;
@@ -36,16 +37,7 @@ interface PackageType {
   isActive: boolean;
 }
 
-interface PackagePerk {
-  id?: number;
-  packageType: string;
-  name: string;
-  icon: string;
-  displayType?: string;
-  textColor?: string;
-  iconColor?: string;
-  isActive: boolean;
-}
+
 
 export default function AdminPage({ user, onLogout }: AdminPageProps) {
   const [yclientsConfig, setYclientsConfig] = useState({
@@ -57,7 +49,6 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
   });
   
   const [packages, setPackages] = useState<PackageType[]>([]);
-  const [packagePerks, setPackagePerks] = useState<PackagePerk[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
@@ -127,7 +118,7 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
         title: "Успешно",
         description: "Настройки пакетов сохранены"
       });
-      loadConfigurations();
+
     } catch (error) {
       toast({
         title: "Ошибка",
@@ -139,46 +130,36 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
     }
   };
 
-  useEffect(() => {
-    loadConfigurations();
-  }, []);
 
-  const loadConfigurations = async () => {
-    try {
-      const packagesResponse = await fetch("/api/packages", {
-        credentials: "include"
-      });
-      
-      if (packagesResponse.ok) {
-        const packagesData = await packagesResponse.json();
-        setPackages(packagesData);
-        
-        const allPerks = [];
-        for (const pkg of packagesData) {
-          const perksResponse = await fetch(`/api/admin/package-perks/${pkg.type}`, {
-            credentials: "include"
-          });
-          if (perksResponse.ok) {
-            const perks = await perksResponse.json();
-            allPerks.push(...perks);
+
+  // Load packages on mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [packagesResponse, yclientsResponse] = await Promise.all([
+          fetch("/api/packages", { credentials: "include" }),
+          fetch("/api/config/yclients", { credentials: "include" })
+        ]);
+
+        if (packagesResponse.ok) {
+          const packagesData = await packagesResponse.json();
+          setPackages(packagesData);
+        }
+
+        if (yclientsResponse.ok) {
+          const yclientsData = await yclientsResponse.json();
+          if (yclientsData) {
+            setYclientsConfig(yclientsData);
           }
         }
-        setPackagePerks(allPerks);
+
+      } catch (error) {
+        console.error("Error loading admin data:", error);
       }
-      
-      const yclientsResponse = await fetch("/api/config/yclients", {
-        credentials: "include"
-      });
-      if (yclientsResponse.ok) {
-        const yclientsData = await yclientsResponse.json();
-        if (yclientsData) {
-          setYclientsConfig(yclientsData);
-        }
-      }
-    } catch (error) {
-      console.error("Error loading configurations:", error);
-    }
-  };
+    };
+
+    loadData();
+  }, []);
 
   const saveYclientsConfig = async () => {
     setLoading(true);
@@ -273,11 +254,12 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
       <main className="flex-1 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-full">
           <Tabs defaultValue="dashboard" className="h-full flex flex-col">
-            <TabsList className="grid w-full grid-cols-5 flex-shrink-0">
+            <TabsList className="grid w-full grid-cols-6 flex-shrink-0">
               <TabsTrigger value="dashboard">Обзор</TabsTrigger>
               <TabsTrigger value="users">Пользователи</TabsTrigger>
               <TabsTrigger value="services">Услуги</TabsTrigger>
               <TabsTrigger value="packages">Пакеты</TabsTrigger>
+              <TabsTrigger value="perks">Перки</TabsTrigger>
               <TabsTrigger value="yclients">Yclients API</TabsTrigger>
             </TabsList>
 
@@ -317,7 +299,16 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
               </TabsContent>
 
               <TabsContent value="packages">
-                <PackagesManagement packages={packages} packagePerks={packagePerks} setPackages={setPackages} setPackagePerks={setPackagePerks} loading={loading} setLoading={setLoading} />
+                <PackagesManagement 
+                  packages={packages}
+                  setPackages={setPackages}
+                  loading={loading}
+                  setLoading={setLoading}
+                />
+              </TabsContent>
+              
+              <TabsContent value="perks">
+                <AdminPerks loading={loading} setLoading={setLoading} />
               </TabsContent>
 
               <TabsContent value="yclients">
@@ -392,8 +383,8 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
                         {loading ? "Сохранение..." : "Сохранить настройки"}
                       </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
                 </div>
               </TabsContent>
             </div>
@@ -736,11 +727,9 @@ function ServicesManagement() {
 }
 
 // Packages Management Component
-function PackagesManagement({ packages, packagePerks, setPackages, setPackagePerks, loading, setLoading }: {
+function PackagesManagement({ packages, setPackages, loading, setLoading }: {
   packages: PackageType[];
-  packagePerks: PackagePerk[];
   setPackages: (packages: PackageType[]) => void;
-  setPackagePerks: (perks: PackagePerk[]) => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;
 }) {
@@ -826,7 +815,7 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
   return (
     <div className="space-y-6 max-h-[calc(100vh-250px)] overflow-y-auto">
       <p className="text-gray-600">
-        Настройка пакетов услуг и их преимуществ.
+        Настройка пакетов услуг. Для управления преимуществами перейдите в раздел "Перки".
       </p>
       
       {packages.map((pkg: PackageType) => (
@@ -929,138 +918,7 @@ function PackagesManagement({ packages, packagePerks, setPackages, setPackagePer
                 </div>
               </div>
 
-              {/* Package Perks Section */}
-              <div className="mt-6">
-                <Label className="text-lg font-semibold">Преимущества пакета</Label>
-                <div className="mt-3 space-y-3">
-                  {packagePerks
-                    .filter((perk: PackagePerk) => perk.packageType === pkg.type)
-                    .map((perk: PackagePerk, index: number) => (
-                      <div key={perk.id || index} className="flex items-center gap-3 p-3 border rounded-lg">
-                        <Switch
-                          checked={perk.isActive}
-                          onCheckedChange={(checked) => {
-                            const updatedPerks = packagePerks.map((p: PackagePerk) => 
-                              p.id === perk.id ? { ...p, isActive: checked } : p
-                            );
-                            setPackagePerks(updatedPerks);
-                          }}
-                        />
-                        <div className="flex-1 grid grid-cols-1 md:grid-cols-6 gap-3">
-                          <Input
-                            placeholder="Название преимущества"
-                            value={perk.name}
-                            onChange={(e) => {
-                              const updatedPerks = packagePerks.map((p: PackagePerk) => 
-                                p.id === perk.id ? { ...p, name: e.target.value } : p
-                              );
-                              setPackagePerks(updatedPerks);
-                            }}
-                          />
-                          <Select
-                            value={perk.icon}
-                            onValueChange={(value) => {
-                              const updatedPerks = packagePerks.map((p: PackagePerk) => 
-                                p.id === perk.id ? { ...p, icon: value } : p
-                              );
-                              setPackagePerks(updatedPerks);
-                            }}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Иконка" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="UserCheck">✅ UserCheck (Консультация)</SelectItem>
-                              <SelectItem value="Gift">🎁 Gift (Подарок)</SelectItem>
-                              <SelectItem value="Percent">% Percent (Скидка)</SelectItem>
-                              <SelectItem value="Clock">⏰ Clock (Время)</SelectItem>
-                              <SelectItem value="Shield">🛡️ Shield (Защита)</SelectItem>
-                              <SelectItem value="Star">⭐ Star (Качество)</SelectItem>
-                              <SelectItem value="Heart">❤️ Heart (Забота)</SelectItem>
-                              <SelectItem value="Gem">💎 Gem (Эксклюзив)</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <Select
-                            value={perk.displayType || "simple"}
-                            onValueChange={(value) => {
-                              const updatedPerks = packagePerks.map((p: PackagePerk) => 
-                                p.id === perk.id ? { ...p, displayType: value } : p
-                              );
-                              setPackagePerks(updatedPerks);
-                            }}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Стиль отображения" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="simple">🔹 Простой</SelectItem>
-                              <SelectItem value="highlighted">⭐ Выделенный</SelectItem>
-                              <SelectItem value="with_value">💰 С ценностью</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          <Input
-                            placeholder="#3B82F6"
-                            value={perk.iconColor || ""}
-                            onChange={(e) => {
-                              const updatedPerks = packagePerks.map((p: PackagePerk) => 
-                                p.id === perk.id ? { ...p, iconColor: e.target.value } : p
-                              );
-                              setPackagePerks(updatedPerks);
-                            }}
-                          />
-                          <Input
-                            placeholder="#374151"
-                            value={perk.textColor || ""}
-                            onChange={(e) => {
-                              const updatedPerks = packagePerks.map((p: PackagePerk) => 
-                                p.id === perk.id ? { ...p, textColor: e.target.value } : p
-                              );
-                              setPackagePerks(updatedPerks);
-                            }}
-                          />
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={async () => {
-                              if (perk.id && typeof perk.id === 'number') {
-                                try {
-                                  await fetch(`/api/admin/package-perks/${perk.id}`, {
-                                    method: "DELETE",
-                                    credentials: "include"
-                                  });
-                                } catch (error) {
-                                  console.error('Failed to delete perk:', error);
-                                }
-                              }
-                              const updatedPerks = packagePerks.filter((p: PackagePerk) => p.id !== perk.id);
-                              setPackagePerks(updatedPerks);
-                            }}
-                          >
-                            Удалить
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      const newPerk: PackagePerk = {
-                        id: Date.now(), // Temporary ID
-                        packageType: pkg.type,
-                        name: '',
-                        icon: 'UserCheck',
-                        displayType: 'simple',
-                        textColor: '#374151',
-                        iconColor: '#6B7280',
-                        isActive: true
-                      };
-                      setPackagePerks([...packagePerks, newPerk]);
-                    }}
-                  >
-                    Добавить преимущество
-                  </Button>
-                </div>
-              </div>
+
             </div>
           </CardContent>
         </Card>
