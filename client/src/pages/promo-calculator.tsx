@@ -170,213 +170,209 @@ const IntegratedPackageComparison = ({
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 px-2">
-      {packageTypes.map((packageType) => {
-        const info = packageInfo[packageType];
-        const data = getPackageData(packageType);
-        const packageData = packages.find((p: Package) => p.type === packageType);
-        const discountPercent = packageData ? Math.round(parseFloat(packageData.discount) * 100) : 0;
-        const Icon = info.icon;
-        const isSelected = selectedPackage === packageType;
-        const isPopular = packageType === 'standard';
+    <div className="space-y-6">
+      {/* Package Headers Row */}
+      <div className="grid grid-cols-4 gap-4">
+        {/* Empty space for perk names column */}
+        <div></div>
+        
+        {/* Package Cards */}
+        {packageTypes.map((packageType) => {
+          const info = packageInfo[packageType];
+          const data = getPackageData(packageType);
+          const packageData = packages.find((p: Package) => p.type === packageType);
+          const discountPercent = packageData ? Math.round(parseFloat(packageData.discount) * 100) : 0;
+          const Icon = info.icon;
+          const isSelected = selectedPackage === packageType;
+          const isPopular = packageType === 'standard';
 
-        if (!data) return null;
+          if (!data) return null;
 
-        return (
-          <div 
-            key={packageType}
-            className={`floating-card-enhanced bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-xl lg:rounded-2xl border-2 transition-all duration-300 overflow-hidden ${
-              isSelected 
-                ? 'border-gradient-to-r from-blue-500 to-purple-500 shadow-2xl transform scale-105' 
-                : 'border-white/20 dark:border-gray-700/20 hover:border-gray-300 dark:hover:border-gray-600'
-            }`}
-          >
-            {/* Package Header */}
+          return (
             <div 
-              className={`p-6 text-center cursor-pointer relative ${
+              key={packageType}
+              className={`floating-card-enhanced bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-xl lg:rounded-2xl border-2 transition-all duration-300 overflow-hidden cursor-pointer ${
                 isSelected 
-                  ? 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-blue-900/20 dark:via-purple-900/20 dark:to-pink-900/20' 
-                  : 'bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 hover:from-gray-100 hover:to-gray-50 dark:hover:from-gray-700 dark:hover:to-gray-800'
+                  ? 'border-purple-500 shadow-2xl transform scale-105' 
+                  : 'border-white/20 dark:border-gray-700/20 hover:border-gray-300 dark:hover:border-gray-600'
               }`}
               onClick={() => data.isAvailable && onPackageSelect(packageType)}
             >
-              {/* Popular badge */}
-              {isPopular && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
-                  <span className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
-                    Популярный
-                  </span>
-                </div>
-              )}
-              
-              {/* VIP Crown */}
-              {packageType === 'vip' && (
-                <div className="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-bl-3xl rounded-tr-xl flex items-end justify-start pl-2 pb-2">
-                  <Crown className="text-white" size={14} />
-                </div>
-              )}
-              
-              {/* Package Icon and Title */}
-              <div className={`w-16 h-16 mx-auto mb-3 bg-gradient-to-r ${info.gradient} rounded-2xl flex items-center justify-center shadow-xl`}>
-                <Icon className="text-white" size={24} />
-              </div>
-              
-              <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-                {packageData?.name || info.title}
-              </h4>
-              
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                {info.subtitle}
-              </p>
-              
-              {/* Discount Badge */}
-              <div className={`inline-block px-4 py-2 rounded-xl text-sm font-bold text-white bg-gradient-to-r ${info.gradient} shadow-lg mb-4`}>
-                Скидка {discountPercent}%
-              </div>
-              
-              {/* Pricing */}
-              <div className="mb-4">
-                <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-                  {formatPrice(data.finalCost)}
-                </div>
-                <div className="text-sm text-gray-400 line-through mb-2">
-                  {formatPrice(calculation.baseCost)}
-                </div>
-                <div className="text-lg font-semibold text-green-600 mb-2">
-                  Экономия: {formatPrice(data.totalSavings)}
-                </div>
-                
-                {/* Additional Package Info */}
-                <div className="space-y-1 text-xs">
-                  {/* Bulk discount applied */}
-                  {procedureCount >= 15 && data.appliedDiscounts.some((d: any) => d.type === 'bulk') && (
-                    <div className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 px-2 py-1 rounded-lg font-medium">
-                      +2,5% доп. скидка применена!
-                    </div>
-                  )}
-                  
-                  {/* Gift sessions */}
-                  {packageData && packageData.giftSessions > 0 && (
-                    <div className="bg-pink-50 dark:bg-pink-900/20 text-pink-700 dark:text-pink-400 px-2 py-1 rounded-lg font-medium">
-                      +{packageData.giftSessions} подарочн{packageData.giftSessions === 1 ? 'ый сеанс' : packageData.giftSessions < 5 ? 'ых сеанса' : 'ых сеансов'}
-                    </div>
-                  )}
-                  
-                  {/* Monthly payment info */}
-                  {data.monthlyPayment > 0 && (
-                    <div className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 px-2 py-1 rounded-lg font-medium">
-                      {formatPrice(data.monthlyPayment)}/мес
-                    </div>
-                  )}
-                </div>
-              </div>
-              
-              {/* Action Button */}
-              <Button
-                className={`w-full py-3 text-sm font-semibold ${
-                  isSelected ? 'btn-premium' : 'btn-outline-premium'
-                } shadow-xl hover:shadow-2xl transition-all duration-300`}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onPackageSelect(packageType);
-                }}
-                disabled={!data.isAvailable}
+              <div 
+                className={`p-6 text-center relative ${
+                  isSelected 
+                    ? 'bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-blue-900/20 dark:via-purple-900/20 dark:to-pink-900/20' 
+                    : 'bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 hover:from-gray-100 hover:to-gray-50 dark:hover:from-gray-700 dark:hover:to-gray-800'
+                }`}
               >
-                {isSelected ? 'Выбрано' : 'Выбрать'}
-              </Button>
-            </div>
-            
-            {/* Perks List */}
-            <div className="p-6 space-y-3">
-              {uniquePerks.map((perk, index) => {
-                const IconComponent = (Icons as any)[perk.icon] || Check;
-                const perkValue = getPerkValue(perk.id, packageType);
+                {/* Popular badge */}
+                {isPopular && (
+                  <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
+                    <span className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                      Популярный
+                    </span>
+                  </div>
+                )}
                 
-                if (!perkValue || !perkValue.isActive) {
-                  return (
-                    <div key={perk.id} className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-50 dark:bg-gray-800/50">
-                      <div className="flex items-center space-x-3">
-                        <div className="p-1.5 rounded-lg bg-gray-200 dark:bg-gray-700">
-                          <IconComponent className="h-4 w-4 text-gray-400" />
-                        </div>
-                        <span className="text-sm text-gray-500 dark:text-gray-400">
-                          {perk.name}
-                        </span>
+                {/* VIP Crown */}
+                {packageType === 'vip' && (
+                  <div className="absolute top-0 right-0 w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-bl-3xl rounded-tr-xl flex items-end justify-start pl-2 pb-2">
+                    <Crown className="text-white" size={14} />
+                  </div>
+                )}
+                
+                {/* Package Icon and Title */}
+                <div className={`w-16 h-16 mx-auto mb-3 bg-gradient-to-r ${info.gradient} rounded-2xl flex items-center justify-center shadow-xl`}>
+                  <Icon className="text-white" size={24} />
+                </div>
+                
+                <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                  {packageData?.name || info.title}
+                </h4>
+                
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                  {info.subtitle}
+                </p>
+                
+                {/* Discount Badge */}
+                <div className={`inline-block px-4 py-2 rounded-xl text-sm font-bold text-white bg-gradient-to-r ${info.gradient} shadow-lg mb-4`}>
+                  Скидка {discountPercent}%
+                </div>
+                
+                {/* Pricing */}
+                <div className="mb-4">
+                  <div className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                    {formatPrice(data.finalCost)}
+                  </div>
+                  <div className="text-sm text-gray-400 line-through mb-2">
+                    {formatPrice(calculation.baseCost)}
+                  </div>
+                  <div className="text-lg font-semibold text-green-600 mb-2">
+                    Экономия: {formatPrice(data.totalSavings)}
+                  </div>
+                  
+                  {/* Additional Package Info */}
+                  <div className="space-y-1 text-xs">
+                    {/* Bulk discount applied */}
+                    {procedureCount >= 15 && data.appliedDiscounts.some((d: any) => d.type === 'bulk') && (
+                      <div className="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 px-2 py-1 rounded-lg font-medium">
+                        +2,5% доп. скидка применена!
                       </div>
-                      <span className="text-red-500 font-bold text-lg">–</span>
-                    </div>
-                  );
-                }
+                    )}
+                    
+                    {/* Gift sessions */}
+                    {packageData && packageData.giftSessions > 0 && (
+                      <div className="bg-pink-50 dark:bg-pink-900/20 text-pink-700 dark:text-pink-400 px-2 py-1 rounded-lg font-medium">
+                        +{packageData.giftSessions} подарочн{packageData.giftSessions === 1 ? 'ый сеанс' : packageData.giftSessions < 5 ? 'ых сеанса' : 'ых сеансов'}
+                      </div>
+                    )}
+                    
+                    {/* Monthly payment info */}
+                    {data.monthlyPayment > 0 && (
+                      <div className="bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 px-2 py-1 rounded-lg font-medium">
+                        {formatPrice(data.monthlyPayment)}/мес
+                      </div>
+                    )}
+                  </div>
+                </div>
                 
-                const isHighlighted = perkValue.isHighlighted;
+                {/* Action Button */}
+                <Button
+                  className={`w-full py-3 text-sm font-semibold ${
+                    isSelected ? 'btn-premium' : 'btn-outline-premium'
+                  } shadow-xl hover:shadow-2xl transition-all duration-300`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onPackageSelect(packageType);
+                  }}
+                  disabled={!data.isAvailable}
+                >
+                  {isSelected ? 'Выбрано' : 'Выбрать'}
+                </Button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      
+      {/* Perks Comparison Table */}
+      <div className="space-y-3">
+        {uniquePerks.map((perk, index) => {
+          const IconComponent = (Icons as any)[perk.icon] || Check;
+          const isEven = index % 2 === 0;
+          
+          return (
+            <div key={perk.id} className={`grid grid-cols-4 gap-4 ${isEven ? 'bg-transparent' : 'bg-gray-50/30 dark:bg-gray-800/30'} rounded-xl p-3`}>
+              {/* Perk Name Column */}
+              <div className="flex items-center space-x-3">
+                <div className="p-2 rounded-lg bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 flex-shrink-0">
+                  <IconComponent className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div className="min-w-0">
+                  <div className="font-semibold text-gray-900 dark:text-white text-base">
+                    {perk.name}
+                  </div>
+                  {perk.description && (
+                    <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      {perk.description}
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* Package Value Columns */}
+              {packageTypes.map((packageType) => {
+                const perkValue = getPerkValue(perk.id, packageType);
+                const isSelected = selectedPackage === packageType;
                 
                 return (
-                  <div key={perk.id} className={`flex items-center justify-between py-3 px-4 rounded-lg transition-all duration-200 ${
-                    isHighlighted 
-                      ? `bg-gradient-to-r ${
-                          packageType === 'vip' ? 'from-purple-50 to-pink-50 border border-purple-200' :
-                          packageType === 'standard' ? 'from-blue-50 to-purple-50 border border-blue-200' :
-                          'from-green-50 to-emerald-50 border border-green-200'
-                        } dark:from-gray-800 dark:to-gray-700 dark:border-gray-600`
-                      : 'bg-gray-50/50 dark:bg-gray-800/30 hover:bg-gray-100/50 dark:hover:bg-gray-700/50'
+                  <div key={packageType} className={`flex items-center justify-center min-h-[80px] rounded-xl transition-all duration-300 ${
+                    isSelected ? 'bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-2 border-purple-200 dark:border-purple-700' : 'bg-white/50 dark:bg-gray-800/50'
                   }`}>
-                    <div className="flex items-center space-x-3">
-                      <div className={`p-2 rounded-lg ${
-                        isHighlighted 
-                          ? packageType === 'vip' ? 'bg-purple-100 text-purple-600' :
-                            packageType === 'standard' ? 'bg-blue-100 text-blue-600' :
-                            'bg-green-100 text-green-600'
-                          : 'bg-gray-200 dark:bg-gray-700 text-gray-500'
-                      }`}>
-                        <IconComponent className="h-4 w-4" />
-                      </div>
-                      <div>
-                        <div className="font-medium text-gray-900 dark:text-white text-sm">
-                          {perk.name}
-                        </div>
-                        {perk.description && (
-                          <div className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                            {perk.description}
+                    {!perkValue || !perkValue.isActive ? (
+                      <span className="text-red-500 font-bold text-2xl">–</span>
+                    ) : (
+                      <div className="flex flex-col items-center space-y-2">
+                        {perkValue.valueType === 'boolean' ? (
+                          perkValue.booleanValue ? (
+                            <div className={`p-3 rounded-full ${
+                              packageType === 'vip' ? 'bg-purple-100 text-purple-600' :
+                              packageType === 'standard' ? 'bg-blue-100 text-blue-600' :
+                              'bg-green-100 text-green-600'
+                            } shadow-lg`}>
+                              <Check className="h-6 w-6" />
+                            </div>
+                          ) : (
+                            <span className="text-red-500 font-bold text-2xl">–</span>
+                          )
+                        ) : (
+                          <div className={`px-4 py-2 rounded-xl text-center min-w-[100px] ${
+                            perkValue.isHighlighted 
+                              ? packageType === 'vip' ? 'bg-purple-500 text-white shadow-xl transform scale-110' :
+                                packageType === 'standard' ? 'bg-blue-500 text-white shadow-xl transform scale-110' :
+                                'bg-green-500 text-white shadow-xl transform scale-110'
+                              : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                          }`}>
+                            <span className="font-bold text-sm">
+                              {perkValue.displayValue}
+                            </span>
+                          </div>
+                        )}
+                        {perkValue.isHighlighted && (
+                          <div className="flex items-center space-x-1">
+                            <Sparkles className="h-4 w-4 text-yellow-500" />
+                            <span className="text-xs text-yellow-600 dark:text-yellow-400 font-bold">Лучшее</span>
                           </div>
                         )}
                       </div>
-                    </div>
-                    
-                    <div className="flex items-center">
-                      {perkValue.valueType === 'boolean' ? (
-                        perkValue.booleanValue ? (
-                          <div className={`p-1.5 rounded-full ${
-                            packageType === 'vip' ? 'bg-purple-100 text-purple-600' :
-                            packageType === 'standard' ? 'bg-blue-100 text-blue-600' :
-                            'bg-green-100 text-green-600'
-                          }`}>
-                            <Check className="h-4 w-4" />
-                          </div>
-                        ) : (
-                          <span className="text-red-500 font-bold text-lg">–</span>
-                        )
-                      ) : (
-                        <span className={`text-sm font-bold ${
-                          isHighlighted 
-                            ? packageType === 'vip' ? 'text-purple-700 bg-purple-100 px-3 py-1 rounded-lg' :
-                              packageType === 'standard' ? 'text-blue-700 bg-blue-100 px-3 py-1 rounded-lg' :
-                              'text-green-700 bg-green-100 px-3 py-1 rounded-lg'
-                            : 'text-gray-700'
-                        }`}>
-                          {perkValue.displayValue}
-                        </span>
-                      )}
-                      {isHighlighted && (
-                        <Sparkles className="h-4 w-4 ml-2 text-yellow-500" />
-                      )}
-                    </div>
+                    )}
                   </div>
                 );
               })}
             </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 };
