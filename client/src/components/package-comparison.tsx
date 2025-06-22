@@ -102,31 +102,61 @@ export default function PackageComparison({
     const perkValue = getPerkValue(perkId, packageType);
     if (!perkValue || !perkValue.isActive) {
       return (
-        <div className="flex items-center justify-center p-3">
-          <X className="h-4 w-4 text-gray-400" />
+        <div className="flex flex-col items-center justify-center p-4 space-y-1">
+          <div className="p-2 rounded-full bg-red-100 dark:bg-red-900">
+            <X className="h-4 w-4 text-red-500 dark:text-red-400" />
+          </div>
+          <span className="text-xs text-gray-500 dark:text-gray-400">Не включено</span>
         </div>
       );
     }
     
     const isHighlighted = perkValue.isHighlighted;
-    const baseClasses = "flex items-center justify-center p-3 text-sm font-medium";
-    const highlightedClasses = isHighlighted ? "bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 rounded-lg" : "";
+    const packageColors = {
+      vip: 'from-purple-500 to-purple-600',
+      standard: 'from-blue-500 to-blue-600', 
+      economy: 'from-green-500 to-green-600'
+    };
     
     if (perkValue.valueType === 'boolean') {
       return (
-        <div className={`${baseClasses} ${highlightedClasses}`}>
+        <div className="flex flex-col items-center justify-center p-4 space-y-1">
           {perkValue.booleanValue ? (
-            <Check className="h-4 w-4 text-green-500" />
+            <>
+              <div className={`p-2 rounded-full bg-gradient-to-r ${packageColors[packageType as keyof typeof packageColors]} text-white`}>
+                <Check className="h-4 w-4" />
+              </div>
+              <span className="text-xs font-medium text-green-700 dark:text-green-400">Включено</span>
+            </>
           ) : (
-            <X className="h-4 w-4 text-gray-400" />
+            <>
+              <div className="p-2 rounded-full bg-red-100 dark:bg-red-900">
+                <X className="h-4 w-4 text-red-500 dark:text-red-400" />
+              </div>
+              <span className="text-xs text-gray-500 dark:text-gray-400">Не включено</span>
+            </>
           )}
         </div>
       );
     }
     
     return (
-      <div className={`${baseClasses} ${highlightedClasses}`}>
-        <span className={isHighlighted ? "font-bold" : ""}>{perkValue.displayValue}</span>
+      <div className="flex flex-col items-center justify-center p-4 space-y-2">
+        <div className={`px-3 py-2 rounded-lg text-center min-w-[80px] ${
+          isHighlighted 
+            ? `bg-gradient-to-r ${packageColors[packageType as keyof typeof packageColors]} text-white shadow-lg transform scale-105` 
+            : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+        }`}>
+          <span className={`text-sm font-bold ${isHighlighted ? 'text-white' : ''}`}>
+            {perkValue.displayValue}
+          </span>
+        </div>
+        {isHighlighted && (
+          <div className="flex items-center space-x-1">
+            <Star className="h-3 w-3 text-yellow-500" />
+            <span className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">Лучшее</span>
+          </div>
+        )}
       </div>
     );
   };
@@ -207,50 +237,75 @@ export default function PackageComparison({
       </div>
       
       {/* Perks Comparison Table */}
-      <Card>
+      <Card className="shadow-lg border-0 bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-xl font-bold text-center text-gray-900 dark:text-white">
+            Сравнение преимуществ пакетов
+          </CardTitle>
+        </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 dark:bg-gray-800">
-                <tr>
-                  <th className="text-left p-4 font-medium text-gray-900 dark:text-white">Преимущества</th>
-                  {packageTypes.map((packageType) => (
-                    <th key={packageType} className="text-center p-4 font-medium text-gray-900 dark:text-white">
-                      {packageInfo[packageType].title}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {uniquePerks.map((perk) => {
-                  const IconComponent = (Icons as any)[perk.icon] || Check;
+            <div className="min-w-full">
+              {/* Header Row */}
+              <div className="grid grid-cols-4 gap-0 bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700 border-b-2 border-gray-300 dark:border-gray-600">
+                <div className="p-4 font-bold text-lg text-gray-900 dark:text-white border-r border-gray-300 dark:border-gray-600">
+                  Преимущества
+                </div>
+                {packageTypes.map((packageType) => {
+                  const info = packageInfo[packageType];
+                  const Icon = info.icon;
                   return (
-                    <tr key={perk.id} className="hover:bg-gray-50 dark:hover:bg-gray-800">
-                      <td className="p-4">
+                    <div key={packageType} className="p-4 text-center border-r border-gray-300 dark:border-gray-600 last:border-r-0">
+                      <div className="flex flex-col items-center space-y-2">
+                        <div className={`p-2 rounded-full bg-gradient-to-r ${info.color} text-white`}>
+                          <Icon className="h-5 w-5" />
+                        </div>
+                        <div className="font-bold text-lg text-gray-900 dark:text-white">
+                          {info.title}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {/* Perks Rows */}
+              <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                {uniquePerks.map((perk, index) => {
+                  const IconComponent = (Icons as any)[perk.icon] || Check;
+                  const isEven = index % 2 === 0;
+                  return (
+                    <div key={perk.id} className={`grid grid-cols-4 gap-0 hover:bg-blue-50 dark:hover:bg-gray-800 transition-colors ${isEven ? 'bg-white dark:bg-gray-900' : 'bg-gray-50 dark:bg-gray-850'}`}>
+                      {/* Perk Name Column */}
+                      <div className="p-4 border-r border-gray-200 dark:border-gray-700">
                         <div className="flex items-center space-x-3">
-                          <IconComponent className="h-4 w-4 text-gray-500" />
+                          <div className="p-2 rounded-lg bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900">
+                            <IconComponent className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                          </div>
                           <div>
-                            <div className="font-medium text-gray-900 dark:text-white">
+                            <div className="font-semibold text-gray-900 dark:text-white text-base">
                               {perk.name}
                             </div>
                             {perk.description && (
-                              <div className="text-sm text-gray-500 dark:text-gray-400">
+                              <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                                 {perk.description}
                               </div>
                             )}
                           </div>
                         </div>
-                      </td>
+                      </div>
+                      
+                      {/* Package Value Columns */}
                       {packageTypes.map((packageType) => (
-                        <td key={packageType} className="border-l border-gray-200 dark:border-gray-700">
+                        <div key={packageType} className="border-r border-gray-200 dark:border-gray-700 last:border-r-0 flex items-center justify-center min-h-[80px]">
                           {renderPerkValue(perk.id, packageType)}
-                        </td>
+                        </div>
                       ))}
-                    </tr>
+                    </div>
                   );
                 })}
-              </tbody>
-            </table>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
