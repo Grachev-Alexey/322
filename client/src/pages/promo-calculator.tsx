@@ -232,7 +232,97 @@ const IntegratedPackageComparison = ({
         })}
       </div>
       
-      
+      {/* Perks Comparison Rows */}
+      <div className="floating-card-enhanced bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-gray-700/20 shadow-xl overflow-hidden">
+        <div className="divide-y divide-gray-100 dark:divide-gray-800">
+          {uniquePerks.map((perk, index) => {
+            const IconComponent = (Icons as any)[perk.icon] || Check;
+            const isEven = index % 2 === 0;
+            
+            return (
+              <div key={perk.id} className={`grid grid-cols-4 gap-2 py-2 px-1 ${!isEven ? 'bg-gray-50/50 dark:bg-gray-800/30' : ''}`}>
+                {/* Perk Name Column */}
+                <div className="p-2 flex items-center space-x-2">
+                  <div className="p-1.5 rounded-lg bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 flex-shrink-0">
+                    <IconComponent className="h-3.5 w-3.5 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-medium text-gray-900 dark:text-white text-xs leading-tight">
+                      {perk.name}
+                    </div>
+                    {perk.description && (
+                      <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5 leading-tight">
+                        {perk.description}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Package Value Columns */}
+                {packageTypes.map((packageType) => {
+                  const perkValue = getPerkValue(perk.id, packageType);
+                  const isSelected = selectedPackage === packageType;
+                  
+                  return (
+                    <div key={packageType} className={`p-2 flex items-center justify-center min-h-[50px] transition-all duration-300 ${
+                      isSelected ? 'bg-gradient-to-br from-blue-50/70 to-purple-50/70 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg' : ''
+                    }`}>
+                      {!perkValue || !perkValue.isActive ? (
+                        <div className="flex flex-col items-center">
+                          <span className="text-red-400 font-bold text-lg">–</span>
+                          <span className="text-xs text-gray-400">Нет</span>
+                        </div>
+                      ) : (
+                        <div className="flex flex-col items-center space-y-1">
+                          {perkValue.valueType === 'boolean' ? (
+                            perkValue.booleanValue ? (
+                              <>
+                                <div className={`p-1.5 rounded-lg ${
+                                  packageType === 'vip' ? 'bg-purple-500 text-white' :
+                                  packageType === 'standard' ? 'bg-blue-500 text-white' :
+                                  'bg-green-500 text-white'
+                                }`}>
+                                  <Check className="h-4 w-4" />
+                                </div>
+                                <span className="text-xs font-medium text-green-600">Да</span>
+                              </>
+                            ) : (
+                              <>
+                                <span className="text-red-400 font-bold text-lg">–</span>
+                                <span className="text-xs text-gray-400">Нет</span>
+                              </>
+                            )
+                          ) : (
+                            <>
+                              <div className={`px-2 py-1 rounded-lg text-center min-w-[60px] text-xs ${
+                                perkValue.isHighlighted 
+                                  ? packageType === 'vip' ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' :
+                                    packageType === 'standard' ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white' :
+                                    'bg-gradient-to-r from-green-500 to-emerald-500 text-white'
+                                  : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
+                              }`}>
+                                <span className="font-bold">
+                                  {perkValue.displayValue}
+                                </span>
+                              </div>
+                              {perkValue.isHighlighted && (
+                                <div className="flex items-center space-x-1">
+                                  <Sparkles className="h-2.5 w-2.5 text-yellow-500" />
+                                  <span className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">Лучшее</span>
+                                </div>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
+      </div>
       
       {/* Package Details and Pricing Section */}
       <div className="grid grid-cols-4 gap-4">
