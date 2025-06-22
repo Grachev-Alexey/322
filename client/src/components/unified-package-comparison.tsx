@@ -118,133 +118,9 @@ export default function UnifiedPackageComparison({
       </CardHeader>
       <CardContent className="p-6 space-y-6">
         
-        {/* Packages Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {packageTypes.map((packageType) => {
-            const info = packageInfo[packageType];
-            const packageData = packages.find((p: Package) => p.type === packageType);
-            const data = getPackageData(packageType);
-            const Icon = info.icon;
-            const isSelected = selectedPackage === packageType;
-            const isPopular = packageType === 'standard';
-            const discountPercent = packageData ? Math.round(parseFloat(packageData.discount) * 100) : 0;
-
-            if (!data || !packageData) return null;
-
-            return (
-              <div 
-                key={packageType}
-                className={`relative transform transition-all duration-300 ${
-                  isSelected ? 'scale-105 z-10' : 'hover:scale-102'
-                }`}
-              >
-                <Card className={`h-full border-2 transition-all duration-300 ${
-                  isSelected 
-                    ? `${info.borderColor} shadow-xl ${info.bgColor}` 
-                    : 'border-gray-200 dark:border-gray-700 hover:shadow-lg'
-                }`}>
-                  
-                  {/* Popular Badge */}
-                  {isPopular && (
-                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20">
-                      <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1">
-                        Популярный
-                      </Badge>
-                    </div>
-                  )}
-                  
-                  {/* VIP Crown */}
-                  {packageType === 'vip' && (
-                    <div className="absolute -top-2 -right-2 w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center z-10 shadow-lg">
-                      <Crown className="text-white" size={16} />
-                    </div>
-                  )}
-                  
-                  <CardContent className="p-6 text-center space-y-4">
-                    {/* Package Icon and Title */}
-                    <div>
-                      <div className={`w-16 h-16 mx-auto mb-3 bg-gradient-to-r ${info.gradient} rounded-2xl flex items-center justify-center shadow-lg`}>
-                        <Icon className="text-white" size={32} />
-                      </div>
-                      
-                      <h3 className="text-xl font-bold text-gray-900 dark:text-white">
-                        {packageData.name}
-                      </h3>
-                      
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {info.subtitle}
-                      </p>
-                    </div>
-                    
-                    {/* Discount Badge */}
-                    <div className={`inline-block px-4 py-2 rounded-xl text-lg font-bold text-white bg-gradient-to-r ${info.gradient} shadow-lg`}>
-                      {discountPercent}% скидка
-                    </div>
-                    
-                    {/* Pricing */}
-                    <div className="space-y-2">
-                      <div className="text-sm text-gray-500 line-through">
-                        {formatPrice(calculation.baseCost)}
-                      </div>
-                      <div className="text-3xl font-bold text-gray-900 dark:text-white">
-                        {formatPrice(data.finalCost)}
-                      </div>
-                      <div className="text-sm text-green-600 font-semibold">
-                        Экономия: {formatPrice(data.totalSavings)}
-                      </div>
-                    </div>
-                    
-                    {/* Additional Info */}
-                    <div className="space-y-2">
-                      {packageData.giftSessions > 0 && (
-                        <div className="bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-400 px-3 py-1 rounded-lg text-sm font-medium">
-                          +{packageData.giftSessions} подарочных сеанса
-                        </div>
-                      )}
-                      
-                      {data.monthlyPayment > 0 && (
-                        <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-3 py-1 rounded-lg text-sm font-medium">
-                          {formatPrice(data.monthlyPayment)}/мес
-                        </div>
-                      )}
-                    </div>
-                    
-                    {/* Select Button */}
-                    <Button
-                      onClick={() => onPackageSelect(packageType)}
-                      disabled={!data.isAvailable}
-                      className={`w-full transition-all duration-300 ${
-                        isSelected 
-                          ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700' 
-                          : `bg-gradient-to-r ${info.gradient} hover:opacity-90`
-                      }`}
-                      size="lg"
-                    >
-                      {isSelected ? (
-                        <div className="flex items-center space-x-2">
-                          <Check className="h-4 w-4" />
-                          <span>Выбрано</span>
-                        </div>
-                      ) : (
-                        'Выбрать пакет'
-                      )}
-                    </Button>
-                    
-                    {!data.isAvailable && (
-                      <p className="text-xs text-red-600 mt-2">
-                        {data.unavailableReason}
-                      </p>
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
-            );
-          })}
-        </div>
-        
-        {/* Perks Comparison Table */}
+        {/* Perks Comparison Table - показываем первым */}
         {uniquePerks.length > 0 && (
-          <div className="mt-8">
+          <div>
             <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 text-center">
               Сравнение преимуществ
             </h4>
@@ -364,6 +240,130 @@ export default function UnifiedPackageComparison({
             </div>
           </div>
         )}
+
+        {/* Packages Grid - показываем после перков */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          {packageTypes.map((packageType) => {
+            const info = packageInfo[packageType];
+            const packageData = packages.find((p: Package) => p.type === packageType);
+            const data = getPackageData(packageType);
+            const Icon = info.icon;
+            const isSelected = selectedPackage === packageType;
+            const isPopular = packageType === 'standard';
+            const discountPercent = packageData ? Math.round(parseFloat(packageData.discount) * 100) : 0;
+
+            if (!data || !packageData) return null;
+
+            return (
+              <div 
+                key={packageType}
+                className={`relative transform transition-all duration-300 ${
+                  isSelected ? 'scale-105 z-10' : 'hover:scale-102'
+                }`}
+              >
+                <Card className={`h-full border-2 transition-all duration-300 ${
+                  isSelected 
+                    ? `${info.borderColor} shadow-xl ${info.bgColor}` 
+                    : 'border-gray-200 dark:border-gray-700 hover:shadow-lg'
+                }`}>
+                  
+                  {/* Popular Badge */}
+                  {isPopular && (
+                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-20">
+                      <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1">
+                        Популярный
+                      </Badge>
+                    </div>
+                  )}
+                  
+                  {/* VIP Crown */}
+                  {packageType === 'vip' && (
+                    <div className="absolute -top-2 -right-2 w-10 h-10 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center z-10 shadow-lg">
+                      <Crown className="text-white" size={16} />
+                    </div>
+                  )}
+                  
+                  <CardContent className="p-4 text-center space-y-3">
+                    {/* Package Icon and Title - компактнее */}
+                    <div>
+                      <div className={`w-12 h-12 mx-auto mb-2 bg-gradient-to-r ${info.gradient} rounded-xl flex items-center justify-center shadow-lg`}>
+                        <Icon className="text-white" size={24} />
+                      </div>
+                      
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">
+                        {packageData.name}
+                      </h3>
+                      
+                      <p className="text-xs text-gray-600 dark:text-gray-400">
+                        {info.subtitle}
+                      </p>
+                    </div>
+                    
+                    {/* Discount Badge */}
+                    <div className={`inline-block px-3 py-1 rounded-lg text-sm font-bold text-white bg-gradient-to-r ${info.gradient} shadow-lg`}>
+                      {discountPercent}% скидка
+                    </div>
+                    
+                    {/* Pricing - компактнее */}
+                    <div className="space-y-1">
+                      <div className="text-xs text-gray-500 line-through">
+                        {formatPrice(calculation.baseCost)}
+                      </div>
+                      <div className="text-xl font-bold text-gray-900 dark:text-white">
+                        {formatPrice(data.finalCost)}
+                      </div>
+                      <div className="text-xs text-green-600 font-semibold">
+                        Экономия: {formatPrice(data.totalSavings)}
+                      </div>
+                    </div>
+                    
+                    {/* Additional Info - компактнее */}
+                    <div className="space-y-1">
+                      {packageData.giftSessions > 0 && (
+                        <div className="bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-400 px-2 py-1 rounded text-xs font-medium">
+                          +{packageData.giftSessions} подарочных сеанса
+                        </div>
+                      )}
+                      
+                      {data.monthlyPayment > 0 && (
+                        <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-1 rounded text-xs font-medium">
+                          {formatPrice(data.monthlyPayment)}/мес
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Select Button */}
+                    <Button
+                      onClick={() => onPackageSelect(packageType)}
+                      disabled={!data.isAvailable}
+                      className={`w-full transition-all duration-300 ${
+                        isSelected 
+                          ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700' 
+                          : `bg-gradient-to-r ${info.gradient} hover:opacity-90`
+                      }`}
+                      size="sm"
+                    >
+                      {isSelected ? (
+                        <div className="flex items-center space-x-2">
+                          <Check className="h-3 w-3" />
+                          <span className="text-sm">Выбрано</span>
+                        </div>
+                      ) : (
+                        <span className="text-sm">Выбрать пакет</span>
+                      )}
+                    </Button>
+                    
+                    {!data.isAvailable && (
+                      <p className="text-xs text-red-600 mt-1">
+                        {data.unavailableReason}
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            );
+          })}
+        </div>
         
       </CardContent>
     </Card>
