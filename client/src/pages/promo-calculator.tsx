@@ -273,16 +273,13 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
 
 
-          {/* Base cost display - адаптивно */}
+          {/* Base cost display - максимально компактно */}
           {calculation && (
-            <div className="floating-card-enhanced bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-lg p-2 lg:p-3 mb-2 lg:mb-3 border border-white/20 dark:border-gray-700/20 flex-shrink-0">
+            <div className="floating-card-enhanced bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded p-1.5 mb-1 border border-white/20 dark:border-gray-700/20 flex-shrink-0">
               <div className="text-center">
                 <div className="text-xs text-gray-500 dark:text-gray-400">Базовая стоимость</div>
-                <div className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white">
+                <div className="text-lg font-bold text-gray-900 dark:text-white">
                   {formatPrice(calculation.baseCost)}
-                </div>
-                <div className="text-xs text-gray-500 dark:text-gray-400 hidden sm:block">
-                  {selectedServices.map(s => s.title).join(' + ')} × {procedureCount}
                 </div>
               </div>
             </div>
@@ -291,16 +288,14 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
           {/* Unified Package Comparison */}
           {calculation && (
             <div className="flex-1 overflow-hidden">
-              <div className="h-full overflow-y-auto pb-4">
-                <UnifiedPackageComparison 
-                  calculation={calculation}
-                  packages={packages as Package[]}
-                  selectedPackage={selectedPackage}
-                  onPackageSelect={setSelectedPackage}
-                  downPayment={downPayment}
-                  installmentMonths={installmentMonths}
-                />
-              </div>
+              <UnifiedPackageComparison 
+                calculation={calculation}
+                packages={packages as Package[]}
+                selectedPackage={selectedPackage}
+                onPackageSelect={setSelectedPackage}
+                downPayment={downPayment}
+                installmentMonths={installmentMonths}
+              />
             </div>
           )}
         </div>
