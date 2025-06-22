@@ -44,8 +44,8 @@ export default function PaymentConfig({
     : 0;
 
   return (
-    <Card className="card-premium p-8 mb-8">
-      <h3 className="text-2xl font-bold text-gray-900 mb-6">Условия оплаты</h3>
+    <Card className="floating-card bg-white/90 backdrop-blur-sm rounded-2xl border-0 p-8 mb-8">
+      <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--graphite)' }}>Условия оплаты</h3>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Down Payment */}

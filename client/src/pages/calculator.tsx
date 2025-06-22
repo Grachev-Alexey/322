@@ -51,17 +51,17 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <div className="h-screen flex flex-col" style={{ background: 'var(--gradient-background)' }}>
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
+      <header className="flex-shrink-0 bg-white/80 backdrop-blur-sm shadow-lg border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 gradient-primary rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ background: 'var(--gradient-premium)' }}>
                 <Calculator className="text-white" size={20} />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Калькулятор Абонементов</h1>
+                <h1 className="text-xl font-bold" style={{ color: 'var(--graphite)' }}>Калькулятор Абонементов</h1>
                 <p className="text-sm text-gray-600">Студия лазерной эпиляции</p>
               </div>
             </div>
@@ -81,24 +81,26 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <Badge className="mb-4 bg-gradient-to-r from-yellow-500/10 to-green-500/10 text-yellow-700 border-yellow-200">
-            <Star className="w-4 h-4 mr-2" />
-            Специальное предложение гостевого дня
-          </Badge>
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Создайте идеальный курс процедур</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Индивидуальный подбор услуг с максимальными выгодами и гибкими условиями оплаты
-          </p>
-        </div>
+      {/* Main Content with Scroll */}
+      <main className="flex-1 overflow-hidden">
+        <div className="h-full overflow-y-auto px-4 sm:px-6 lg:px-8 py-8 pb-16 max-w-7xl mx-auto custom-scrollbar">
 
-        {/* Service Selection */}
-        <Card className="card-premium p-8 mb-8">
-          <h3 className="text-2xl font-bold text-gray-900 mb-6">Выбор услуг</h3>
+        
+          {/* Hero Section */}
+          <div className="text-center mb-8">
+            <Badge className="mb-4 bg-gradient-to-r from-yellow-500/10 to-green-500/10 text-yellow-700 border-yellow-200">
+              <Star className="w-4 h-4 mr-2" />
+              Специальное предложение гостевого дня
+            </Badge>
+            <h2 className="text-3xl font-bold mb-4" style={{ color: 'var(--graphite)' }}>Создайте идеальный курс процедур</h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Индивидуальный подбор услуг с максимальными выгодами и гибкими условиями оплаты
+            </p>
+          </div>
+
+          {/* Service Selection */}
+          <Card className="floating-card bg-white/80 backdrop-blur-sm border-0 rounded-2xl p-8 mb-8">
+          <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--graphite)' }}>Выбор услуг</h3>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <ServiceSelector
@@ -192,7 +194,11 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
           <Button
             onClick={handleProceedToOrder}
             disabled={!selectedPackage || selectedServices.length === 0}
-            className="btn-primary text-lg py-4 px-8"
+            className="floating-card text-lg py-4 px-8 rounded-2xl font-semibold text-white transition-all duration-300 hover:scale-105"
+            style={{ 
+              background: 'var(--gradient-premium)',
+              opacity: (!selectedPackage || selectedServices.length === 0) ? 0.5 : 1
+            }}
           >
             <Star className="w-5 h-5 mr-2" />
             Оформить абонемент
@@ -200,10 +206,15 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
           
           <Button
             variant="outline"
-            className="border-2 border-gray-300 hover:border-gray-400 text-gray-700 font-semibold py-4 px-8 rounded-xl"
+            className="floating-card border-2 text-gray-700 font-semibold py-4 px-8 rounded-2xl transition-all duration-300 hover:scale-105"
+            style={{ 
+              borderColor: 'hsl(338, 55%, 68%)',
+              color: 'hsl(338, 55%, 68%)'
+            }}
           >
             Сохранить как черновик
           </Button>
+        </div>
         </div>
       </main>
 

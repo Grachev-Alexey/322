@@ -37,6 +37,50 @@
   --gradient-premium: linear-gradient(135deg, var(--dusty-pink) 0%, var(--coral) 100%);
   --gradient-subtle: linear-gradient(135deg, hsl(0, 0%, 98%) 0%, hsl(220, 14%, 96%) 100%);
   --gradient-background: linear-gradient(135deg, hsl(0, 0%, 99%) 0%, hsl(220, 14%, 97%) 50%, hsl(338, 20%, 98%) 100%);
+  
+  /* Shadow levels */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-3xl: 0 35px 60px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Custom scrollbar styles */
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(338, 55%, 68%) transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: hsl(338, 55%, 68%);
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: hsl(338, 55%, 58%);
+}
+
+/* Floating card effect */
+.floating-card {
+  box-shadow: var(--shadow-2xl);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.floating-card:hover {
+  box-shadow: var(--shadow-3xl);
+  transform: translateY(-4px);
 }
 
 .dark {

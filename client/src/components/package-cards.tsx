@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, Crown, Star, Leaf, AlertCircle } from "lucide-react";
+import { Check, Crown, Star, Leaf, AlertCircle, Gift } from "lucide-react";
 import * as Icons from "lucide-react";
 import { formatPrice, getPackageIcon, getPackageColor } from "@/lib/utils";
 import { usePackagePerks } from "@/hooks/use-package-perks";
@@ -99,19 +99,25 @@ export default function PackageCards({
     const { data: realPerks = [] } = useQuery({
       queryKey: [`/api/packages/${packageType}/perks`],
       enabled: true,
-      staleTime: 0,
-      cacheTime: 0
+      staleTime: 0
     });
 
     return (
       <div
         key={packageType}
         className={`
-          relative card-premium p-8 transition-all duration-200 cursor-pointer
-          ${isSelected ? 'ring-2 ring-purple-500 ring-offset-2' : ''}
-          ${isPopular ? 'transform scale-105 shadow-xl border-2 border-blue-200' : ''}
+          relative bg-white/90 backdrop-blur-sm rounded-2xl border-0 p-8 transition-all duration-300 cursor-pointer flex flex-col
+          shadow-2xl hover:shadow-3xl hover:-translate-y-2
+          ${isSelected ? 'ring-2 ring-offset-2 shadow-3xl' : ''}
+          ${isPopular ? 'transform scale-105 shadow-3xl' : ''}
           ${!data.isAvailable ? 'opacity-75' : ''}
         `}
+        style={{
+          ringColor: isSelected ? 'hsl(338, 55%, 68%)' : undefined,
+          boxShadow: isSelected 
+            ? '0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px hsl(338, 55%, 68%)' 
+            : '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+        }}
         onClick={() => data.isAvailable && onPackageSelect(packageType)}
       >
         {/* Popular Badge */}
