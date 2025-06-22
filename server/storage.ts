@@ -201,34 +201,49 @@ export class DatabaseStorage implements IStorage {
   }
 
   async upsertPackagePerk(perk: InsertPackagePerk & { id?: number }): Promise<PackagePerk> {
-    // If we have an ID, update existing perk
-    if (perk.id) {
-      const [updated] = await db.update(packagePerks)
-        .set({
-          packageType: perk.packageType,
-          name: perk.name,
-          icon: perk.icon,
-          displayType: perk.displayType || 'simple',
-          textColor: perk.textColor || '#6B7280',
-          iconColor: perk.iconColor || '#6B7280',
-          isActive: perk.isActive
-        })
-        .where(eq(packagePerks.id, perk.id))
-        .returning();
-      return updated;
+    try {
+      // Validate required fields
+      if (!perk.packageType || !perk.name || !perk.icon) {
+        throw new Error(`Missing required fields. packageType: ${perk.packageType}, name: ${perk.name}, icon: ${perk.icon}`);
+      }
+
+      // If we have a valid ID, update existing perk
+      if (perk.id && typeof perk.id === 'number' && perk.id > 0) {
+        const [updated] = await db.update(packagePerks)
+          .set({
+            packageType: perk.packageType,
+            name: perk.name,
+            icon: perk.icon,
+            displayType: perk.displayType || 'simple',
+            textColor: perk.textColor || '#6B7280',
+            iconColor: perk.iconColor || '#6B7280',
+            isActive: perk.isActive !== undefined ? perk.isActive : true,
+            updatedAt: new Date()
+          })
+          .where(eq(packagePerks.id, perk.id))
+          .returning();
+        
+        if (updated) {
+          return updated;
+        }
+      }
+      
+      // Create new perk
+      const [created] = await db.insert(packagePerks).values({
+        packageType: perk.packageType,
+        name: perk.name,
+        icon: perk.icon,
+        displayType: perk.displayType || 'simple',
+        textColor: perk.textColor || '#6B7280',
+        iconColor: perk.iconColor || '#6B7280',
+        isActive: perk.isActive !== undefined ? perk.isActive : true
+      }).returning();
+      return created;
+    } catch (error) {
+      console.error('Error in upsertPackagePerk:', error);
+      console.error('Perk data:', perk);
+      throw error;
     }
-    
-    // Otherwise, create new perk
-    const [created] = await db.insert(packagePerks).values({
-      packageType: perk.packageType,
-      name: perk.name,
-      icon: perk.icon,
-      displayType: perk.displayType || 'simple',
-      textColor: perk.textColor || '#6B7280',
-      iconColor: perk.iconColor || '#6B7280',
-      isActive: perk.isActive
-    }).returning();
-    return created;
   }
 
   async deletePackagePerk(id: number): Promise<void> {

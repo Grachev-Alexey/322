@@ -333,9 +333,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/package-perks", requireAdmin, async (req, res) => {
     try {
       const perkData = req.body;
+      console.log('Saving perk:', perkData);
       const result = await storage.upsertPackagePerk(perkData);
       res.json(result);
     } catch (error) {
+      console.error('Error saving perk:', error);
       res.status(500).json({ message: "Ошибка сохранения плюшки пакета" });
     }
   });
