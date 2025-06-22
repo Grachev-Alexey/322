@@ -6,13 +6,16 @@ import {
   type Client, type InsertClient, type Sale, type InsertSale
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 
 export interface IStorage {
   // Users
   getUserByPin(pin: string): Promise<User | undefined>;
+  getAllUsers(): Promise<User[]>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, user: Partial<InsertUser>): Promise<User | undefined>;
+  deleteUser(id: number): Promise<void>;
+  getUserCount(): Promise<number>;
   
   // Config
   getConfig(key: string): Promise<Config | undefined>;
@@ -20,6 +23,7 @@ export interface IStorage {
   
   // Services
   getActiveServices(): Promise<Service[]>;
+  getAllServices(): Promise<Service[]>;
   upsertService(service: InsertService): Promise<Service>;
   updateServiceStatus(yclientsId: number, isActive: boolean): Promise<void>;
   
@@ -33,6 +37,10 @@ export interface IStorage {
   upsertPackage(pkg: InsertPackage): Promise<Package>;
   getPackagePerks(packageType: string): Promise<PackagePerk[]>;
   upsertPackagePerk(perk: InsertPackagePerk): Promise<PackagePerk>;
+  getPackageCount(): Promise<number>;
+  
+  // Initialization
+  initializeDefaultData(): Promise<void>;
   
   // Clients
   getClientByPhone(phone: string): Promise<Client | undefined>;
@@ -56,9 +64,22 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
 
+  async getAllUsers(): Promise<User[]> {
+    return await db.select().from(users);
+  }
+
   async updateUser(id: number, userData: Partial<InsertUser>): Promise<User | undefined> {
     const [user] = await db.update(users).set(userData).where(eq(users.id, id)).returning();
     return user || undefined;
+  }
+
+  async deleteUser(id: number): Promise<void> {
+    await db.delete(users).where(eq(users.id, id));
+  }
+
+  async getUserCount(): Promise<number> {
+    const result = await db.select({ count: sql`count(*)` }).from(users);
+    return Number(result[0].count);
   }
 
   // Config
@@ -82,6 +103,10 @@ export class DatabaseStorage implements IStorage {
   // Services
   async getActiveServices(): Promise<Service[]> {
     return await db.select().from(services).where(eq(services.isActive, true));
+  }
+
+  async getAllServices(): Promise<Service[]> {
+    return await db.select().from(services);
   }
 
   async upsertService(service: InsertService): Promise<Service> {
@@ -208,6 +233,109 @@ export class DatabaseStorage implements IStorage {
 
   async deletePackagePerk(id: number): Promise<void> {
     await db.delete(packagePerks).where(eq(packagePerks.id, id));
+  }
+
+  async getPackageCount(): Promise<number> {
+    const result = await db.select({ count: sql`count(*)` }).from(packages);
+    return Number(result[0].count);
+  }
+
+  async initializeDefaultData(): Promise<void> {
+    // Check if we need to create default admin user
+    const userCount = await this.getUserCount();
+    if (userCount === 0) {
+      await this.createUser({
+        pin: "7571",
+        role: "admin",
+        name: "Администратор",
+        isActive: true
+      });
+    }
+
+    // Check if we need to create default packages
+    const packageCount = await this.getPackageCount();
+    if (packageCount === 0) {
+      // Create VIP package
+      await this.upsertPackage({
+        type: "vip",
+        name: "VIP",
+        discount: "0.25",
+        minCost: "50000",
+        minDownPaymentPercent: "0.30",
+        requiresFullPayment: false,
+        giftSessions: 2,
+        isActive: true
+      });
+
+      // Create Standard package
+      await this.upsertPackage({
+        type: "standard",
+        name: "Стандарт",
+        discount: "0.15",
+        minCost: "30000",
+        minDownPaymentPercent: "0.50",
+        requiresFullPayment: false,
+        giftSessions: 1,
+        isActive: true
+      });
+
+      // Create Economy package
+      await this.upsertPackage({
+        type: "economy",
+        name: "Эконом",
+        discount: "0.10",
+        minCost: "15000",
+        minDownPaymentPercent: "0.70",
+        requiresFullPayment: true,
+        giftSessions: 0,
+        isActive: true
+      });
+
+      // Create default perks for VIP
+      const vipPerks = [
+        { name: "Бесплатная консультация", icon: "UserCheck", displayType: "simple", textColor: "#10B981", iconColor: "#10B981" },
+        { name: "2 бесплатные процедуры", icon: "Gift", displayType: "highlighted", textColor: "#F59E0B", iconColor: "#F59E0B" },
+        { name: "Скидка 25%", icon: "Percent", displayType: "with_value", textColor: "#EF4444", iconColor: "#EF4444" },
+        { name: "Приоритетная запись", icon: "Clock", displayType: "simple", textColor: "#8B5CF6", iconColor: "#8B5CF6" }
+      ];
+
+      for (const perk of vipPerks) {
+        await this.upsertPackagePerk({
+          packageType: "vip",
+          ...perk,
+          isActive: true
+        });
+      }
+
+      // Create default perks for Standard
+      const standardPerks = [
+        { name: "Бесплатная консультация", icon: "UserCheck", displayType: "simple", textColor: "#10B981", iconColor: "#10B981" },
+        { name: "1 бесплатная процедура", icon: "Gift", displayType: "highlighted", textColor: "#F59E0B", iconColor: "#F59E0B" },
+        { name: "Скидка 15%", icon: "Percent", displayType: "with_value", textColor: "#3B82F6", iconColor: "#3B82F6" }
+      ];
+
+      for (const perk of standardPerks) {
+        await this.upsertPackagePerk({
+          packageType: "standard",
+          ...perk,
+          isActive: true
+        });
+      }
+
+      // Create default perks for Economy
+      const economyPerks = [
+        { name: "Бесплатная консультация", icon: "UserCheck", displayType: "simple", textColor: "#10B981", iconColor: "#10B981" },
+        { name: "Скидка 10%", icon: "Percent", displayType: "with_value", textColor: "#6B7280", iconColor: "#6B7280" }
+      ];
+
+      for (const perk of economyPerks) {
+        await this.upsertPackagePerk({
+          packageType: "economy",
+          ...perk,
+          isActive: true
+        });
+      }
+    }
   }
 }
 

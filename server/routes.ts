@@ -44,6 +44,9 @@ const configSchema = z.object({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Initialize default data on startup
+  await storage.initializeDefaultData();
+  
   // Authentication
   app.post("/api/auth", async (req, res) => {
     try {
@@ -194,13 +197,107 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin routes
+  // Admin routes - User Management
   app.get("/api/admin/users", requireAdmin, async (req, res) => {
     try {
-      const result = await db.select().from(users);
-      res.json(result);
+      const users = await storage.getAllUsers();
+      res.json(users);
     } catch (error) {
       res.status(500).json({ message: "Ошибка получения пользователей" });
+    }
+  });
+
+  app.post("/api/admin/users", requireAdmin, async (req, res) => {
+    try {
+      const { pin, role, name } = req.body;
+      if (!pin || !role || !name) {
+        return res.status(400).json({ message: "Необходимо заполнить все поля" });
+      }
+      
+      // Check if PIN already exists
+      const existingUser = await storage.getUserByPin(pin);
+      if (existingUser) {
+        return res.status(400).json({ message: "Пользователь с таким PIN уже существует" });
+      }
+
+      const user = await storage.createUser({
+        pin,
+        role,
+        name,
+        isActive: true
+      });
+      res.json(user);
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка создания пользователя" });
+    }
+  });
+
+  app.put("/api/admin/users/:id", requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { pin, role, name, isActive } = req.body;
+      
+      // Check if PIN is taken by another user
+      if (pin) {
+        const existingUser = await storage.getUserByPin(pin);
+        if (existingUser && existingUser.id !== parseInt(id)) {
+          return res.status(400).json({ message: "Пользователь с таким PIN уже существует" });
+        }
+      }
+
+      const user = await storage.updateUser(parseInt(id), {
+        pin,
+        role,
+        name,
+        isActive
+      });
+      
+      if (!user) {
+        return res.status(404).json({ message: "Пользователь не найден" });
+      }
+      
+      res.json(user);
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка обновления пользователя" });
+    }
+  });
+
+  app.delete("/api/admin/users/:id", requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const userId = parseInt(id);
+      
+      // Prevent deletion of current user
+      if ((req as any).session.userId === userId) {
+        return res.status(400).json({ message: "Нельзя удалить самого себя" });
+      }
+      
+      await storage.deleteUser(userId);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка удаления пользователя" });
+    }
+  });
+
+  // Admin routes - Service Management  
+  app.get("/api/admin/services", requireAdmin, async (req, res) => {
+    try {
+      const services = await storage.getAllServices();
+      res.json(services);
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка получения услуг" });
+    }
+  });
+
+  app.put("/api/admin/services/:yclientsId", requireAdmin, async (req, res) => {
+    try {
+      const { yclientsId } = req.params;
+      const { isActive } = req.body;
+      
+      await storage.updateServiceStatus(parseInt(yclientsId), isActive);
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка обновления статуса услуги" });
     }
   });
 

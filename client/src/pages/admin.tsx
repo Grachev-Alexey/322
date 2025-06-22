@@ -8,13 +8,26 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Settings, Users, Database, Package, LogOut } from "lucide-react";
+import { Settings, Users, Database, Package, LogOut, Trash2, Edit, Plus, Eye, EyeOff } from "lucide-react";
 import AdminDashboard from "@/components/admin-dashboard";
 
 interface User {
   id: number;
+  pin: string;
   name: string;
   role: 'master' | 'admin';
+  isActive: boolean;
+  createdAt: string;
+}
+
+interface Service {
+  id: number;
+  yclientsId: number;
+  title: string;
+  priceMin: string;
+  categoryId: number | null;
+  isActive: boolean;
+  updatedAt: string;
 }
 
 interface AdminPageProps {
@@ -33,6 +46,12 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
   
   const [packages, setPackages] = useState<any[]>([]);
   const [packagePerks, setPackagePerks] = useState<any[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [services, setServices] = useState<Service[]>([]);
+  
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [newUser, setNewUser] = useState({ pin: '', name: '', role: 'master' as 'master' | 'admin' });
 
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
@@ -43,6 +62,24 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
 
   const loadConfigurations = async () => {
     try {
+      // Load users data
+      const usersResponse = await fetch("/api/admin/users", {
+        credentials: "include"
+      });
+      if (usersResponse.ok) {
+        const usersData = await usersResponse.json();
+        setUsers(usersData);
+      }
+
+      // Load services data
+      const servicesResponse = await fetch("/api/admin/services", {
+        credentials: "include"
+      });
+      if (servicesResponse.ok) {
+        const servicesData = await servicesResponse.json();
+        setServices(servicesData);
+      }
+
       // Load packages data
       const packagesResponse = await fetch("/api/packages", {
         credentials: "include"
@@ -189,6 +226,147 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
     }
   };
 
+  const createUser = async () => {
+    if (!newUser.pin || !newUser.name || !newUser.role) {
+      toast({
+        title: "Ошибка",
+        description: "Заполните все поля",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch("/api/admin/users", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(newUser)
+      });
+
+      if (response.ok) {
+        const user = await response.json();
+        setUsers([...users, user]);
+        setNewUser({ pin: '', name: '', role: 'master' });
+        setShowUserModal(false);
+        toast({
+          title: "Успешно",
+          description: "Пользователь создан"
+        });
+      } else {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
+    } catch (error: any) {
+      toast({
+        title: "Ошибка",
+        description: error.message || "Не удалось создать пользователя",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateUser = async () => {
+    if (!editingUser) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/admin/users/${editingUser.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(editingUser)
+      });
+
+      if (response.ok) {
+        const updatedUser = await response.json();
+        setUsers(users.map(u => u.id === updatedUser.id ? updatedUser : u));
+        setEditingUser(null);
+        toast({
+          title: "Успешно",
+          description: "Пользователь обновлен"
+        });
+      } else {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
+    } catch (error: any) {
+      toast({
+        title: "Ошибка",
+        description: error.message || "Не удалось обновить пользователя",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteUser = async (userId: number) => {
+    if (!confirm("Вы уверены, что хотите удалить этого пользователя?")) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: "DELETE",
+        credentials: "include"
+      });
+
+      if (response.ok) {
+        setUsers(users.filter(u => u.id !== userId));
+        toast({
+          title: "Успешно",
+          description: "Пользователь удален"
+        });
+      } else {
+        const error = await response.json();
+        throw new Error(error.message);
+      }
+    } catch (error: any) {
+      toast({
+        title: "Ошибка",
+        description: error.message || "Не удалось удалить пользователя",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleServiceStatus = async (yclientsId: number, isActive: boolean) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/admin/services/${yclientsId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ isActive })
+      });
+
+      if (response.ok) {
+        setServices(services.map(s => 
+          s.yclientsId === yclientsId ? { ...s, isActive } : s
+        ));
+        toast({
+          title: "Успешно",
+          description: `Услуга ${isActive ? 'включена' : 'отключена'}`
+        });
+      } else {
+        throw new Error("Failed to update service");
+      }
+    } catch (error) {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось обновить статус услуги",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const syncServices = async () => {
     setLoading(true);
     try {
@@ -254,10 +432,11 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
           <Tabs defaultValue="dashboard" className="h-full flex flex-col">
             <TabsList className="grid w-full grid-cols-5 flex-shrink-0">
               <TabsTrigger value="dashboard">Обзор</TabsTrigger>
-              <TabsTrigger value="yclients">Yclients API</TabsTrigger>
-              <TabsTrigger value="packages">Пакеты</TabsTrigger>
-              <TabsTrigger value="services">Услуги</TabsTrigger>
               <TabsTrigger value="users">Пользователи</TabsTrigger>
+              <TabsTrigger value="services">Услуги</TabsTrigger>
+              <TabsTrigger value="packages">Пакеты</TabsTrigger>
+              <TabsTrigger value="yclients">Yclients API</TabsTrigger>
+            </TabsList>Trigger value="users">Пользователи</TabsTrigger>
             </TabsList>
 
             <div className="flex-1 overflow-y-auto mt-6">
@@ -604,23 +783,64 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
 
           {/* Services Management */}
           <TabsContent value="services">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Database size={20} />
-                  Управление услугами
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <p className="text-gray-600">
-                    Синхронизация услуг с Yclients. Убедитесь, что настройки API корректны.
-                  </p>
-                  
-                  <Button onClick={syncServices} disabled={loading} className="btn-primary">
-                    {loading ? "Синхронизация..." : "Синхронизировать услуги"}
-                  </Button>
-                </div>
+            <div className="space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Database size={20} />
+                    Управление услугами
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <p className="text-gray-600">
+                      Синхронизация услуг с Yclients и управление их отображением в калькуляторе.
+                    </p>
+                    
+                    <Button onClick={syncServices} disabled={loading} className="btn-primary">
+                      {loading ? "Синхронизация..." : "Синхронизировать услуги"}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Список услуг</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {services.map((service) => (
+                      <div key={service.id} className="flex items-center justify-between p-3 border rounded-lg">
+                        <div className="flex-1">
+                          <h4 className="font-medium">{service.title}</h4>
+                          <p className="text-sm text-gray-600">
+                            Цена от: {service.priceMin} ₽ • ID: {service.yclientsId}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <div className={`px-2 py-1 text-xs rounded-full ${
+                            service.isActive 
+                              ? 'bg-green-100 text-green-800' 
+                              : 'bg-gray-100 text-gray-800'
+                          }`}>
+                            {service.isActive ? 'Показывается' : 'Скрыта'}
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => toggleServiceStatus(service.yclientsId, !service.isActive)}
+                            disabled={loading}
+                          >
+                            {service.isActive ? <EyeOff size={14} /> : <Eye size={14} />}
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -652,6 +872,117 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
           </Tabs>
         </div>
       </main>
+
+      {/* User Creation Modal */}
+      {showUserModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle>Добавить пользователя</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="pin">PIN код (4 цифры)</Label>
+                <Input
+                  id="pin"
+                  type="text"
+                  maxLength={4}
+                  value={newUser.pin}
+                  onChange={(e) => setNewUser({...newUser, pin: e.target.value})}
+                  placeholder="0000"
+                />
+              </div>
+              <div>
+                <Label htmlFor="name">Имя</Label>
+                <Input
+                  id="name"
+                  value={newUser.name}
+                  onChange={(e) => setNewUser({...newUser, name: e.target.value})}
+                  placeholder="Имя пользователя"
+                />
+              </div>
+              <div>
+                <Label htmlFor="role">Роль</Label>
+                <Select value={newUser.role} onValueChange={(value: 'master' | 'admin') => setNewUser({...newUser, role: value})}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="master">Мастер</SelectItem>
+                    <SelectItem value="admin">Администратор</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex gap-2 pt-4">
+                <Button onClick={createUser} disabled={loading} className="flex-1">
+                  {loading ? "Создание..." : "Создать"}
+                </Button>
+                <Button variant="outline" onClick={() => setShowUserModal(false)} className="flex-1">
+                  Отмена
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* User Edit Modal */}
+      {editingUser && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <Card className="w-full max-w-md">
+            <CardHeader>
+              <CardTitle>Редактировать пользователя</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <Label htmlFor="edit-pin">PIN код</Label>
+                <Input
+                  id="edit-pin"
+                  type="text"
+                  maxLength={4}
+                  value={editingUser.pin}
+                  onChange={(e) => setEditingUser({...editingUser, pin: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-name">Имя</Label>
+                <Input
+                  id="edit-name"
+                  value={editingUser.name}
+                  onChange={(e) => setEditingUser({...editingUser, name: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label htmlFor="edit-role">Роль</Label>
+                <Select value={editingUser.role} onValueChange={(value: 'master' | 'admin') => setEditingUser({...editingUser, role: value})}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="master">Мастер</SelectItem>
+                    <SelectItem value="admin">Администратор</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Switch
+                  checked={editingUser.isActive}
+                  onCheckedChange={(checked) => setEditingUser({...editingUser, isActive: checked})}
+                />
+                <Label>Активен</Label>
+              </div>
+              <div className="flex gap-2 pt-4">
+                <Button onClick={updateUser} disabled={loading} className="flex-1">
+                  {loading ? "Сохранение..." : "Сохранить"}
+                </Button>
+                <Button variant="outline" onClick={() => setEditingUser(null)} className="flex-1">
+                  Отмена
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
