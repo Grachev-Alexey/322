@@ -1,8 +1,5 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Lock } from "lucide-react";
 
@@ -17,22 +14,12 @@ interface AuthPageProps {
 }
 
 export default function AuthPage({ onLogin }: AuthPageProps) {
-  const [pin, setPin] = useState("");
+  const [pin, setPin] = useState(['', '', '', '']);
   const [loading, setLoading] = useState(false);
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { toast } = useToast();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (pin.length !== 4) {
-      toast({
-        title: "Ошибка",
-        description: "PIN-код должен содержать 4 цифры",
-        variant: "destructive"
-      });
-      return;
-    }
-
+  const handleAuth = async (fullPin: string) => {
     setLoading(true);
     
     try {
@@ -42,7 +29,7 @@ export default function AuthPage({ onLogin }: AuthPageProps) {
           "Content-Type": "application/json"
         },
         credentials: "include",
-        body: JSON.stringify({ pin })
+        body: JSON.stringify({ pin: fullPin })
       });
 
       if (response.ok) {
@@ -59,6 +46,9 @@ export default function AuthPage({ onLogin }: AuthPageProps) {
           description: error.message || "Неверный PIN-код",
           variant: "destructive"
         });
+        // Очистить PIN при ошибке
+        setPin(['', '', '', '']);
+        inputRefs.current[0]?.focus();
       }
     } catch (error) {
       toast({
@@ -66,10 +56,51 @@ export default function AuthPage({ onLogin }: AuthPageProps) {
         description: "Ошибка подключения к серверу",
         variant: "destructive"
       });
+      setPin(['', '', '', '']);
+      inputRefs.current[0]?.focus();
     } finally {
       setLoading(false);
     }
   };
+
+  const handleInputChange = (index: number, value: string) => {
+    if (!/^\d*$/.test(value)) return; // Только цифры
+    
+    const newPin = [...pin];
+    newPin[index] = value.slice(-1); // Только последний символ
+    setPin(newPin);
+
+    // Автоматический переход к следующему полю
+    if (value && index < 3) {
+      inputRefs.current[index + 1]?.focus();
+    }
+
+    // Автоматическая отправка при заполнении всех полей
+    if (newPin.every(digit => digit !== '')) {
+      handleAuth(newPin.join(''));
+    }
+  };
+
+  const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
+    if (e.key === 'Backspace' && !pin[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 4);
+    if (pastedData.length === 4) {
+      const newPin = pastedData.split('');
+      setPin(newPin);
+      handleAuth(pastedData);
+    }
+  };
+
+  useEffect(() => {
+    // Auto-focus first input on mount
+    inputRefs.current[0]?.focus();
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4" style={{ background: 'var(--gradient-background)' }}>
@@ -90,35 +121,43 @@ export default function AuthPage({ onLogin }: AuthPageProps) {
             </div>
           </div>
           
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-6">
             <div>
-              <Label htmlFor="pin" className="block text-sm font-medium mb-2" style={{ color: 'var(--graphite)' }}>
-                PIN-код
-              </Label>
-              <Input
-                id="pin"
-                type="password"
-                maxLength={4}
-                value={pin}
-                onChange={(e) => setPin(e.target.value.replace(/\D/g, ''))}
-                className="text-center text-2xl font-mono tracking-widest border-2 focus:border-pink-400 focus:ring-pink-400/20 transition-colors duration-200 rounded-xl py-4"
-                placeholder="••••"
-                disabled={loading}
-              />
+              <div className="text-sm font-medium mb-4 text-center" style={{ color: 'var(--graphite)' }}>
+                Введите PIN-код
+              </div>
+              <div className="flex justify-center space-x-3" onPaste={handlePaste}>
+                {pin.map((digit, index) => (
+                  <input
+                    key={index}
+                    ref={(el) => (inputRefs.current[index] = el)}
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handleInputChange(index, e.target.value)}
+                    onKeyDown={(e) => handleKeyDown(index, e)}
+                    className="w-16 h-16 text-center text-2xl font-bold border-2 rounded-xl transition-all duration-200 focus:outline-none focus:border-pink-400 focus:ring-4 focus:ring-pink-400/20 focus:scale-105"
+                    style={{
+                      borderColor: digit ? 'hsl(338, 55%, 68%)' : 'hsl(220, 13%, 91%)',
+                      backgroundColor: digit ? 'hsl(338, 55%, 68%, 0.1)' : 'white'
+                    }}
+                    disabled={loading}
+                    autoComplete="off"
+                  />
+                ))}
+              </div>
             </div>
             
-            <Button 
-              type="submit" 
-              disabled={loading || pin.length !== 4}
-              className="w-full py-4 text-lg font-semibold rounded-xl transition-all duration-200 hover:shadow-lg disabled:opacity-50"
-              style={{ 
-                background: loading || pin.length !== 4 ? 'var(--muted)' : 'var(--gradient-premium)',
-                color: 'white'
-              }}
-            >
-              {loading ? "Вход..." : "Войти"}
-            </Button>
-          </form>
+            {loading && (
+              <div className="text-center">
+                <div className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium" style={{ background: 'var(--gradient-premium)', color: 'white' }}>
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                  Проверка...
+                </div>
+              </div>
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>

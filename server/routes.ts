@@ -15,7 +15,7 @@ declare module 'express-session' {
 }
 
 const authSchema = z.object({
-  pin: z.string().length(6)
+  pin: z.string().length(4)
 });
 
 const clientSchema = z.object({
