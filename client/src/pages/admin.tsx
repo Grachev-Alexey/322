@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Settings, Users, Database, Package, LogOut } from "lucide-react";
 import AdminDashboard from "@/components/admin-dashboard";
@@ -447,20 +448,49 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
                                     setPackagePerks(updatedPerks);
                                   }}
                                 />
-                                <Input
-                                  placeholder="Иконка (emoji или lucide-react название)"
+                                <Select
                                   value={perk.icon}
-                                  onChange={(e) => {
+                                  onValueChange={(value) => {
                                     const updatedPerks = packagePerks.map(p => 
-                                      p.id === perk.id ? { ...p, icon: e.target.value } : p
+                                      p.id === perk.id ? { ...p, icon: value } : p
                                     );
                                     setPackagePerks(updatedPerks);
                                   }}
-                                />
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue placeholder="Выберите иконку" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="Percent">📊 Percent (Скидка)</SelectItem>
+                                    <SelectItem value="Gift">🎁 Gift (Подарок)</SelectItem>
+                                    <SelectItem value="Calendar">📅 Calendar (Рассрочка)</SelectItem>
+                                    <SelectItem value="User">👤 User (Консультант)</SelectItem>
+                                    <SelectItem value="Star">⭐ Star (Приоритет)</SelectItem>
+                                    <SelectItem value="Clock">🕐 Clock (График)</SelectItem>
+                                    <SelectItem value="MessageCircle">💬 MessageCircle (Консультации)</SelectItem>
+                                    <SelectItem value="CreditCard">💳 CreditCard (Оплата)</SelectItem>
+                                    <SelectItem value="Package">📦 Package (Услуги)</SelectItem>
+                                    <SelectItem value="Shield">🛡️ Shield (Гарантия)</SelectItem>
+                                    <SelectItem value="Crown">👑 Crown (VIP)</SelectItem>
+                                    <SelectItem value="Heart">❤️ Heart (Забота)</SelectItem>
+                                  </SelectContent>
+                                </Select>
                                 <Button
                                   variant="outline"
                                   size="sm"
-                                  onClick={() => {
+                                  onClick={async () => {
+                                    if (perk.id && typeof perk.id === 'number') {
+                                      // Delete from database if it has a real ID
+                                      try {
+                                        await fetch(`/api/admin/package-perks/${perk.id}`, {
+                                          method: "DELETE",
+                                          credentials: "include"
+                                        });
+                                      } catch (error) {
+                                        console.error('Failed to delete perk:', error);
+                                      }
+                                    }
+                                    // Remove from local state
                                     const updatedPerks = packagePerks.filter(p => p.id !== perk.id);
                                     setPackagePerks(updatedPerks);
                                   }}

@@ -243,6 +243,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/admin/package-perks/:id", requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deletePackagePerk(parseInt(id));
+      res.json({ success: true });
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка удаления плюшки пакета" });
+    }
+  });
+
   // Subscription creation
   app.post("/api/subscription", requireAuth, async (req, res) => {
     try {

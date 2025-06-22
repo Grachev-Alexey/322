@@ -172,21 +172,24 @@ export default function PackageCards({
         {/* Benefits */}
         <div className="space-y-3 mb-6">
           {realPerks.length > 0 ? (
-            realPerks.map((perk: any, index: number) => (
-              <div key={index} className="flex items-center justify-between text-sm">
-                <div className="flex items-center">
-                  <Check className={`text-${packageType === 'vip' ? 'purple' : packageType === 'standard' ? 'blue' : 'green'}-600 mr-3`} size={16} />
-                  <span>{perk.name}</span>
+            realPerks.map((perk: any, index: number) => {
+              const IconComponent = Icons[perk.icon as keyof typeof Icons] || Check;
+              return (
+                <div key={index} className="flex items-center justify-between text-sm">
+                  <div className="flex items-center">
+                    <IconComponent className={`text-${packageType === 'vip' ? 'purple' : packageType === 'standard' ? 'blue' : 'green'}-600 mr-3`} size={16} />
+                    <span>{perk.name}</span>
+                  </div>
+                  {perk.name.includes('подарочный сеанс') && (
+                    <span className="font-semibold text-green-600">
+                      {perk.name.includes('3') ? formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount) * 3) :
+                       perk.name.includes('1') ? formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount)) :
+                       formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount))}
+                    </span>
+                  )}
                 </div>
-                {perk.name.includes('подарочный сеанс') && (
-                  <span className="font-semibold text-green-600">
-                    {perk.name.includes('3') ? formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount) * 3) :
-                     perk.name.includes('1') ? formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount)) :
-                     formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount))}
-                  </span>
-                )}
-              </div>
-            ))
+              );
+            })
           ) : (
             info.benefits.map((benefit, index) => (
               <div key={index} className="flex items-center text-sm">

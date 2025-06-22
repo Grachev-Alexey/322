@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { X, Moon, Sun, Crown, Star, Leaf, Gift, Sparkles } from "lucide-react";
+import * as Icons from "lucide-react";
 import { useCalculator } from "@/hooks/use-calculator";
 import { formatPrice } from "@/lib/utils";
 import ServiceSelector from "@/components/service-selector";
@@ -76,23 +77,29 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
 
     return (
       <div className="space-y-2 mb-6">
-        {realPerks.slice(0, 3).map((perk: any, index: number) => (
-          <div key={index} className="flex items-center justify-between text-sm">
-            <span className="text-gray-600 dark:text-gray-300">{perk.name}</span>
-            {perk.name.includes('подарочный сеанс') && calculation && (
-              <span className="font-semibold text-green-600 dark:text-green-400">
-                {perk.name.includes('3') ? formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount) * 3) :
-                 perk.name.includes('1') ? formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount)) :
-                 formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount))}
-              </span>
-            )}
-            {perk.name.includes('Скидка') && (
-              <span className="font-semibold text-gray-900 dark:text-white">
-                {Math.round(parseFloat(packages.find((p: any) => p.type === packageType)?.discount || 0) * 100)}%
-              </span>
-            )}
-          </div>
-        ))}
+        {realPerks.map((perk: any, index: number) => {
+          const IconComponent = Icons[perk.icon as keyof typeof Icons] || Icons.Check;
+          return (
+            <div key={index} className="flex items-center justify-between text-sm">
+              <div className="flex items-center">
+                <IconComponent className="text-gray-400 dark:text-gray-500 mr-2" size={14} />
+                <span className="text-gray-600 dark:text-gray-300">{perk.name}</span>
+              </div>
+              {perk.name.includes('подарочный сеанс') && calculation && (
+                <span className="font-semibold text-green-600 dark:text-green-400">
+                  {perk.name.includes('3') ? formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount) * 3) :
+                   perk.name.includes('1') ? formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount)) :
+                   formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount))}
+                </span>
+              )}
+              {perk.name.includes('Скидка') && (
+                <span className="font-semibold text-gray-900 dark:text-white">
+                  {Math.round(parseFloat(packages.find((p: any) => p.type === packageType)?.discount || 0) * 100)}%
+                </span>
+              )}
+            </div>
+          );
+        })}
       </div>
     );
   };

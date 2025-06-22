@@ -190,6 +190,10 @@ export class DatabaseStorage implements IStorage {
       return created;
     }
   }
+
+  async deletePackagePerk(id: number): Promise<void> {
+    await db.delete(packagePerks).where(eq(packagePerks.id, id));
+  }
 }
 
 export const storage = new DatabaseStorage();
