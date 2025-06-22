@@ -32,6 +32,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
     freeZones,
     calculation,
     selectedPackage,
+    packages,
     setSelectedServices,
     setProcedureCount,
     setDownPayment,
@@ -169,6 +170,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
             selectedPackage={selectedPackage}
             onPackageSelect={setSelectedPackage}
             procedureCount={procedureCount}
+            packages={packages}
           />
         )}
 

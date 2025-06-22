@@ -31,6 +31,7 @@ interface PackageCardsProps {
   selectedPackage: string | null;
   onPackageSelect: (packageType: string) => void;
   procedureCount: number;
+  packages: any[];
 }
 
 const packageInfo = {
@@ -79,14 +80,19 @@ export default function PackageCards({
   calculation, 
   selectedPackage, 
   onPackageSelect,
-  procedureCount 
+  procedureCount,
+  packages 
 }: PackageCardsProps) {
   const getPackageCard = (packageType: keyof typeof packageInfo) => {
     const info = packageInfo[packageType];
     const data = calculation.packages[packageType];
+    const packageData = packages.find(p => p.type === packageType);
     const Icon = info.icon;
     const isSelected = selectedPackage === packageType;
     const isPopular = packageType === 'standard';
+    
+    // Get actual discount percentage from database
+    const discountPercent = packageData ? Math.round(parseFloat(packageData.discount) * 100) : 0;
 
     return (
       <div
@@ -120,8 +126,13 @@ export default function PackageCards({
           <div className={`w-16 h-16 mx-auto mb-4 bg-gradient-to-r ${info.color} rounded-full flex items-center justify-center`}>
             <Icon className="text-white text-2xl" size={24} />
           </div>
-          <h4 className="text-2xl font-bold text-gray-900">{info.title}</h4>
+          <h4 className="text-2xl font-bold text-gray-900">{packageData?.name || info.title}</h4>
           <p className="text-gray-600">{info.subtitle}</p>
+          
+          {/* Prominent discount display */}
+          <div className={`mt-3 inline-block px-4 py-2 rounded-full text-white font-bold text-lg bg-gradient-to-r ${info.color}`}>
+            Скидка {discountPercent}%
+          </div>
         </div>
 
         {/* Pricing */}

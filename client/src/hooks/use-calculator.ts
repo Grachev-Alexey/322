@@ -58,7 +58,9 @@ export function useCalculator() {
 
   const { data: packages = [] } = useQuery<any[]>({
     queryKey: ['/api/packages'],
-    enabled: true
+    enabled: true,
+    staleTime: 0, // Always fetch fresh data
+    cacheTime: 0  // Don't cache
   });
 
   // Calculate total procedures
@@ -172,6 +174,7 @@ export function useCalculator() {
     freeZones,
     selectedPackage,
     calculation,
+    packages,
     totalProcedures,
     setSelectedServices,
     setProcedureCount,

@@ -31,6 +31,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
     freeZones,
     calculation,
     selectedPackage,
+    packages,
     setSelectedServices,
     setProcedureCount,
     setDownPayment,
@@ -321,6 +322,8 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
               {(['economy', 'standard', 'vip'] as const).map((packageType) => {
                 const info = packageInfo[packageType];
                 const data = calculation.packages[packageType];
+                const packageData = packages.find(p => p.type === packageType);
+                const discountPercent = packageData ? Math.round(parseFloat(packageData.discount) * 100) : 0;
                 const Icon = info.icon;
                 const isSelected = selectedPackage === packageType;
                 const isPopular = packageType === 'standard';
@@ -352,8 +355,13 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                       <div className={`w-12 h-12 mx-auto mb-3 bg-gradient-to-r ${info.gradient} rounded-2xl flex items-center justify-center`}>
                         <Icon className="text-white" size={20} />
                       </div>
-                      <h4 className="text-xl font-bold text-gray-900 dark:text-white">{info.title}</h4>
+                      <h4 className="text-xl font-bold text-gray-900 dark:text-white">{packageData?.name || info.title}</h4>
                       <p className="text-sm text-gray-500 dark:text-gray-400">{info.subtitle}</p>
+                      
+                      {/* Prominent discount display */}
+                      <div className={`mt-2 inline-block px-3 py-1 rounded-full text-white font-bold text-sm bg-gradient-to-r ${info.gradient}`}>
+                        Скидка {discountPercent}%
+                      </div>
                     </div>
 
                     {/* Pricing */}
