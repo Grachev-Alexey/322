@@ -169,6 +169,21 @@ export default function PackageCards({
           </div>
         </div>
 
+        {/* Gift Sessions */}
+        {packageData && packageData.giftSessions > 0 && (
+          <div className="bg-gradient-to-r from-pink-50 to-purple-50 border border-pink-200 rounded-lg p-3 mb-4">
+            <div className="flex items-center justify-center">
+              <Gift className="text-pink-600 mr-2" size={16} />
+              <span className="text-sm font-medium text-pink-800">
+                {packageData.giftSessions} подарочн{packageData.giftSessions === 1 ? 'ый сеанс' : packageData.giftSessions < 5 ? 'ых сеанса' : 'ых сеансов'}
+              </span>
+            </div>
+            <div className="text-xs text-pink-600 text-center mt-1">
+              Стоимость: {formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount) * packageData.giftSessions)}
+            </div>
+          </div>
+        )}
+
         {/* Benefits */}
         <div className="space-y-3 mb-6">
           {realPerks.length > 0 ? (
@@ -180,13 +195,7 @@ export default function PackageCards({
                     <IconComponent className={`text-${packageType === 'vip' ? 'purple' : packageType === 'standard' ? 'blue' : 'green'}-600 mr-3`} size={16} />
                     <span>{perk.name}</span>
                   </div>
-                  {perk.name.includes('подарочный сеанс') && (
-                    <span className="font-semibold text-green-600">
-                      {perk.name.includes('3') ? formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount) * 3) :
-                       perk.name.includes('1') ? formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount)) :
-                       formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount))}
-                    </span>
-                  )}
+
                 </div>
               );
             })

@@ -58,8 +58,8 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
       cacheTime: 0
     });
 
-    // Always show database perks if available, otherwise show fallback
-    console.log(`Package ${packageType} perks:`, realPerks);
+    // Get package data for gift sessions
+    const packageData = packages.find((p: any) => p.type === packageType);
     
     if (realPerks.length === 0) {
       return (
@@ -77,6 +77,23 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
 
     return (
       <div className="space-y-2 mb-6">
+        {/* Gift Sessions */}
+        {packageData && packageData.giftSessions > 0 && (
+          <div className="bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-900/20 dark:to-purple-900/20 border border-pink-200 dark:border-pink-700 rounded-lg p-2 mb-3">
+            <div className="flex items-center justify-center">
+              <Gift className="text-pink-600 dark:text-pink-400 mr-2" size={14} />
+              <span className="text-sm font-medium text-pink-800 dark:text-pink-200">
+                {packageData.giftSessions} подарочн{packageData.giftSessions === 1 ? 'ый сеанс' : packageData.giftSessions < 5 ? 'ых сеанса' : 'ых сеансов'}
+              </span>
+            </div>
+            {calculation && (
+              <div className="text-xs text-pink-600 dark:text-pink-400 text-center mt-1">
+                Стоимость: {formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount) * packageData.giftSessions)}
+              </div>
+            )}
+          </div>
+        )}
+        
         {realPerks.map((perk: any, index: number) => {
           const IconComponent = Icons[perk.icon as keyof typeof Icons] || Icons.Check;
           return (
@@ -85,18 +102,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 <IconComponent className="text-gray-400 dark:text-gray-500 mr-2" size={14} />
                 <span className="text-gray-600 dark:text-gray-300">{perk.name}</span>
               </div>
-              {perk.name.includes('подарочный сеанс') && calculation && (
-                <span className="font-semibold text-green-600 dark:text-green-400">
-                  {perk.name.includes('3') ? formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount) * 3) :
-                   perk.name.includes('1') ? formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount)) :
-                   formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount))}
-                </span>
-              )}
-              {perk.name.includes('Скидка') && (
-                <span className="font-semibold text-gray-900 dark:text-white">
-                  {Math.round(parseFloat(packages.find((p: any) => p.type === packageType)?.discount || 0) * 100)}%
-                </span>
-              )}
+
             </div>
           );
         })}
@@ -247,7 +253,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             <input
               type="range"
               min="5000"
-              max={calculation && selectedPackage ? calculation.packages[selectedPackage].finalCost : (calculation ? calculation.packages.vip.finalCost : 25000)}
+              max={calculation && selectedPackage && calculation.packages[selectedPackage] ? calculation.packages[selectedPackage].finalCost : (calculation && calculation.packages.vip ? calculation.packages.vip.finalCost : 25000)}
               step="1"
               value={downPayment}
               onChange={(e) => setDownPayment(parseInt(e.target.value))}

@@ -154,6 +154,7 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
             },
             credentials: "include",
             body: JSON.stringify({
+              id: perk.id && typeof perk.id === 'number' ? perk.id : undefined,
               packageType: perk.packageType,
               name: perk.name,
               icon: perk.icon,
@@ -348,7 +349,7 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
                       <div>
                         <Label>Название пакета</Label>
                         <Input
@@ -400,6 +401,21 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
                           onChange={(e) => {
                             const updatedPackages = packages.map(p => 
                               p.id === pkg.id ? { ...p, minDownPaymentPercent: (parseFloat(e.target.value) / 100).toString() } : p
+                            );
+                            setPackages(updatedPackages);
+                          }}
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label>Подарочные сеансы</Label>
+                        <Input
+                          type="number"
+                          min="0"
+                          value={pkg.giftSessions || 0}
+                          onChange={(e) => {
+                            const updatedPackages = packages.map(p => 
+                              p.id === pkg.id ? { ...p, giftSessions: parseInt(e.target.value) || 0 } : p
                             );
                             setPackages(updatedPackages);
                           }}
@@ -461,18 +477,55 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
                                     <SelectValue placeholder="Выберите иконку" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="Percent">📊 Percent (Скидка)</SelectItem>
-                                    <SelectItem value="Gift">🎁 Gift (Подарок)</SelectItem>
-                                    <SelectItem value="Calendar">📅 Calendar (Рассрочка)</SelectItem>
-                                    <SelectItem value="User">👤 User (Консультант)</SelectItem>
-                                    <SelectItem value="Star">⭐ Star (Приоритет)</SelectItem>
-                                    <SelectItem value="Clock">🕐 Clock (График)</SelectItem>
-                                    <SelectItem value="MessageCircle">💬 MessageCircle (Консультации)</SelectItem>
-                                    <SelectItem value="CreditCard">💳 CreditCard (Оплата)</SelectItem>
-                                    <SelectItem value="Package">📦 Package (Услуги)</SelectItem>
-                                    <SelectItem value="Shield">🛡️ Shield (Гарантия)</SelectItem>
-                                    <SelectItem value="Crown">👑 Crown (VIP)</SelectItem>
-                                    <SelectItem value="Heart">❤️ Heart (Забота)</SelectItem>
+                                    <SelectItem value="Calendar">📅 Calendar</SelectItem>
+                                    <SelectItem value="Clock">🕐 Clock</SelectItem>
+                                    <SelectItem value="User">👤 User</SelectItem>
+                                    <SelectItem value="Users">👥 Users</SelectItem>
+                                    <SelectItem value="MessageCircle">💬 MessageCircle</SelectItem>
+                                    <SelectItem value="Phone">📞 Phone</SelectItem>
+                                    <SelectItem value="Mail">✉️ Mail</SelectItem>
+                                    <SelectItem value="Settings">⚙️ Settings</SelectItem>
+                                    <SelectItem value="Shield">🛡️ Shield</SelectItem>
+                                    <SelectItem value="Heart">❤️ Heart</SelectItem>
+                                    <SelectItem value="Star">⭐ Star</SelectItem>
+                                    <SelectItem value="Crown">👑 Crown</SelectItem>
+                                    <SelectItem value="Award">🏆 Award</SelectItem>
+                                    <SelectItem value="Trophy">🏆 Trophy</SelectItem>
+                                    <SelectItem value="Target">🎯 Target</SelectItem>
+                                    <SelectItem value="CheckCircle">✅ CheckCircle</SelectItem>
+                                    <SelectItem value="CheckSquare">☑️ CheckSquare</SelectItem>
+                                    <SelectItem value="Sparkles">✨ Sparkles</SelectItem>
+                                    <SelectItem value="Zap">⚡ Zap</SelectItem>
+                                    <SelectItem value="Flame">🔥 Flame</SelectItem>
+                                    <SelectItem value="Sun">☀️ Sun</SelectItem>
+                                    <SelectItem value="Moon">🌙 Moon</SelectItem>
+                                    <SelectItem value="Coffee">☕ Coffee</SelectItem>
+                                    <SelectItem value="Smile">😊 Smile</SelectItem>
+                                    <SelectItem value="ThumbsUp">👍 ThumbsUp</SelectItem>
+                                    <SelectItem value="Handshake">🤝 Handshake</SelectItem>
+                                    <SelectItem value="Headphones">🎧 Headphones</SelectItem>
+                                    <SelectItem value="Mic">🎤 Mic</SelectItem>
+                                    <SelectItem value="Camera">📷 Camera</SelectItem>
+                                    <SelectItem value="Video">📹 Video</SelectItem>
+                                    <SelectItem value="Monitor">🖥️ Monitor</SelectItem>
+                                    <SelectItem value="Smartphone">📱 Smartphone</SelectItem>
+                                    <SelectItem value="Laptop">💻 Laptop</SelectItem>
+                                    <SelectItem value="Tablet">📱 Tablet</SelectItem>
+                                    <SelectItem value="Wifi">📶 Wifi</SelectItem>
+                                    <SelectItem value="Globe">🌍 Globe</SelectItem>
+                                    <SelectItem value="MapPin">📍 MapPin</SelectItem>
+                                    <SelectItem value="Navigation">🧭 Navigation</SelectItem>
+                                    <SelectItem value="Compass">🧭 Compass</SelectItem>
+                                    <SelectItem value="Map">🗺️ Map</SelectItem>
+                                    <SelectItem value="Home">🏠 Home</SelectItem>
+                                    <SelectItem value="Building">🏢 Building</SelectItem>
+                                    <SelectItem value="Store">🏪 Store</SelectItem>
+                                    <SelectItem value="Car">🚗 Car</SelectItem>
+                                    <SelectItem value="Plane">✈️ Plane</SelectItem>
+                                    <SelectItem value="Train">🚂 Train</SelectItem>
+                                    <SelectItem value="Bike">🚲 Bike</SelectItem>
+                                    <SelectItem value="Walk">🚶 Walk</SelectItem>
+                                    <SelectItem value="Run">🏃 Run</SelectItem>
                                   </SelectContent>
                                 </Select>
                                 <Button

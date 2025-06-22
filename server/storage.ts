@@ -175,20 +175,29 @@ export class DatabaseStorage implements IStorage {
       .where(and(eq(packagePerks.packageType, packageType), eq(packagePerks.isActive, true)));
   }
 
-  async upsertPackagePerk(perk: InsertPackagePerk): Promise<PackagePerk> {
-    const [existing] = await db.select().from(packagePerks)
-      .where(and(eq(packagePerks.packageType, perk.packageType), eq(packagePerks.name, perk.name)));
-    
-    if (existing) {
+  async upsertPackagePerk(perk: InsertPackagePerk & { id?: number }): Promise<PackagePerk> {
+    // If we have an ID, update existing perk
+    if (perk.id) {
       const [updated] = await db.update(packagePerks)
-        .set(perk)
-        .where(eq(packagePerks.id, existing.id))
+        .set({
+          packageType: perk.packageType,
+          name: perk.name,
+          icon: perk.icon,
+          isActive: perk.isActive
+        })
+        .where(eq(packagePerks.id, perk.id))
         .returning();
       return updated;
-    } else {
-      const [created] = await db.insert(packagePerks).values(perk).returning();
-      return created;
     }
+    
+    // Otherwise, create new perk
+    const [created] = await db.insert(packagePerks).values({
+      packageType: perk.packageType,
+      name: perk.name,
+      icon: perk.icon,
+      isActive: perk.isActive
+    }).returning();
+    return created;
   }
 
   async deletePackagePerk(id: number): Promise<void> {

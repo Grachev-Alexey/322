@@ -53,6 +53,7 @@ export const packages = pgTable("packages", {
   minCost: decimal("min_cost", { precision: 10, scale: 2 }).notNull(),
   minDownPaymentPercent: decimal("min_down_payment_percent", { precision: 3, scale: 2 }).notNull(), // 0.50 for 50%
   requiresFullPayment: boolean("requires_full_payment").default(false),
+  giftSessions: integer("gift_sessions").default(0), // Number of free sessions
   isActive: boolean("is_active").default(true),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
