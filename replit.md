@@ -101,4 +101,5 @@ The development environment uses Vite's HMR (Hot Module Replacement) for rapid d
 
 ```
 Preferred communication style: Simple, everyday language.
+Interface design: Compact but beautiful - everything should fit on screen without scrolling, but not too small.
 ```
