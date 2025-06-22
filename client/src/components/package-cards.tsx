@@ -5,6 +5,7 @@ import { Check, Crown, Star, Leaf, AlertCircle } from "lucide-react";
 import * as Icons from "lucide-react";
 import { formatPrice, getPackageIcon, getPackageColor } from "@/lib/utils";
 import { usePackagePerks } from "@/hooks/use-package-perks";
+import { useQuery } from "@tanstack/react-query";
 
 interface PackageData {
   isAvailable: boolean;
@@ -93,6 +94,14 @@ export default function PackageCards({
     
     // Get actual discount percentage from database
     const discountPercent = packageData ? Math.round(parseFloat(packageData.discount) * 100) : 0;
+    
+    // Fetch real perks from database
+    const { data: realPerks = [] } = useQuery({
+      queryKey: [`/api/admin/package-perks/${packageType}`],
+      enabled: true,
+      staleTime: 0,
+      cacheTime: 0
+    });
 
     return (
       <div
@@ -162,12 +171,30 @@ export default function PackageCards({
 
         {/* Benefits */}
         <div className="space-y-3 mb-6">
-          {info.benefits.map((benefit, index) => (
-            <div key={index} className="flex items-center text-sm">
-              <Check className={`text-${packageType === 'vip' ? 'purple' : packageType === 'standard' ? 'blue' : 'green'}-600 mr-3`} size={16} />
-              <span>{benefit}</span>
-            </div>
-          ))}
+          {realPerks.length > 0 ? (
+            realPerks.map((perk: any, index: number) => (
+              <div key={index} className="flex items-center justify-between text-sm">
+                <div className="flex items-center">
+                  <Check className={`text-${packageType === 'vip' ? 'purple' : packageType === 'standard' ? 'blue' : 'green'}-600 mr-3`} size={16} />
+                  <span>{perk.name}</span>
+                </div>
+                {perk.name.includes('подарочный сеанс') && (
+                  <span className="font-semibold text-green-600">
+                    {perk.name.includes('3') ? formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount) * 3) :
+                     perk.name.includes('1') ? formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount)) :
+                     formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount))}
+                  </span>
+                )}
+              </div>
+            ))
+          ) : (
+            info.benefits.map((benefit, index) => (
+              <div key={index} className="flex items-center text-sm">
+                <Check className={`text-${packageType === 'vip' ? 'purple' : packageType === 'standard' ? 'blue' : 'green'}-600 mr-3`} size={16} />
+                <span>{benefit}</span>
+              </div>
+            ))
+          )}
         </div>
 
         {/* Special Requirements */}

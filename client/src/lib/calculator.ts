@@ -102,9 +102,18 @@ export function calculatePackagePricing(
     // Calculate bulk discount (2.5% for 8+ procedures)
     const additionalDiscount = totalProcedures >= 8 ? baseCost * 0.025 : 0;
 
+    // Calculate gift session value based on package type
+    // Gift sessions are full procedure sessions, not individual visits
+    let giftSessionValue = 0;
+    if (packageType === 'vip') {
+      giftSessionValue = baseCost / totalProcedures * 3; // 3 full sessions for VIP
+    } else if (packageType === 'standard') {
+      giftSessionValue = baseCost / totalProcedures * 1; // 1 full session for Standard
+    }
+
     // Total savings
     const packageDiscount = baseCost * discount;
-    const totalSavings = packageDiscount + certificateDiscount + additionalDiscount;
+    const totalSavings = packageDiscount + certificateDiscount + additionalDiscount + giftSessionValue;
     const finalCost = baseCost - totalSavings;
 
     // Check down payment requirements
@@ -144,7 +153,8 @@ export function calculatePackagePricing(
       appliedDiscounts: [
         { type: 'package', amount: packageDiscount },
         ...(additionalDiscount > 0 ? [{ type: 'bulk', amount: additionalDiscount }] : []),
-        ...(certificateDiscount > 0 ? [{ type: 'certificate', amount: certificateDiscount }] : [])
+        ...(certificateDiscount > 0 ? [{ type: 'certificate', amount: certificateDiscount }] : []),
+        ...(giftSessionValue > 0 ? [{ type: 'gift_sessions', amount: giftSessionValue }] : [])
       ]
     };
   }

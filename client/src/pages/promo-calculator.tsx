@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { X, Moon, Sun, Crown, Star, Leaf, Gift, Sparkles } from "lucide-react";
@@ -45,6 +46,51 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
   const toggleDarkMode = () => {
     setDarkMode(!darkMode);
     document.documentElement.classList.toggle('dark');
+  };
+
+  // Benefits component for displaying database perks
+  const BenefitsSection = ({ packageType, packages, calculation, procedureCount }: any) => {
+    const { data: realPerks = [] } = useQuery({
+      queryKey: [`/api/admin/package-perks/${packageType}`],
+      enabled: true,
+      staleTime: 0,
+      cacheTime: 0
+    });
+
+    if (realPerks.length === 0) {
+      return (
+        <div className="space-y-2 mb-6">
+          {packageInfo[packageType as keyof typeof packageInfo].benefits.slice(0, 3).map((benefit: any, index: number) => (
+            <div key={index} className="flex items-center justify-between text-sm">
+              <span className="text-gray-600 dark:text-gray-300">{benefit.text}</span>
+              <span className="font-semibold text-gray-900 dark:text-white">{benefit.value}</span>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-2 mb-6">
+        {realPerks.slice(0, 3).map((perk: any, index: number) => (
+          <div key={index} className="flex items-center justify-between text-sm">
+            <span className="text-gray-600 dark:text-gray-300">{perk.name}</span>
+            {perk.name.includes('подарочный сеанс') && calculation && (
+              <span className="font-semibold text-green-600 dark:text-green-400">
+                {perk.name.includes('3') ? formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount) * 3) :
+                 perk.name.includes('1') ? formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount)) :
+                 formatPrice(calculation.baseCost / (calculation.totalProcedures || procedureCount))}
+              </span>
+            )}
+            {perk.name.includes('Скидка') && (
+              <span className="font-semibold text-gray-900 dark:text-white">
+                {Math.round(parseFloat(packages.find((p: any) => p.type === packageType)?.discount || 0) * 100)}%
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+    );
   };
 
   const packageInfo = {
@@ -383,14 +429,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                     </div>
 
                     {/* Benefits */}
-                    <div className="space-y-2 mb-6">
-                      {info.benefits.slice(0, 3).map((benefit, index) => (
-                        <div key={index} className="flex items-center justify-between text-sm">
-                          <span className="text-gray-600 dark:text-gray-300">{benefit.text}</span>
-                          <span className="font-semibold text-gray-900 dark:text-white">{benefit.value}</span>
-                        </div>
-                      ))}
-                    </div>
+                    <BenefitsSection packageType={packageType} packages={packages} calculation={calculation} procedureCount={procedureCount} />
 
                     {/* Action */}
                     {data.isAvailable ? (
