@@ -1,0 +1,454 @@
+import type { Express } from "express";
+import { createServer, type Server } from "http";
+import { storage } from "./storage";
+import { createYclientsService } from "./services/yclients";
+import { z } from "zod";
+import { db } from "./db";
+import { users } from "@shared/schema";
+
+// Extend session types
+declare module 'express-session' {
+  interface SessionData {
+    userId: number;
+    userRole: string;
+  }
+}
+
+const authSchema = z.object({
+  pin: z.string().length(6)
+});
+
+const clientSchema = z.object({
+  phone: z.string().min(10),
+  email: z.string().email().optional()
+});
+
+const calculationSchema = z.object({
+  services: z.array(z.object({
+    id: z.number(),
+    quantity: z.number()
+  })),
+  packageType: z.enum(['vip', 'standard', 'economy']),
+  downPayment: z.number(),
+  installmentMonths: z.number().optional(),
+  usedCertificate: z.boolean().default(false),
+  freeZones: z.array(z.object({
+    serviceId: z.number(),
+    quantity: z.number()
+  })).default([])
+});
+
+const configSchema = z.object({
+  key: z.string(),
+  value: z.any()
+});
+
+export async function registerRoutes(app: Express): Promise<Server> {
+  // Authentication
+  app.post("/api/auth", async (req, res) => {
+    try {
+      const { pin } = authSchema.parse(req.body);
+      const user = await storage.getUserByPin(pin);
+      
+      if (!user || !user.isActive) {
+        return res.status(401).json({ message: "Неверный PIN-код" });
+      }
+
+      // Store user in session
+      (req.session as any).userId = user.id;
+      (req.session as any).userRole = user.role;
+      (req.session as any).userName = user.name;
+      
+      res.json({ 
+        user: { 
+          id: user.id, 
+          name: user.name, 
+          role: user.role 
+        } 
+      });
+    } catch (error) {
+      res.status(400).json({ message: "Ошибка валидации данных" });
+    }
+  });
+
+  app.post("/api/logout", (req, res) => {
+    if (req.session) {
+      req.session.destroy((err) => {
+        if (err) {
+          console.error('Session destruction error:', err);
+        }
+        res.json({ success: true });
+      });
+    } else {
+      res.json({ success: true });
+    }
+  });
+
+  // Auth check route
+  app.get("/api/auth/check", (req, res) => {
+    const session = req.session as any;
+    if (session?.userId) {
+      res.json({ 
+        user: { 
+          id: session.userId, 
+          name: session.userName || 'Пользователь', 
+          role: session.userRole 
+        } 
+      });
+    } else {
+      res.status(401).json({ message: "Не авторизован" });
+    }
+  });
+
+  // Middleware for authentication
+  const requireAuth = (req: any, res: any, next: any) => {
+    const session = req.session as any;
+    if (!session?.userId) {
+      return res.status(401).json({ message: "Требуется авторизация" });
+    }
+    next();
+  };
+
+  const requireAdmin = (req: any, res: any, next: any) => {
+    const session = req.session as any;
+    if (!session?.userId || session.userRole !== 'admin') {
+      return res.status(403).json({ message: "Требуются права администратора" });
+    }
+    next();
+  };
+
+  // Services
+  app.get("/api/services", requireAuth, async (req, res) => {
+    try {
+      const services = await storage.getActiveServices();
+      res.json(services);
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка получения услуг" });
+    }
+  });
+
+  app.post("/api/services/sync", requireAdmin, async (req, res) => {
+    try {
+      const yclientsConfig = await storage.getConfig('yclients');
+      if (!yclientsConfig) {
+        return res.status(400).json({ message: "Настройки Yclients не найдены" });
+      }
+
+      const yclientsService = createYclientsService(yclientsConfig.value);
+      const services = await yclientsService.getServices();
+      
+      for (const service of services) {
+        await storage.upsertService({
+          yclientsId: service.id,
+          title: service.title,
+          priceMin: service.price_min.toString(),
+          categoryId: service.category_id || null,
+          isActive: true
+        });
+      }
+
+      res.json({ message: "Услуги синхронизированы", count: services.length });
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка синхронизации услуг" });
+    }
+  });
+
+  // Configuration
+  app.get("/api/config/:key", requireAdmin, async (req, res) => {
+    try {
+      const config = await storage.getConfig(req.params.key);
+      res.json(config?.value || null);
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка получения настроек" });
+    }
+  });
+
+  app.post("/api/config", requireAdmin, async (req, res) => {
+    try {
+      const { key, value } = configSchema.parse(req.body);
+      const config = await storage.setConfig(key, value);
+      res.json(config);
+    } catch (error) {
+      res.status(400).json({ message: "Ошибка сохранения настроек" });
+    }
+  });
+
+  // Get packages configuration
+  app.get("/api/packages", requireAuth, async (req, res) => {
+    try {
+      const packages = await storage.getPackages();
+      res.json(packages);
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка получения пакетов" });
+    }
+  });
+
+  // Get package perks
+  app.get("/api/packages/:type/perks", requireAuth, async (req, res) => {
+    try {
+      const { type } = req.params;
+      const perks = await storage.getPackagePerks(type);
+      res.json(perks);
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка получения плюшек пакета" });
+    }
+  });
+
+  // Admin routes
+  app.get("/api/admin/users", requireAdmin, async (req, res) => {
+    try {
+      const result = await db.select().from(users);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка получения пользователей" });
+    }
+  });
+
+  app.get("/api/admin/sales", requireAdmin, async (req, res) => {
+    try {
+      const stats = await storage.getSalesStats();
+      res.json(stats);
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка получения статистики продаж" });
+    }
+  });
+
+  app.post("/api/admin/packages", requireAdmin, async (req, res) => {
+    try {
+      const packageData = req.body;
+      const result = await storage.upsertPackage(packageData);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка сохранения пакета" });
+    }
+  });
+
+  app.get("/api/admin/package-perks/:packageType", requireAdmin, async (req, res) => {
+    try {
+      const { packageType } = req.params;
+      const perks = await storage.getPackagePerks(packageType);
+      res.json(perks);
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка получения преимуществ пакета" });
+    }
+  });
+
+  app.post("/api/admin/package-perks", requireAdmin, async (req, res) => {
+    try {
+      const perkData = req.body;
+      const result = await storage.upsertPackagePerk(perkData);
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка сохранения плюшки пакета" });
+    }
+  });
+
+  // Subscription creation
+  app.post("/api/subscription", requireAuth, async (req, res) => {
+    try {
+      const { client: clientData, calculation } = req.body;
+      const { phone, email } = clientSchema.parse(clientData);
+      
+      // Get or create client
+      let client = await storage.getClientByPhone(phone);
+      if (!client) {
+        client = await storage.createClient({ phone, email: email || null });
+      }
+
+      // Check if subscription type exists in Yclients
+      const yclientsConfig = await storage.getConfig('yclients');
+      if (!yclientsConfig) {
+        return res.status(400).json({ message: "Настройки Yclients не найдены" });
+      }
+
+      const yclientsService = createYclientsService(yclientsConfig.value);
+      
+      // Try to find existing subscription type
+      let subscriptionType = await storage.findSubscriptionType(
+        calculation.services, 
+        calculation.finalCost, 
+        calculation.packageType
+      );
+
+      if (!subscriptionType) {
+        // Create new subscription type in Yclients
+        const templateConfig = await storage.getConfig('subscriptionTemplate');
+        const template = templateConfig?.value || "Курс {services} - {package}";
+        
+        const title = generateSubscriptionTitle(template, calculation);
+        
+        const yclientsSubscriptionType = await yclientsService.createSubscriptionType({
+          title,
+          cost: calculation.finalCost,
+          services: calculation.services,
+          allowFreeze: getFreezePolicyForPackage(calculation.packageType),
+          freezeLimit: getFreezeLimitForPackage(calculation.packageType),
+          packageType: calculation.packageType
+        });
+
+        // Save to local database
+        subscriptionType = await storage.upsertSubscriptionType({
+          yclientsId: yclientsSubscriptionType.id,
+          title: yclientsSubscriptionType.title,
+          cost: yclientsSubscriptionType.cost.toString(),
+          allowFreeze: yclientsSubscriptionType.allow_freeze,
+          freezeLimit: yclientsSubscriptionType.freeze_limit,
+          balanceContainer: yclientsSubscriptionType.balance_container
+        });
+      }
+
+      // Save sale to database
+      const sale = await storage.createSale({
+        clientId: client.id,
+        masterId: (req as any).session.userId,
+        subscriptionTypeId: subscriptionType.id,
+        selectedServices: calculation.services,
+        selectedPackage: calculation.packageType,
+        baseCost: calculation.baseCost.toString(),
+        finalCost: calculation.finalCost.toString(),
+        totalSavings: calculation.totalSavings.toString(),
+        downPayment: calculation.downPayment.toString(),
+        installmentMonths: calculation.installmentMonths || null,
+        monthlyPayment: calculation.monthlyPayment?.toString() || null,
+        appliedDiscounts: calculation.appliedDiscounts,
+        freeZones: calculation.freeZones,
+        usedCertificate: calculation.usedCertificate
+      });
+
+      res.json({ 
+        success: true, 
+        subscriptionType: subscriptionType.title,
+        saleId: sale.id 
+      });
+    } catch (error) {
+      console.error('Subscription creation error:', error);
+      res.status(500).json({ message: "Ошибка создания абонемента" });
+    }
+  });
+
+  const httpServer = createServer(app);
+  return httpServer;
+}
+
+function calculatePackagePricing(baseCost: number, calculation: any, packages: any) {
+  const { services, packageType, downPayment, installmentMonths, usedCertificate, freeZones } = calculation;
+  
+  // Calculate procedure count
+  const totalProcedures = services.reduce((sum: number, service: any) => sum + service.quantity, 0);
+  
+  // Base package discounts
+  const packageDiscounts = {
+    vip: packages.vip.discount,
+    standard: packages.standard.discount,
+    economy: packages.economy.discount
+  };
+
+  // Additional discounts
+  let additionalDiscount = 0;
+  
+  // Bulk procedure discount
+  if (totalProcedures >= 15) {
+    additionalDiscount += 0.025; // +2.5%
+  }
+  
+  // Certificate discount
+  let certificateDiscount = 0;
+  if (usedCertificate && baseCost >= 25000) {
+    certificateDiscount = 3000;
+  }
+
+  // Calculate for each package
+  const results: any = {};
+  
+  for (const [pkg, discount] of Object.entries(packageDiscounts)) {
+    let finalDiscount = discount as number + additionalDiscount;
+    
+    // Special logic for economy package
+    if (pkg === 'economy' && downPayment > 10000) {
+      finalDiscount = Math.max(finalDiscount, 0.30);
+    }
+    
+    const discountAmount = baseCost * finalDiscount;
+    const finalCost = baseCost - discountAmount - certificateDiscount;
+    
+    // Calculate free zones value
+    const freeZonesValue = freeZones.reduce((sum: number, zone: any) => {
+      return sum + (zone.pricePerProcedure * zone.quantity);
+    }, 0);
+    
+    const totalSavings = discountAmount + certificateDiscount + freeZonesValue;
+    
+    // Check availability
+    let isAvailable = true;
+    let unavailableReason = '';
+    
+    if (pkg === 'vip') {
+      if (baseCost < packages.vip.minCost) {
+        isAvailable = false;
+        unavailableReason = `Минимальная стоимость курса ${packages.vip.minCost} ₽`;
+      } else if (downPayment < finalCost) {
+        isAvailable = false;
+        unavailableReason = 'Требуется 100% предоплата';
+      }
+    } else if (pkg === 'standard') {
+      if (downPayment < finalCost * 0.5 || downPayment < packages.standard.minDownPayment) {
+        isAvailable = false;
+        unavailableReason = `Минимальный взнос ${Math.max(finalCost * 0.5, packages.standard.minDownPayment)} ₽`;
+      }
+    } else if (pkg === 'economy') {
+      if (downPayment < packages.economy.minDownPayment) {
+        isAvailable = false;
+        unavailableReason = `Минимальный взнос ${packages.economy.minDownPayment} ₽`;
+      } else if (downPayment >= finalCost * 0.5) {
+        isAvailable = false;
+        unavailableReason = 'Первый взнос должен быть менее 50%';
+      }
+    }
+    
+    // Calculate monthly payment
+    let monthlyPayment = 0;
+    if (isAvailable && installmentMonths && installmentMonths > 0 && pkg !== 'vip') {
+      monthlyPayment = (finalCost - downPayment) / installmentMonths;
+    }
+    
+    results[pkg] = {
+      isAvailable,
+      unavailableReason,
+      finalCost,
+      totalSavings,
+      monthlyPayment,
+      appliedDiscounts: [
+        { type: 'package', amount: discountAmount },
+        ...(additionalDiscount > 0 ? [{ type: 'bulk', amount: baseCost * 0.025 }] : []),
+        ...(certificateDiscount > 0 ? [{ type: 'certificate', amount: certificateDiscount }] : [])
+      ]
+    };
+  }
+  
+  return {
+    baseCost,
+    packages: results,
+    totalProcedures,
+    freeZonesValue: freeZones.reduce((sum: number, zone: any) => sum + (zone.pricePerProcedure * zone.quantity), 0)
+  };
+}
+
+function generateSubscriptionTitle(template: string, calculation: any): string {
+  // Simple template replacement
+  return template
+    .replace('{services}', calculation.services.map((s: any) => s.name).join(', '))
+    .replace('{package}', calculation.packageType.toUpperCase());
+}
+
+function getFreezePolicyForPackage(packageType: string): boolean {
+  return packageType !== 'none'; // All packages allow freeze
+}
+
+function getFreezeLimitForPackage(packageType: string): number {
+  const limits = {
+    vip: 3650, // Unlimited (10 years)
+    standard: 180, // 6 months
+    economy: 90 // 3 months
+  };
+  return (limits as any)[packageType] || 0;
+}
