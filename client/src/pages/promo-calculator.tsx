@@ -271,22 +271,14 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
 
         {/* Right panel - Package comparison */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-          {/* Title */}
-          <div className="text-center mb-3 lg:mb-4 flex-shrink-0">
-            <h1 className="text-xl lg:text-2xl xl:text-3xl font-black text-gray-900 dark:text-white mb-1 lg:mb-2">
-              Создайте идеальный курс
-            </h1>
-            <p className="text-xs lg:text-sm xl:text-base text-gray-600 dark:text-gray-300">
-              Выберите пакет с максимальными выгодами
-            </p>
-          </div>
 
-          {/* Base cost display */}
+
+          {/* Base cost display - компактно */}
           {calculation && (
-            <div className="floating-card-enhanced bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-xl lg:rounded-2xl p-3 lg:p-4 xl:p-6 mb-3 lg:mb-4 xl:mb-6 border border-white/20 dark:border-gray-700/20 flex-shrink-0">
+            <div className="floating-card-enhanced bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-lg p-2 mb-2 border border-white/20 dark:border-gray-700/20 flex-shrink-0">
               <div className="text-center">
-                <div className="text-xs lg:text-sm text-gray-500 dark:text-gray-400 mb-1 lg:mb-2">Базовая стоимость курса</div>
-                <div className="text-xl lg:text-2xl xl:text-4xl font-bold text-gray-900 dark:text-white">
+                <div className="text-xs text-gray-500 dark:text-gray-400">Базовая стоимость</div>
+                <div className="text-lg font-bold text-gray-900 dark:text-white">
                   {formatPrice(calculation.baseCost)}
                 </div>
                 <div className="text-xs text-gray-500 dark:text-gray-400">

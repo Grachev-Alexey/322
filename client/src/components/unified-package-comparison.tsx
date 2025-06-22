@@ -107,9 +107,9 @@ export default function UnifiedPackageComparison({
   };
 
   return (
-    <div className="space-y-3">
-      {/* Package Headers - компактные заголовки */}
-      <div className="grid grid-cols-4 gap-3">
+    <div className="space-y-2">
+      {/* Package Headers - очень компактные заголовки */}
+      <div className="grid grid-cols-4 gap-2">
         <div></div>
         {packageTypes.map((packageType) => {
           const info = packageInfo[packageType];
@@ -121,31 +121,31 @@ export default function UnifiedPackageComparison({
           return (
             <div 
               key={packageType}
-              className={`relative p-3 rounded-lg border transition-all duration-300 ${
+              className={`relative p-2 rounded border transition-all duration-300 ${
                 isSelected 
-                  ? `${info.borderColor} shadow-lg ${info.bgColor}` 
+                  ? `${info.borderColor} shadow ${info.bgColor}` 
                   : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
               }`}
             >
               {isPopular && (
                 <div className="absolute -top-1 left-1/2 transform -translate-x-1/2 z-10">
-                  <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-2 py-0.5 text-xs">
-                    Популярный
+                  <Badge className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-1 py-0.5 text-xs">
+                    Топ
                   </Badge>
                 </div>
               )}
               
               {packageType === 'vip' && (
-                <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center z-10">
-                  <Crown className="text-white" size={10} />
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center z-10">
+                  <Crown className="text-white" size={8} />
                 </div>
               )}
               
               <div className="text-center">
-                <div className={`w-8 h-8 mx-auto mb-1 bg-gradient-to-r ${info.gradient} rounded-lg flex items-center justify-center`}>
-                  <Icon className="text-white" size={16} />
+                <div className={`w-6 h-6 mx-auto mb-1 bg-gradient-to-r ${info.gradient} rounded flex items-center justify-center`}>
+                  <Icon className="text-white" size={12} />
                 </div>
-                <h3 className="font-bold text-gray-900 dark:text-white text-sm">
+                <h3 className="font-bold text-gray-900 dark:text-white text-xs">
                   {packageData?.name || info.title}
                 </h3>
                 <p className="text-xs text-gray-600 dark:text-gray-400">
@@ -157,29 +157,24 @@ export default function UnifiedPackageComparison({
         })}
       </div>
 
-      {/* Perks Comparison Table - компактная таблица */}
+      {/* Perks Comparison Table - максимально компактная таблица */}
       {uniquePerks.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <div className="bg-white dark:bg-gray-800 rounded border border-gray-200 dark:border-gray-700 overflow-hidden">
           <div className="divide-y divide-gray-100 dark:divide-gray-700">
             {uniquePerks.map((perk, index) => {
               const IconComponent = (Icons as any)[perk.icon] || Check;
               
               return (
-                <div key={perk.id} className={`grid grid-cols-4 gap-3 py-2 px-3 ${index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-750' : 'bg-white dark:bg-gray-800'}`}>
+                <div key={perk.id} className={`grid grid-cols-4 gap-2 py-1 px-2 ${index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-750' : 'bg-white dark:bg-gray-800'}`}>
                   {/* Perk Name */}
-                  <div className="flex items-center space-x-2">
-                    <div className="p-1 rounded bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 flex-shrink-0">
-                      <IconComponent className="h-3 w-3 text-blue-600 dark:text-blue-400" />
+                  <div className="flex items-center space-x-1">
+                    <div className="p-0.5 rounded bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 flex-shrink-0">
+                      <IconComponent className="h-2 w-2 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div className="min-w-0">
-                      <div className="font-medium text-gray-900 dark:text-white text-sm leading-tight">
+                      <div className="font-medium text-gray-900 dark:text-white text-xs leading-tight">
                         {perk.name}
                       </div>
-                      {perk.description && (
-                        <div className="text-xs text-gray-600 dark:text-gray-400 leading-tight">
-                          {perk.description}
-                        </div>
-                      )}
                     </div>
                   </div>
                   
@@ -190,46 +185,34 @@ export default function UnifiedPackageComparison({
                     const isSelected = selectedPackage === packageType;
                     
                     return (
-                      <div key={packageType} className={`flex items-center justify-center py-1 transition-all duration-300 ${
+                      <div key={packageType} className={`flex items-center justify-center transition-all duration-300 ${
                         isSelected ? `${info.bgColor} rounded` : ''
                       }`}>
                         {!perkValue || !perkValue.isActive ? (
                           <div className="text-center">
-                            <X className="h-3 w-3 text-red-400 mx-auto" />
-                            <span className="text-xs text-gray-400 block">Нет</span>
+                            <X className="h-2 w-2 text-red-400 mx-auto" />
                           </div>
                         ) : (
                           <div className="text-center">
                             {perkValue.valueType === 'boolean' ? (
                               perkValue.booleanValue ? (
-                                <>
-                                  <div className={`p-1 rounded bg-gradient-to-r ${info.gradient} mx-auto w-fit`}>
-                                    <Check className="h-3 w-3 text-white" />
-                                  </div>
-                                  <span className="text-xs font-medium text-green-600 dark:text-green-400 block">Да</span>
-                                </>
+                                <div className={`p-0.5 rounded bg-gradient-to-r ${info.gradient} mx-auto w-fit`}>
+                                  <Check className="h-2 w-2 text-white" />
+                                </div>
                               ) : (
-                                <>
-                                  <X className="h-3 w-3 text-red-400 mx-auto" />
-                                  <span className="text-xs text-gray-400 block">Нет</span>
-                                </>
+                                <X className="h-2 w-2 text-red-400 mx-auto" />
                               )
                             ) : (
                               <>
-                                <div className={`px-2 py-1 rounded text-xs font-semibold ${
+                                <div className={`px-1 py-0.5 rounded text-xs font-semibold ${
                                   perkValue.isHighlighted 
-                                    ? `bg-gradient-to-r ${info.gradient} text-white shadow`
+                                    ? `bg-gradient-to-r ${info.gradient} text-white`
                                     : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
                                 }`}>
                                   {perkValue.displayValue}
                                 </div>
                                 {perkValue.isHighlighted && (
-                                  <div className="flex items-center justify-center space-x-1 mt-1">
-                                    <Sparkles className="h-2 w-2 text-yellow-500" />
-                                    <span className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">
-                                      Топ
-                                    </span>
-                                  </div>
+                                  <Sparkles className="h-1 w-1 text-yellow-500 mx-auto mt-0.5" />
                                 )}
                               </>
                             )}
@@ -245,8 +228,8 @@ export default function UnifiedPackageComparison({
         </div>
       )}
 
-      {/* Package Pricing and Selection - компактные карточки */}
-      <div className="grid grid-cols-4 gap-3">
+      {/* Package Pricing and Selection - максимально компактные карточки */}
+      <div className="grid grid-cols-4 gap-2">
         <div></div>
         {packageTypes.map((packageType) => {
           const info = packageInfo[packageType];
@@ -260,44 +243,44 @@ export default function UnifiedPackageComparison({
           return (
             <div 
               key={packageType}
-              className={`border transition-all duration-300 rounded-lg overflow-hidden ${
+              className={`border transition-all duration-300 rounded overflow-hidden ${
                 isSelected 
-                  ? `${info.borderColor} shadow-lg ${info.bgColor}` 
+                  ? `${info.borderColor} shadow ${info.bgColor}` 
                   : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
               }`}
             >
               {/* Discount Badge */}
-              <div className={`p-2 text-center bg-gradient-to-r ${info.gradient}`}>
-                <div className="text-sm font-bold text-white">
+              <div className={`p-1 text-center bg-gradient-to-r ${info.gradient}`}>
+                <div className="text-xs font-bold text-white">
                   {discountPercent}% скидка
                 </div>
               </div>
               
               {/* Pricing */}
-              <div className="p-3 space-y-2">
+              <div className="p-2 space-y-1">
                 <div className="text-center">
                   <div className="text-xs text-gray-500 line-through">
                     {formatPrice(calculation.baseCost)}
                   </div>
-                  <div className="text-lg font-bold text-gray-900 dark:text-white">
+                  <div className="text-sm font-bold text-gray-900 dark:text-white">
                     {formatPrice(data.finalCost)}
                   </div>
                   <div className="text-xs text-green-600 font-semibold">
-                    Экономия: {formatPrice(data.totalSavings)}
+                    -{formatPrice(data.totalSavings)}
                   </div>
                 </div>
                 
                 {/* Additional Info */}
                 {(packageData.giftSessions > 0 || data.monthlyPayment > 0) && (
-                  <div className="space-y-1">
+                  <div className="space-y-0.5">
                     {packageData.giftSessions > 0 && (
-                      <div className="bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-400 px-2 py-1 rounded text-xs text-center font-medium">
-                        +{packageData.giftSessions} подарочных
+                      <div className="bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-400 px-1 py-0.5 rounded text-xs text-center font-medium">
+                        +{packageData.giftSessions}
                       </div>
                     )}
                     
                     {data.monthlyPayment > 0 && (
-                      <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-1 rounded text-xs text-center font-medium">
+                      <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-1 py-0.5 rounded text-xs text-center font-medium">
                         {formatPrice(data.monthlyPayment)}/мес
                       </div>
                     )}
@@ -317,7 +300,7 @@ export default function UnifiedPackageComparison({
                 >
                   {isSelected ? (
                     <div className="flex items-center space-x-1">
-                      <Check className="h-3 w-3" />
+                      <Check className="h-2 w-2" />
                       <span className="text-xs">Выбрано</span>
                     </div>
                   ) : (
