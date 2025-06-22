@@ -9,6 +9,7 @@ import { formatPrice } from "@/lib/utils";
 import ServiceSelector from "@/components/service-selector";
 import ClientModal from "@/components/client-modal";
 import { usePackagePerks, type PackagePerkValue } from "@/hooks/use-package-perks";
+import UnifiedPackageComparison from "@/components/unified-package-comparison";
 
 interface User {
   id: number;
@@ -930,12 +931,13 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
           {calculation && (
             <div className="flex-1 overflow-hidden">
               <div className="h-full overflow-y-auto pb-4">
-                <IntegratedPackageComparison 
+                <UnifiedPackageComparison 
                   calculation={calculation}
                   packages={packages as Package[]}
                   selectedPackage={selectedPackage}
                   onPackageSelect={setSelectedPackage}
-                  procedureCount={procedureCount}
+                  downPayment={downPayment}
+                  installmentMonths={installmentMonths}
                 />
               </div>
             </div>
