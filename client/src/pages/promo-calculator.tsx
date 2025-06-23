@@ -189,17 +189,19 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
               
               <div className="text-center mb-2">
                 <input
-                  type="text"
-                  value={formatPrice(downPayment)}
+                  type="number"
+                  value={downPayment}
                   onChange={(e) => {
-                    // Remove all non-digits and convert to number
-                    const numericValue = parseInt(e.target.value.replace(/\D/g, '')) || 0;
-                    const constrainedValue = Math.max(getMinDownPayment(), Math.min(getMaxFinalCost(), numericValue));
+                    const value = parseInt(e.target.value) || 0;
+                    const constrainedValue = Math.max(getMinDownPayment(), Math.min(getMaxFinalCost(), value));
                     setDownPayment(constrainedValue);
                   }}
+                  min={getMinDownPayment()}
+                  max={getMaxFinalCost()}
                   className="text-lg font-bold text-premium bg-transparent border-none text-center w-full focus:outline-none focus:ring-2 focus:ring-purple-500 rounded px-2 py-1"
-                  placeholder={formatPrice(getMinDownPayment())}
+                  style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' }}
                 />
+                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">₽</div>
               </div>
               
               <RangeSlider
