@@ -238,7 +238,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
     const [textValue, setTextValue] = useState(currentValue?.textValue || '');
     const [numberValue, setNumberValue] = useState(currentValue?.numberValue?.toString() || '');
     const [tooltip, setTooltip] = useState(currentValue?.tooltip || '');
-    const [customIcon, setCustomIcon] = useState(currentValue?.customIcon || '');
+    const [customIcon, setCustomIcon] = useState(currentValue?.customIcon || 'none');
     const [customIconColor, setCustomIconColor] = useState(currentValue?.customIconColor || '#000000');
     const [isHighlighted, setIsHighlighted] = useState(currentValue?.isHighlighted || false);
     const [isBest, setIsBest] = useState(currentValue?.isBest || false);
@@ -251,7 +251,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
         textValue: valueType === 'text' ? textValue : null,
         numberValue: valueType === 'number' ? parseFloat(numberValue) || null : null,
         tooltip: tooltip || null,
-        customIcon: customIcon || null,
+        customIcon: customIcon && customIcon !== 'none' ? customIcon : null,
         customIconColor: customIconColor || null,
         isHighlighted,
         isBest
@@ -366,7 +366,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
                 <SelectValue placeholder="Выберите иконку" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Без иконки</SelectItem>
+                <SelectItem value="none">Без иконки</SelectItem>
                 {availableIcons.map(icon => (
                   <SelectItem key={icon.name} value={icon.name}>
                     <div className="flex items-center space-x-2">
