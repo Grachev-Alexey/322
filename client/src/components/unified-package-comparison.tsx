@@ -134,14 +134,6 @@ export default function UnifiedPackageComparison({
     }
   };
 
-  const getPackageSubtitle = (packageType: string) => {
-    switch (packageType) {
-      case 'vip': return '(от 25 000 руб)';
-      case 'standard': return 'Первый взнос: 50%, от 15 000 руб';
-      case 'economy': return 'Первый взнос: менее 50%. Мин. 5 000 руб';
-      default: return '';
-    }
-  };
 
   return (
     <TooltipProvider>
@@ -169,9 +161,6 @@ export default function UnifiedPackageComparison({
                   </div>
                   <div className="font-bold text-gray-900 dark:text-white text-sm">
                     {getPackageName(packageType)}
-                  </div>
-                  <div className="text-xs text-gray-600 dark:text-gray-400 leading-tight">
-                    {getPackageSubtitle(packageType)}
                   </div>
                 </div>
               );
