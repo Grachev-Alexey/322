@@ -514,9 +514,14 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
                           Синхронизация услуг с Yclients и управление их отображением в калькуляторе.
                         </p>
                         
-                        <Button onClick={syncServices} disabled={loading} className="btn-primary">
-                          {loading ? "Синхронизация..." : "Синхронизировать услуги"}
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button onClick={syncServices} disabled={loading} className="btn-primary">
+                            {loading ? "Синхронизация..." : "Синхронизировать услуги"}
+                          </Button>
+                          <Button onClick={syncSubscriptionTypes} disabled={loading} variant="outline">
+                            {loading ? "Синхронизация..." : "Синхронизировать абонементы"}
+                          </Button>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>
