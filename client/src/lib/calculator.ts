@@ -112,10 +112,11 @@ export function calculatePackagePricing(
       giftSessionValue = baseCost / totalProcedures * 1; // 1 full session for Standard
     }
 
-    // Total savings
+    // Total savings - gift sessions only for display, not actual cost reduction
     const packageDiscount = baseCost * discount;
-    const totalSavings = packageDiscount + certificateDiscount + additionalDiscount + giftSessionValue;
-    const finalCost = baseCost - totalSavings;
+    const actualDiscounts = packageDiscount + certificateDiscount + additionalDiscount;
+    const totalSavings = actualDiscounts + giftSessionValue; // Total for display
+    const finalCost = baseCost - actualDiscounts; // Actual cost without gift sessions
 
     // All packages are available for selection - payment constraints will be applied when selected
     const minDownPayment = Math.max(

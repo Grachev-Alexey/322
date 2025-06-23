@@ -283,12 +283,19 @@ export default function UnifiedPackageComparison({
                   </div>
                   <div className="text-xs lg:text-sm text-green-600 font-semibold">
                     Экономия: {formatPrice(data.totalSavings)}
-                    {hasAdditionalDiscount && (
-                      <span className="block text-purple-600 font-medium">
-                        +{((bulkThreshold && calculation?.packages[packageType]?.appliedDiscounts?.find(d => d.type === 'bulk')?.amount) ? 
-                          Math.round((calculation.packages[packageType].appliedDiscounts.find(d => d.type === 'bulk').amount / calculation.baseCost) * 100) : 3)}% за {actualThreshold}+ процедур
-                      </span>
-                    )}
+                    <div className="text-xs text-gray-500 space-y-0.5 mt-1">
+                      {data.appliedDiscounts.map((discount: any, idx: number) => (
+                        <div key={idx} className="flex justify-between">
+                          <span>
+                            {discount.type === 'package' && `Скидка пакета ${discountPercent}%`}
+                            {discount.type === 'bulk' && `За ${actualThreshold}+ процедур`}
+                            {discount.type === 'certificate' && 'Сертификат'}
+                            {discount.type === 'gift_sessions' && `Подарочные сессии`}
+                          </span>
+                          <span>-{formatPrice(discount.amount)}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
                 
