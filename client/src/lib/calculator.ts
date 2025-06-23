@@ -38,7 +38,8 @@ export interface CalculationResult {
 
 export function calculatePackagePricing(
   baseCost: number,
-  params: CalculationParams
+  params: CalculationParams,
+  calculatorSettings?: any
 ): CalculationResult {
   const { packageConfig, freeZones } = params;
   
@@ -96,12 +97,15 @@ export function calculatePackagePricing(
       discount = Math.max(discount, packageData.dynamicDiscount);
     }
 
-    // Calculate certificate discount (max 3000 RUB)
-    const certificateDiscount = params.usedCertificate ? Math.min(baseCost * 0.05, 3000) : 0;
+    // Calculate certificate discount using configurable percentage
+    const certificateDiscountPercent = calculatorSettings?.certificateDiscountPercentage || 0.025;
+    const certificateDiscount = params.usedCertificate ? baseCost * certificateDiscountPercent : 0;
     
-    // Calculate bulk discount (2.5% for 15+ procedures) - use service count for this
+    // Calculate bulk discount using configurable threshold and percentage
+    const bulkThreshold = calculatorSettings?.bulkDiscountThreshold || 15;
+    const bulkDiscountPercent = calculatorSettings?.bulkDiscountPercentage || 0.025;
     const serviceCount = params.services.reduce((sum, s) => sum + s.quantity, 0);
-    const additionalDiscount = serviceCount >= 15 ? baseCost * 0.025 : 0;
+    const additionalDiscount = serviceCount >= bulkThreshold ? baseCost * bulkDiscountPercent : 0;
 
     // Calculate gift session value based on package type
     // Gift sessions are full procedure sessions, not individual visits

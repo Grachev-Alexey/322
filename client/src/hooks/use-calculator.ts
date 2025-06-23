@@ -79,6 +79,34 @@ export function useCalculator() {
     gcTime: 0  // Updated from cacheTime to gcTime
   });
 
+  // Get calculator settings from config
+  const { data: calculatorSettings } = useQuery({
+    queryKey: ['/api/config/calculator-settings'],
+    queryFn: async () => {
+      const configs = await Promise.all([
+        fetch('/api/config/minimum_down_payment', { credentials: 'include' }),
+        fetch('/api/config/bulk_discount_threshold', { credentials: 'include' }),
+        fetch('/api/config/bulk_discount_percentage', { credentials: 'include' }),
+        fetch('/api/config/installment_months_options', { credentials: 'include' }),
+        fetch('/api/config/certificate_discount_percentage', { credentials: 'include' })
+      ]);
+
+      const [minPayment, bulkThreshold, bulkPercentage, monthsOptions, certificateDiscount] = await Promise.all(
+        configs.map(response => response.ok ? response.json() : null)
+      );
+
+      return {
+        minimumDownPayment: minPayment || 5000,
+        bulkDiscountThreshold: bulkThreshold || 15,
+        bulkDiscountPercentage: bulkPercentage || 0.05,
+        installmentMonthsOptions: monthsOptions || [2, 3, 4, 5, 6],
+        certificateDiscountPercentage: certificateDiscount || 0.025
+      };
+    },
+    enabled: true,
+    staleTime: 5 * 60 * 1000 // Cache for 5 minutes
+  });
+
   // Calculate total procedures (for display only, not for discount calculation)
   const totalProcedures = useMemo(() => {
     return selectedServices.reduce((sum, service) => sum + service.quantity, 0) * procedureCount;
@@ -145,8 +173,8 @@ export function useCalculator() {
         packageConfig
       };
 
-      // Use the centralized calculation function
-      const result = calculatePackagePricing(baseCost, calculationParams);
+      // Use the centralized calculation function with calculator settings
+      const result = calculatePackagePricing(baseCost, calculationParams, calculatorSettings);
       
       console.log('Final calculation result:', result);
       console.log(`15+ discount applied based on slider value: ${procedures}`);
@@ -237,7 +265,7 @@ export function useCalculator() {
           }
         }
       }
-    }, [calculation, downPayment, packages]),
+    }, [calculation, downPayment, packages, calculatorSettings]),
     isLoading: !calculation && selectedServices.length > 0,
     getMaxDownPayment: () => {
       if (!selectedPackage || !calculation?.packages || packages.length === 0) return 50000;
@@ -272,12 +300,9 @@ export function useCalculator() {
       const minPaymentPercent = parseFloat(packageConfig.minDownPaymentPercent.toString());
       const percentageBasedMin = Math.round(packageData.finalCost * minPaymentPercent);
       
-      // Use absolute minimum from DB only as fallback for very small packages
-      const minCostFromDB = parseFloat(packageConfig.minCost.toString());
-      
-      // For most cases, use percentage-based calculation
-      // Only use absolute minimum if percentage results in a smaller amount
-      return Math.max(percentageBasedMin, Math.min(minCostFromDB, percentageBasedMin));
+      // Use the higher of percentage-based minimum or global minimum
+      const globalMin = calculatorSettings?.minimumDownPayment || 5000;
+      return Math.max(percentageBasedMin, globalMin);
     }
   };
 }

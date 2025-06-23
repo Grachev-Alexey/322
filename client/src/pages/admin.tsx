@@ -8,7 +8,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Settings, Users, Database, Package, LogOut } from "lucide-react";
+import { Settings, Users, Database, Package, LogOut, Calculator } from "lucide-react";
 import AdminDashboard from "@/components/admin-dashboard";
 import AdminPerks from "@/components/admin-perks";
 
@@ -38,6 +38,210 @@ interface PackageType {
 }
 
 
+
+// Calculator Settings Component
+function CalculatorSettings({ loading, setLoading }: { loading: boolean; setLoading: (loading: boolean) => void }) {
+  const [settings, setSettings] = useState({
+    minimumDownPayment: 5000,
+    bulkDiscountThreshold: 15,
+    bulkDiscountPercentage: 0.05,
+    installmentMonthsOptions: [2, 3, 4, 5, 6],
+    certificateDiscountPercentage: 0.025
+  });
+  const { toast } = useToast();
+
+  useEffect(() => {
+    loadSettings();
+  }, []);
+
+  const loadSettings = async () => {
+    try {
+      const configs = await Promise.all([
+        fetch('/api/config/minimum_down_payment', { credentials: 'include' }),
+        fetch('/api/config/bulk_discount_threshold', { credentials: 'include' }),
+        fetch('/api/config/bulk_discount_percentage', { credentials: 'include' }),
+        fetch('/api/config/installment_months_options', { credentials: 'include' }),
+        fetch('/api/config/certificate_discount_percentage', { credentials: 'include' })
+      ]);
+
+      const [minPayment, bulkThreshold, bulkPercentage, monthsOptions, certificateDiscount] = await Promise.all(
+        configs.map(response => response.ok ? response.json() : null)
+      );
+
+      setSettings({
+        minimumDownPayment: minPayment || 5000,
+        bulkDiscountThreshold: bulkThreshold || 15,
+        bulkDiscountPercentage: bulkPercentage || 0.05,
+        installmentMonthsOptions: monthsOptions || [2, 3, 4, 5, 6],
+        certificateDiscountPercentage: certificateDiscount || 0.025
+      });
+    } catch (error) {
+      console.error('Error loading settings:', error);
+    }
+  };
+
+  const saveSettings = async () => {
+    setLoading(true);
+    try {
+      const configsToSave = [
+        { key: 'minimum_down_payment', value: settings.minimumDownPayment },
+        { key: 'bulk_discount_threshold', value: settings.bulkDiscountThreshold },
+        { key: 'bulk_discount_percentage', value: settings.bulkDiscountPercentage },
+        { key: 'installment_months_options', value: settings.installmentMonthsOptions },
+        { key: 'certificate_discount_percentage', value: settings.certificateDiscountPercentage }
+      ];
+
+      await Promise.all(
+        configsToSave.map(config =>
+          fetch('/api/config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(config)
+          })
+        )
+      );
+
+      toast({
+        title: "Успешно",
+        description: "Настройки калькулятора сохранены"
+      });
+    } catch (error) {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось сохранить настройки",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="space-y-6 max-h-[calc(100vh-250px)] overflow-y-auto">
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Calculator size={20} />
+            Настройки калькулятора
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-6">
+            <div>
+              <Label htmlFor="minPayment">Минимальный первый взнос (руб.)</Label>
+              <Input
+                id="minPayment"
+                type="number"
+                value={settings.minimumDownPayment}
+                onChange={(e) => setSettings({
+                  ...settings,
+                  minimumDownPayment: parseInt(e.target.value) || 0
+                })}
+                placeholder="5000"
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                Абсолютный минимум для всех пакетов
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="bulkThreshold">Количество процедур для скидки</Label>
+              <Input
+                id="bulkThreshold"
+                type="number"
+                value={settings.bulkDiscountThreshold}
+                onChange={(e) => setSettings({
+                  ...settings,
+                  bulkDiscountThreshold: parseInt(e.target.value) || 0
+                })}
+                placeholder="15"
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                С какого количества процедур начинается скидка
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="bulkDiscount">Размер скидки за большое количество (%)</Label>
+              <Input
+                id="bulkDiscount"
+                type="number"
+                step="0.01"
+                max="1"
+                min="0"
+                value={settings.bulkDiscountPercentage * 100}
+                onChange={(e) => setSettings({
+                  ...settings,
+                  bulkDiscountPercentage: (parseFloat(e.target.value) || 0) / 100
+                })}
+                placeholder="5"
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                Процент скидки за количество процедур (например, 5 для 5%)
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="certificateDiscount">Скидка по сертификату (%)</Label>
+              <Input
+                id="certificateDiscount"
+                type="number"
+                step="0.01"
+                max="1"
+                min="0"
+                value={settings.certificateDiscountPercentage * 100}
+                onChange={(e) => setSettings({
+                  ...settings,
+                  certificateDiscountPercentage: (parseFloat(e.target.value) || 0) / 100
+                })}
+                placeholder="2.5"
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                Процент скидки при использовании сертификата (например, 2.5 для 2.5%)
+              </p>
+            </div>
+
+            <div>
+              <Label>Доступные месяцы рассрочки</Label>
+              <div className="grid grid-cols-6 gap-2 mt-2">
+                {[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(month => (
+                  <label key={month} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      checked={settings.installmentMonthsOptions.includes(month)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setSettings({
+                            ...settings,
+                            installmentMonthsOptions: [...settings.installmentMonthsOptions, month].sort((a, b) => a - b)
+                          });
+                        } else {
+                          setSettings({
+                            ...settings,
+                            installmentMonthsOptions: settings.installmentMonthsOptions.filter(m => m !== month)
+                          });
+                        }
+                      }}
+                    />
+                    <span className="text-sm">{month}</span>
+                  </label>
+                ))}
+              </div>
+              <p className="text-sm text-gray-500 mt-1">
+                Выберите доступные варианты рассрочки
+              </p>
+            </div>
+
+            <Button onClick={saveSettings} disabled={loading} className="w-full">
+              {loading ? "Сохранение..." : "Сохранить настройки"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
 
 export default function AdminPage({ user, onLogout }: AdminPageProps) {
   const [yclientsConfig, setYclientsConfig] = useState({
@@ -228,12 +432,13 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
       <main className="flex-1 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-full">
           <Tabs defaultValue="dashboard" className="h-full flex flex-col">
-            <TabsList className="grid w-full grid-cols-6 flex-shrink-0">
+            <TabsList className="grid w-full grid-cols-7 flex-shrink-0">
               <TabsTrigger value="dashboard">Обзор</TabsTrigger>
               <TabsTrigger value="users">Пользователи</TabsTrigger>
               <TabsTrigger value="services">Услуги</TabsTrigger>
               <TabsTrigger value="packages">Пакеты</TabsTrigger>
               <TabsTrigger value="perks">Перки</TabsTrigger>
+              <TabsTrigger value="calculator">Настройки</TabsTrigger>
               <TabsTrigger value="yclients">Yclients API</TabsTrigger>
             </TabsList>
 
@@ -283,6 +488,10 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
               
               <TabsContent value="perks">
                 <AdminPerks loading={loading} setLoading={setLoading} />
+              </TabsContent>
+
+              <TabsContent value="calculator">
+                <CalculatorSettings loading={loading} setLoading={setLoading} />
               </TabsContent>
 
               <TabsContent value="yclients">
