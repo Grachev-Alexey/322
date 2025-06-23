@@ -125,12 +125,15 @@ export default function UnifiedPackageComparison({
     return calculation.packages[packageType as keyof typeof calculation.packages];
   };
 
+  // Check if we have valid calculation data
+  const hasValidCalculation = calculation && calculation.packages && Object.keys(calculation.packages).length > 0;
+
   return (
     <TooltipProvider>
       <div className="flex flex-col space-y-2 lg:space-y-3 h-full shadow-safe">
         {/* Unified Table */}
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 overflow-hidden flex-1 min-h-0">
-          <div className="overflow-y-auto table-scroll" style={{ maxHeight: 'min(500px, calc(100vh - 200px))', minHeight: '400px' }}>
+          <div className="overflow-y-auto table-scroll" style={{ height: '100%' }}>
             
             {/* Table Header with Package Names */}
             <div className="grid grid-cols-4 gap-1 lg:gap-2 p-2 lg:p-3 bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 sticky top-0 z-10">
@@ -178,6 +181,92 @@ export default function UnifiedPackageComparison({
                   <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-gray-100 dark:bg-gray-600 rounded-lg' : ''}`}>
                     <span className="text-xs lg:text-sm font-semibold text-green-600 dark:text-green-400">
                       {discountPercent}%
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Minimum Cost Row */}
+            <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
+                Минимальная стоимость
+              </div>
+              {packageTypes.map((packageType) => {
+                const packageData = packages.find((p: Package) => p.type === packageType);
+                const isSelected = selectedPackage === packageType;
+                const minCost = packageData ? parseFloat(packageData.minCost) : 0;
+                
+                return (
+                  <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-gray-100 dark:bg-gray-600 rounded-lg' : ''}`}>
+                    <span className="text-xs lg:text-sm font-semibold text-gray-700 dark:text-gray-300">
+                      {formatPrice(minCost)}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Down Payment Requirement Row */}
+            <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-750">
+              <div className="flex items-center font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
+                Мин. первоначальный взнос
+              </div>
+              {packageTypes.map((packageType) => {
+                const packageData = packages.find((p: Package) => p.type === packageType);
+                const isSelected = selectedPackage === packageType;
+                const downPaymentPercent = packageData ? parseFloat(packageData.minDownPaymentPercent) : 0;
+                
+                return (
+                  <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-gray-100 dark:bg-gray-600 rounded-lg' : ''}`}>
+                    <span className="text-xs lg:text-sm font-semibold text-purple-600 dark:text-purple-400">
+                      {downPaymentPercent}%
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Payment Requirement Row */}
+            <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
+                Требует полную оплату
+              </div>
+              {packageTypes.map((packageType) => {
+                const packageData = packages.find((p: Package) => p.type === packageType);
+                const isSelected = selectedPackage === packageType;
+                const requiresFullPayment = packageData?.requiresFullPayment;
+                
+                return (
+                  <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-gray-100 dark:bg-gray-600 rounded-lg' : ''}`}>
+                    <div className="flex items-center justify-center">
+                      {requiresFullPayment ? (
+                        <div className="p-1 rounded-lg bg-green-500 mx-auto w-fit shadow">
+                          <Check className="h-2.5 w-2.5 lg:h-3 lg:w-3 text-white" />
+                        </div>
+                      ) : (
+                        <X className="h-3 w-3 lg:h-4 lg:w-4 text-red-400 mx-auto" />
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Gift Sessions Row */}
+            <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-750">
+              <div className="flex items-center font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
+                Подарочные процедуры
+              </div>
+              {packageTypes.map((packageType) => {
+                const packageData = packages.find((p: Package) => p.type === packageType);
+                const isSelected = selectedPackage === packageType;
+                const giftSessions = packageData?.giftSessions || 0;
+                
+                return (
+                  <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-gray-100 dark:bg-gray-600 rounded-lg' : ''}`}>
+                    <span className="text-xs lg:text-sm font-semibold text-pink-600 dark:text-pink-400">
+                      {giftSessions > 0 ? `+${giftSessions}` : '0'}
                     </span>
                   </div>
                 );
@@ -306,6 +395,25 @@ export default function UnifiedPackageComparison({
               );
             })}
 
+            {/* Total Savings Row */}
+            <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-100 dark:border-gray-700 bg-green-50 dark:bg-green-900/20">
+              <div className="flex items-center font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
+                Общая экономия
+              </div>
+              {packageTypes.map((packageType) => {
+                const data = getPackageData(packageType);
+                const isSelected = selectedPackage === packageType;
+                
+                return (
+                  <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-green-100 dark:bg-green-800 rounded-lg' : ''}`}>
+                    <span className="text-xs lg:text-sm font-bold text-green-700 dark:text-green-300">
+                      {data && data.totalSavings > 0 ? formatPrice(data.totalSavings) : '-'}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
             {/* Cost Calculation Rows */}
             <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-100 dark:border-gray-700 bg-blue-50 dark:bg-blue-900/20">
               <div className="flex items-center font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
@@ -318,7 +426,7 @@ export default function UnifiedPackageComparison({
                 return (
                   <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-blue-100 dark:bg-blue-800 rounded-lg' : ''}`}>
                     <span className="text-xs lg:text-sm font-bold text-blue-700 dark:text-blue-300">
-                      {data ? formatPrice(data.finalCost) : '-'}
+                      {data && data.finalCost ? formatPrice(data.finalCost) : (hasValidCalculation ? formatPrice(0) : 'Выберите услуги')}
                     </span>
                   </div>
                 );
@@ -337,7 +445,8 @@ export default function UnifiedPackageComparison({
                 return (
                   <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-gray-100 dark:bg-gray-600 rounded-lg' : ''}`}>
                     <span className="text-xs lg:text-sm font-semibold text-gray-700 dark:text-gray-300">
-                      {data && data.monthlyPayment > 0 ? formatPrice(data.monthlyPayment) : '-'}
+                      {data && data.monthlyPayment > 0 ? formatPrice(data.monthlyPayment) : 
+                       (hasValidCalculation && installmentMonths > 1 ? 'Рассчитывается' : '-')}
                     </span>
                   </div>
                 );
@@ -359,7 +468,7 @@ export default function UnifiedPackageComparison({
                       variant={isSelected ? "default" : "outline"}
                       size="sm"
                       onClick={() => onPackageSelect(packageType)}
-                      disabled={!data?.isAvailable}
+                      disabled={data?.isAvailable === false}
                       className="w-full h-8"
                     >
                       {isSelected ? (
