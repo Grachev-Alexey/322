@@ -139,8 +139,8 @@ export default function UnifiedPackageComparison({
     <TooltipProvider>
       <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col h-full">
         {/* Package Headers */}
-        <div className="bg-gray-50 dark:bg-gray-800 px-4 py-3">
-          <div className="grid grid-cols-4 gap-1">
+        <div className="bg-gray-50 dark:bg-gray-800 px-2 py-2">
+          <div className="grid grid-cols-4 gap-0.5">
             <div className="text-sm font-medium text-gray-700 dark:text-gray-300"></div>
             {packageTypes.map((packageType) => {
               const Icon = getPackageIcon(packageType);
@@ -176,7 +176,7 @@ export default function UnifiedPackageComparison({
             const IconComponent = (Icons as any)[perk.icon] || Check;
             
             return (
-              <div key={perk.id} className="grid grid-cols-4 gap-1 py-2 px-4 border-b border-gray-100 dark:border-gray-700">
+              <div key={perk.id} className="grid grid-cols-4 gap-0.5 py-1 px-2 border-b border-gray-50 dark:border-gray-800">
                 {/* Perk Name */}
                 <div className="flex items-center space-x-2">
                   {perk.icon && perk.icon !== 'none' && (
@@ -250,18 +250,17 @@ export default function UnifiedPackageComparison({
           })}
 
           {/* Free Sessions Row */}
-          <div className="grid grid-cols-4 gap-1 py-2 px-4 border-b border-gray-100 dark:border-gray-700">
-            <div className="text-sm font-medium text-gray-900 dark:text-white">
+          <div className="grid grid-cols-4 gap-0.5 py-1 px-2 border-b border-gray-50 dark:border-gray-800">
+            <div className="text-base font-medium text-gray-900 dark:text-white">
               Сеансы в подарок
             </div>
             {packageTypes.map((packageType) => {
               const packageData = packages.find((p: Package) => p.type === packageType);
-              const isSelected = selectedPackage === packageType;
               const giftSessions = packageData?.giftSessions || 0;
               
               return (
                 <div key={packageType} className="text-center py-1">
-                  <span className="text-sm font-bold text-gray-900 dark:text-white">
+                  <span className="text-base font-bold text-gray-900 dark:text-white">
                     {giftSessions > 0 ? giftSessions : '-'}
                   </span>
                 </div>
@@ -270,18 +269,17 @@ export default function UnifiedPackageComparison({
           </div>
 
           {/* Discount Row */}
-          <div className="grid grid-cols-4 gap-1 py-2 px-4 border-b border-gray-100 dark:border-gray-700">
+          <div className="grid grid-cols-4 gap-0.5 py-1 px-2 border-b border-gray-50 dark:border-gray-800">
             <div className="text-sm font-medium text-gray-900 dark:text-white">
               Скидка
             </div>
             {packageTypes.map((packageType) => {
               const packageData = packages.find((p: Package) => p.type === packageType);
-              const isSelected = selectedPackage === packageType;
               const discountPercent = packageData ? Math.round(parseFloat(packageData.discount) * 100) : 0;
               
               return (
                 <div key={packageType} className="text-center py-1">
-                  <span className="text-sm font-bold text-gray-900 dark:text-white">
+                  <span className="text-lg font-bold text-gray-900 dark:text-white">
                     {discountPercent}%
                   </span>
                 </div>
@@ -290,13 +288,12 @@ export default function UnifiedPackageComparison({
           </div>
 
           {/* Bonus Account Row */}
-          <div className="grid grid-cols-4 gap-1 py-2 px-4 border-b border-gray-100 dark:border-gray-700">
+          <div className="grid grid-cols-4 gap-0.5 py-1 px-2 border-b border-gray-50 dark:border-gray-800">
             <div className="text-sm font-medium text-gray-900 dark:text-white">
               Бонусный счет
             </div>
             {packageTypes.map((packageType) => {
               const packageData = packages.find((p: Package) => p.type === packageType);
-              const isSelected = selectedPackage === packageType;
               const bonusPercent = packageData ? Math.round(parseFloat(packageData.bonusAccountPercent) * 100) : 0;
               
               return (
@@ -311,11 +308,11 @@ export default function UnifiedPackageComparison({
           </div>
 
           {/* Subscription Cost Section */}
-          <div className="bg-gray-50 dark:bg-gray-800 py-3 px-4">
-            <div className="font-bold text-gray-900 dark:text-white text-sm mb-3">Итого стоимость абонемента</div>
+          <div className="py-2 px-2">
+            <div className="font-bold text-gray-900 dark:text-white text-lg mb-2">Итого стоимость абонемента</div>
             
             {/* Original Cost Row */}
-            <div className="grid grid-cols-4 gap-1 py-2 border-b border-gray-200 dark:border-gray-600">
+            <div className="grid grid-cols-4 gap-0.5 py-1 border-b border-gray-50 dark:border-gray-800">
               <div className="text-sm text-gray-700 dark:text-gray-300">
                 Первоначальная
               </div>
@@ -333,7 +330,7 @@ export default function UnifiedPackageComparison({
             </div>
 
             {/* Discount Amount Row */}
-            <div className="grid grid-cols-4 gap-1 py-2">
+            <div className="grid grid-cols-4 gap-0.5 py-1">
               <div className="text-sm text-gray-700 dark:text-gray-300">
                 Скидка
               </div>
@@ -354,8 +351,8 @@ export default function UnifiedPackageComparison({
 
           {/* Certificate Section - Only show if certificate is used */}
           {usedCertificate && (
-            <div className="py-3 px-4">
-              <div className="grid grid-cols-4 gap-1 py-2">
+            <div className="py-2 px-2">
+              <div className="grid grid-cols-4 gap-0.5 py-1">
                 <div className="text-sm font-medium text-gray-900 dark:text-white">
                   Сертификат
                 </div>
@@ -375,8 +372,8 @@ export default function UnifiedPackageComparison({
           )}
 
           {/* Final Cost Row */}
-          <div className="grid grid-cols-4 gap-1 py-3 px-4 border-b border-gray-100 dark:border-gray-700">
-            <div className="text-sm font-bold text-gray-900 dark:text-white">
+          <div className="grid grid-cols-4 gap-0.5 py-1 px-2 border-b border-gray-50 dark:border-gray-800">
+            <div className="text-lg font-bold text-gray-900 dark:text-white">
               Итого стоимость курса:
             </div>
             {packageTypes.map((packageType) => {
@@ -399,9 +396,9 @@ export default function UnifiedPackageComparison({
           </div>
 
           {/* Payment Details */}
-          <div className="bg-gray-50 dark:bg-gray-800 py-3 px-4">
+          <div className="py-2 px-2">
             {/* Down Payment Row */}
-            <div className="grid grid-cols-4 gap-1 py-2 border-b border-gray-200 dark:border-gray-600">
+            <div className="grid grid-cols-4 gap-0.5 py-1 border-b border-gray-50 dark:border-gray-800">
               <div className="text-sm text-gray-700 dark:text-gray-300">
                 Первый взнос:
               </div>
@@ -419,7 +416,7 @@ export default function UnifiedPackageComparison({
             </div>
 
             {/* Monthly Payment Row */}
-            <div className="grid grid-cols-4 gap-1 py-2">
+            <div className="grid grid-cols-4 gap-0.5 py-1">
               <div className="text-sm text-gray-700 dark:text-gray-300">
                 Платеж в месяц
               </div>
@@ -445,14 +442,13 @@ export default function UnifiedPackageComparison({
             </div>
             
             {/* Gift Procedures Cost Row */}
-            <div className="grid grid-cols-4 gap-1 py-2 border-b border-blue-200 dark:border-blue-700">
+            <div className="grid grid-cols-4 gap-0.5 py-1 border-b border-gray-50 dark:border-gray-800">
               <div className="text-sm text-gray-900 dark:text-white">
                 Стоимость подарочных процедур
               </div>
               {packageTypes.map((packageType) => {
                 const data = getPackageData(packageType);
                 const packageData = packages.find((p: Package) => p.type === packageType);
-                const isSelected = selectedPackage === packageType;
                 
                 // Calculate gift procedures value
                 const giftValue = data && packageData && (packageData.giftSessions || 0) > 0 && calculation.totalProcedures > 0
@@ -460,7 +456,7 @@ export default function UnifiedPackageComparison({
                   : 0;
                 
                 return (
-                  <div key={packageType} className={`text-center ${isSelected ? 'bg-blue-200 dark:bg-blue-800 rounded-lg py-1' : ''}`}>
+                  <div key={packageType} className="text-center py-1">
                     <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
                       {giftValue > 0 ? `${Math.round(giftValue).toLocaleString()} ₽` : '-'}
                     </span>
@@ -469,22 +465,39 @@ export default function UnifiedPackageComparison({
               })}
             </div>
 
+            {/* Free Zones Cost Row */}
+            <div className="grid grid-cols-4 gap-0.5 py-1 border-b border-gray-50 dark:border-gray-800">
+              <div className="text-sm text-gray-900 dark:text-white">
+                Стоимость бесплатных зон
+              </div>
+              {packageTypes.map((packageType) => {
+                const freeZoneValue = calculation?.freeZonesValue || 0;
+                
+                return (
+                  <div key={packageType} className="text-center py-1">
+                    <span className="text-sm font-semibold text-green-600 dark:text-green-400">
+                      {freeZoneValue > 0 ? `${Math.round(freeZoneValue).toLocaleString()} ₽` : '-'}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
             {/* Bonus Account Row */}
-            <div className="grid grid-cols-4 gap-1 py-2 border-b border-blue-200 dark:border-blue-700">
+            <div className="grid grid-cols-4 gap-0.5 py-1 border-b border-gray-50 dark:border-gray-800">
               <div className="text-sm text-gray-900 dark:text-white">
                 Бонусный счет
               </div>
               {packageTypes.map((packageType) => {
                 const data = getPackageData(packageType);
                 const packageData = packages.find((p: Package) => p.type === packageType);
-                const isSelected = selectedPackage === packageType;
                 
                 const bonusPercent = packageData ? parseFloat(packageData.bonusAccountPercent) : 0;
                 const bonusAmount = data && bonusPercent > 0 ? (data.finalCost * bonusPercent) : 0;
                 
                 return (
-                  <div key={packageType} className={`text-center ${isSelected ? 'bg-blue-200 dark:bg-blue-800 rounded-lg py-1' : ''}`}>
-                    <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+                  <div key={packageType} className="text-center py-1">
+                    <span className="text-sm font-semibold text-orange-600 dark:text-orange-400">
                       {bonusAmount > 0 ? `${Math.round(bonusAmount).toLocaleString()} ₽` : '-'}
                     </span>
                   </div>
@@ -493,7 +506,7 @@ export default function UnifiedPackageComparison({
             </div>
 
             {/* Total Gifts Value Row */}
-            <div className="grid grid-cols-4 gap-1 py-2">
+            <div className="grid grid-cols-4 gap-0.5 py-1">
               <div className="text-sm font-bold text-gray-900 dark:text-white">
                 Итого стоимость подарков:
               </div>
@@ -513,8 +526,8 @@ export default function UnifiedPackageComparison({
                 const totalGifts = giftValue + bonusAmount;
                 
                 return (
-                  <div key={packageType} className={`text-center ${isSelected ? 'bg-blue-200 dark:bg-blue-800 rounded-lg py-1' : ''}`}>
-                    <span className="text-sm font-bold text-blue-700 dark:text-blue-300">
+                  <div key={packageType} className="text-center py-1">
+                    <span className="text-lg font-bold text-green-700 dark:text-green-300">
                       {totalGifts > 0 ? `${Math.round(totalGifts).toLocaleString()} ₽` : '-'}
                     </span>
                   </div>
