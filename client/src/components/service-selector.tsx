@@ -181,7 +181,7 @@ export default function ServiceSelector({
               width: `${dropdownPosition.width}px`
             }}
           >
-            <div className="overflow-y-auto max-h-[280px] scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600">
+            <div className="overflow-y-auto max-h-[280px] beautiful-scroll">
               {filteredServices.length === 0 ? (
                 <div className="p-6 text-center">
                   <Search className="h-8 w-8 text-gray-300 mx-auto mb-2" />
