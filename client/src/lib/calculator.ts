@@ -75,7 +75,19 @@ export function calculatePackagePricing(
   for (const [packageType, config] of Object.entries(packages)) {
     const packageData = config as any;
     
-    // Calculate all values first, then check availability
+    // Check if package meets minimum cost requirement
+    if (baseCost < packageData.minCost) {
+      results[packageType] = {
+        isAvailable: false,
+        unavailableReason: `Минимальная стоимость курса: ${packageData.minCost.toLocaleString()} ₽`,
+        finalCost: baseCost,
+        totalSavings: 0,
+        monthlyPayment: 0,
+        appliedDiscounts: []
+      };
+      continue;
+    }
+
     // Calculate discount
     let discount = packageData.discount;
     
@@ -92,6 +104,7 @@ export function calculatePackagePricing(
     const additionalDiscount = serviceCount >= 15 ? baseCost * 0.025 : 0;
 
     // Calculate gift session value based on package type
+    // Gift sessions are full procedure sessions, not individual visits
     let giftSessionValue = 0;
     if (packageType === 'vip') {
       giftSessionValue = baseCost / totalProcedures * 3; // 3 full sessions for VIP
@@ -103,26 +116,6 @@ export function calculatePackagePricing(
     const packageDiscount = baseCost * discount;
     const totalSavings = packageDiscount + certificateDiscount + additionalDiscount + giftSessionValue;
     const finalCost = baseCost - totalSavings;
-
-    // Check if package meets minimum cost requirement
-    if (baseCost < packageData.minCost) {
-      results[packageType] = {
-        isAvailable: false,
-        unavailableReason: `Минимальная стоимость курса: ${packageData.minCost.toLocaleString()} ₽`,
-        finalCost,
-        totalSavings,
-        monthlyPayment: 0,
-        appliedDiscounts: [
-          { type: 'package', amount: packageDiscount },
-          ...(additionalDiscount > 0 ? [{ type: 'bulk', amount: additionalDiscount }] : []),
-          ...(certificateDiscount > 0 ? [{ type: 'certificate', amount: certificateDiscount }] : []),
-          ...(giftSessionValue > 0 ? [{ type: 'gift_sessions', amount: giftSessionValue }] : [])
-        ]
-      };
-      continue;
-    }
-
-
 
     // Check down payment requirements
     const minDownPayment = Math.max(

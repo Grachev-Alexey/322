@@ -162,30 +162,18 @@ export function useCalculator() {
     );
   }, [selectedServices, procedureCount, downPayment, installmentMonths, usedCertificate, freeZones, calculateInstantly]);
 
-  // Auto-adjust down payment and select package when available packages change
+  // Auto-select package based on down payment amount and set default VIP down payment
   useEffect(() => {
     if (calculation && calculation.packages) {
-      // Get available packages and their costs
-      const availablePackages = Object.entries(calculation.packages)
-        .filter(([_, data]) => data.isAvailable);
+      const { vip, standard, economy } = calculation.packages;
       
-      if (availablePackages.length > 0) {
-        const maxAvailableCost = Math.max(...availablePackages.map(([_, data]) => data.finalCost));
-        
-        // Set down payment to maximum available package cost when:
-        // 1. It's the first calculation (downPayment === 0)
-        // 2. Available packages changed (current payment is not equal to max available)
-        const currentMaxPackageCost = maxAvailableCost;
-        if (downPayment === 0 || downPayment !== currentMaxPackageCost) {
-          console.log(`Auto-adjusting down payment from ${downPayment} to ${currentMaxPackageCost}`);
-          setDownPayment(currentMaxPackageCost);
-          return;
-        }
-      } else {
-        // If no packages are available, reset to 0
-        if (downPayment !== 0) {
-          console.log('No packages available, resetting down payment to 0');
-          setDownPayment(0);
+      // Set default down payment to available package's maximum cost on first calculation
+      if (downPayment === 0) {
+        const availablePackages = Object.entries(calculation.packages)
+          .filter(([_, data]) => data.isAvailable)
+          .map(([_, data]) => data.finalCost);
+        if (availablePackages.length > 0) {
+          setDownPayment(Math.max(...availablePackages));
           return;
         }
       }
@@ -222,7 +210,7 @@ export function useCalculator() {
         setSelectedPackage(newSelectedPackage);
       }
     }
-  }, [calculation, downPayment, selectedServices, procedureCount]);
+  }, [calculation, downPayment]);
 
   return {
     selectedServices,
