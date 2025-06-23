@@ -502,6 +502,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const yclientsService = createYclientsService(yclientsConfig.value as YclientsConfig);
       
+      // Add service titles to calculation for title generation
+      const servicesWithTitles = await Promise.all(
+        calculation.services.map(async (service: any) => {
+          const serviceData = await db.select().from(services).where(eq(services.yclientsId, service.id)).limit(1);
+          return {
+            ...service,
+            title: serviceData[0]?.title || 'Неизвестная услуга'
+          };
+        })
+      );
+      calculation.services = servicesWithTitles;
+
       // Try to find existing subscription type
       let subscriptionType = await storage.findSubscriptionType(
         calculation.services, 
@@ -514,7 +526,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const templateConfig = await storage.getConfig('subscriptionTemplate');
         const template = templateConfig?.value || "Курс {services} - {package}";
         
-        const title = generateSubscriptionTitle(template, calculation);
+        const title = await generateSubscriptionTitle(template, calculation);
         
         const servicesForYclients = calculation.services.map((service: any) => ({
           serviceId: service.id || service.serviceId,
@@ -688,11 +700,43 @@ function calculatePackagePricing(baseCost: number, calculation: any, packages: a
   };
 }
 
-function generateSubscriptionTitle(template: string, calculation: any): string {
-  // Simple template replacement
-  return template
-    .replace('{services}', calculation.services.map((s: any) => s.name).join(', '))
-    .replace('{package}', calculation.packageType.toUpperCase());
+async function generateSubscriptionTitle(template: string, calculation: any): Promise<string> {
+  // Get package name in Russian
+  const packageNames = {
+    'vip': 'ВИП',
+    'standard': 'Стандарт',
+    'economy': 'Эконом'
+  };
+  
+  const packageName = packageNames[calculation.packageType as keyof typeof packageNames] || calculation.packageType;
+  
+  // Generate unique number combination
+  const uniqueNumber = await generateUniqueSubscriptionNumber();
+  
+  // Get service names from calculation
+  const serviceNames = calculation.services.map((s: any) => s.title || s.name).join(', ');
+  
+  return `${uniqueNumber} ${serviceNames} - ${packageName}`;
+}
+
+async function generateUniqueSubscriptionNumber(): Promise<string> {
+  const firstDigit = Math.floor(Math.random() * 4) + 1; // 1-4
+  
+  // Try to find unique combination
+  for (let attempts = 0; attempts < 100; attempts++) {
+    const secondPart = Math.floor(Math.random() * 1000); // 0-999
+    const number = `${firstDigit}.${secondPart.toString().padStart(3, '0')}`;
+    
+    // Check if this number already exists
+    const existing = await storage.findSubscriptionByNumber(number);
+    if (!existing) {
+      return number;
+    }
+  }
+  
+  // Fallback: use timestamp-based number
+  const timestamp = Date.now().toString().slice(-3);
+  return `${firstDigit}.${timestamp}`;
 }
 
 function getFreezePolicyForPackage(packageType: string): boolean {

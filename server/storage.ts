@@ -32,6 +32,7 @@ export interface IStorage {
   getSubscriptionTypes(): Promise<SubscriptionType[]>;
   upsertSubscriptionType(subscriptionType: InsertSubscriptionType): Promise<SubscriptionType>;
   findSubscriptionType(services: any[], cost: number, packageType: string): Promise<SubscriptionType | undefined>;
+  findSubscriptionByNumber(number: string): Promise<SubscriptionType | undefined>;
   
   // Packages
   getPackages(): Promise<Package[]>;
@@ -153,9 +154,29 @@ export class DatabaseStorage implements IStorage {
   }
 
   async findSubscriptionType(services: any[], cost: number, packageType: string): Promise<SubscriptionType | undefined> {
-    // This would implement complex matching logic based on services composition and package parameters
-    // For now, return undefined to trigger creation of new subscription type
-    return undefined;
+    // Create a normalized key for comparison
+    const serviceKey = services
+      .map(s => `${s.serviceId || s.id}:${s.count || s.quantity || 1}`)
+      .sort()
+      .join('|');
+    
+    const subscriptionTypes = await this.getSubscriptionTypes();
+    
+    return subscriptionTypes.find(st => {
+      const stServiceKey = JSON.parse(st.services || '[]')
+        .map((s: any) => `${s.serviceId || s.id}:${s.count || s.quantity || 1}`)
+        .sort()
+        .join('|');
+      
+      return stServiceKey === serviceKey && 
+             Math.abs(st.cost - cost) < 1 && 
+             st.packageType === packageType;
+    });
+  }
+
+  async findSubscriptionByNumber(number: string): Promise<SubscriptionType | undefined> {
+    const subscriptionTypes = await this.getSubscriptionTypes();
+    return subscriptionTypes.find(st => st.title?.startsWith(number));
   }
 
   // Clients
