@@ -76,7 +76,15 @@ The development environment uses Vite's HMR (Hot Module Replacement) for rapid d
 
 ## Recent Changes
 
-- **Yclients Integration Enhancement (Latest)**: Fixed subscription type creation and improved synchronization
+- **Subscription Naming System (Latest)**: Implemented unique subscription naming with Russian package types
+  - Generated unique number combinations in format "X.XXX" (first digit 1-4)
+  - Added Russian package names (ВИП, Стандарт, Эконом) instead of English
+  - Implemented duplicate checking based on services, cost and package type
+  - Created new client modal interface showing subscription title with copy functionality
+  - Removed side notifications, results displayed in same modal window
+  - Fixed all import issues and API integration errors
+
+- **Yclients Integration Enhancement**: Fixed subscription type creation and improved synchronization
   - Implemented proper pagination for subscription types sync (handles >250 records)
   - Fixed API payload structure for creating subscription types in Yclients
   - Added comprehensive logging for API debugging

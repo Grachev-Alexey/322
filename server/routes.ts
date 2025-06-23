@@ -3,8 +3,12 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { createYclientsService } from "./services/yclients";
 import { z } from "zod";
+import { eq } from "drizzle-orm";
 import { db } from "./db";
-import { users } from "@shared/schema";
+import { users, services, insertUserSchema, insertConfigSchema, insertServiceSchema, 
+  insertSubscriptionTypeSchema, insertPerkSchema, insertPackagePerkValueSchema,
+  insertPackageSchema, config, perks, packagePerkValues,
+  packages as packagesTable } from "@shared/schema";
 
 // Extend session types
 declare module 'express-session' {
@@ -503,15 +507,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const yclientsService = createYclientsService(yclientsConfig.value as YclientsConfig);
       
       // Add service titles to calculation for title generation
-      const servicesWithTitles = await Promise.all(
-        calculation.services.map(async (service: any) => {
-          const serviceData = await db.select().from(services).where(eq(services.yclientsId, service.id)).limit(1);
-          return {
-            ...service,
-            title: serviceData[0]?.title || 'Неизвестная услуга'
-          };
-        })
-      );
+      const allServices = await storage.getAllServices();
+      const servicesWithTitles = calculation.services.map((service: any) => {
+        const serviceData = allServices.find(s => s.yclientsId === service.id);
+        return {
+          ...service,
+          title: serviceData?.title || 'Неизвестная услуга'
+        };
+      });
       calculation.services = servicesWithTitles;
 
       // Try to find existing subscription type
