@@ -55,7 +55,7 @@ export function useCalculator() {
   const [selectedServices, setSelectedServices] = useState<SelectedService[]>([]);
   const [procedureCount, setProcedureCount] = useState(10);
   const [downPayment, setDownPayment] = useState(0);
-  const [installmentMonths, setInstallmentMonths] = useState(4);
+  const [installmentMonths, setInstallmentMonths] = useState(2);
   const [usedCertificate, setUsedCertificate] = useState(false);
   const [freeZones, setFreeZones] = useState<FreeZone[]>([]);
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
@@ -178,8 +178,14 @@ export function useCalculator() {
       // Use the centralized calculation function with calculator settings
       const result = calculatePackagePricing(baseCost, calculationParams, calculatorSettings);
       
+      console.log(`=== FINAL CALCULATION RESULT ===`);
+      console.log('Calculator settings:', calculatorSettings);
+      console.log('Base cost:', baseCost);
+      console.log('Procedure count (slider):', procedures);
+      console.log('Used certificate:', usedCertificate);
+      console.log('Down payment:', downPayment);
+      console.log('Installment months:', installmentMonths);
       console.log('Final calculation result:', result);
-      console.log(`15+ discount applied based on slider value: ${procedures}`);
       setCalculation(result);
     },
     [services, packages, calculatorSettings]
@@ -202,6 +208,15 @@ export function useCalculator() {
       );
     }, isUserDragging.current ? 100 : 0); // Shorter debounce when dragging
   }, [selectedServices, procedureCount, downPayment, installmentMonths, usedCertificate, freeZones, calculateInstantly]);
+
+  // Initialize default installment months based on settings - set to minimum available
+  useEffect(() => {
+    if (calculatorSettings?.installmentMonthsOptions?.length > 0) {
+      const minMonths = Math.min(...calculatorSettings.installmentMonthsOptions);
+      console.log(`Setting default installment months to: ${minMonths}`, calculatorSettings.installmentMonthsOptions);
+      setInstallmentMonths(minMonths);
+    }
+  }, [calculatorSettings]);
 
   // Trigger calculation when dependencies change
   useEffect(() => {

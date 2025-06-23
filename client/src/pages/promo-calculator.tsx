@@ -237,7 +237,10 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 
                 <div className="text-center mb-2">
                   <div className="text-lg font-bold text-premium">{installmentMonths}</div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">месяцев</div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    {installmentMonths === 1 ? 'месяц' : 
+                     installmentMonths <= 4 ? 'месяца' : 'месяцев'}
+                  </div>
                 </div>
                 
                 <RangeSlider

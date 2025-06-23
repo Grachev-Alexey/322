@@ -41,6 +41,11 @@ export function calculatePackagePricing(
   params: CalculationParams,
   calculatorSettings?: any
 ): CalculationResult {
+  console.log(`=== PACKAGE PRICING CALCULATION START ===`);
+  console.log('Base cost:', baseCost);
+  console.log('Calculator settings:', calculatorSettings);
+  console.log('Params:', params);
+  
   const { packageConfig, freeZones } = params;
   
   // Default package configuration if not provided
@@ -102,11 +107,27 @@ export function calculatePackagePricing(
     const certificateMinAmount = calculatorSettings?.certificateMinCourseAmount || 25000;
     const certificateDiscount = params.usedCertificate && baseCost >= certificateMinAmount ? certificateDiscountAmount : 0;
     
+    console.log(`=== CERTIFICATE DISCOUNT CALCULATION ===`);
+    console.log(`Used certificate: ${params.usedCertificate}`);
+    console.log(`Base cost: ${baseCost}`);
+    console.log(`Certificate min amount: ${certificateMinAmount}`);
+    console.log(`Certificate discount amount: ${certificateDiscountAmount}`);
+    console.log(`Certificate discount: ${certificateDiscount}`);
+    
     // Calculate bulk discount using configurable threshold and percentage
     const bulkThreshold = calculatorSettings?.bulkDiscountThreshold || 15;
     const bulkDiscountPercent = calculatorSettings?.bulkDiscountPercentage || 0.025;
     const serviceCount = params.services.reduce((sum, s) => sum + s.quantity, 0);
-    const additionalDiscount = serviceCount >= bulkThreshold ? baseCost * bulkDiscountPercent : 0;
+    // Use procedureCount from params instead of serviceCount for bulk discount
+    const actualProcedureCount = params.procedureCount || serviceCount;
+    const additionalDiscount = actualProcedureCount >= bulkThreshold ? baseCost * bulkDiscountPercent : 0;
+    
+    console.log(`=== BULK DISCOUNT CALCULATION ===`);
+    console.log(`Procedure count: ${actualProcedureCount}`);
+    console.log(`Bulk threshold: ${bulkThreshold}`);
+    console.log(`Bulk discount percent: ${bulkDiscountPercent}`);
+    console.log(`Additional discount: ${additionalDiscount}`);
+    console.log(`Qualifies for bulk discount: ${actualProcedureCount >= bulkThreshold}`);
 
     // Calculate gift session value based on package type
     // Gift sessions are full procedure sessions, not individual visits

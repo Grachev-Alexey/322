@@ -52,13 +52,25 @@ export default function PaymentConfig({
     enabled: true
   });
 
-  // Get calculator settings for installment options
+  // Get calculator settings for installment options and certificate config
   const { data: calculatorSettings } = useQuery({
     queryKey: ['/api/config/calculator-settings'],
     queryFn: async () => {
-      const response = await fetch('/api/config/installment_months_options', { credentials: 'include' });
-      const monthsOptions = response.ok ? await response.json() : [2, 3, 4, 5, 6];
-      return { installmentMonthsOptions: monthsOptions };
+      const configs = await Promise.all([
+        fetch('/api/config/installment_months_options', { credentials: 'include' }),
+        fetch('/api/config/certificate_discount_percentage', { credentials: 'include' }),
+        fetch('/api/config/certificate_min_course_amount', { credentials: 'include' })
+      ]);
+      
+      const [monthsOptions, certificateAmount, certificateMinAmount] = await Promise.all(
+        configs.map(response => response.ok ? response.json() : null)
+      );
+      
+      return { 
+        installmentMonthsOptions: monthsOptions || [2, 3, 4, 5, 6],
+        certificateDiscountAmount: certificateAmount || 3000,
+        certificateMinCourseAmount: certificateMinAmount || 25000
+      };
     },
     enabled: true
   });
@@ -124,7 +136,10 @@ export default function PaymentConfig({
           <div className="bg-gray-50 rounded-xl p-6">
             <div className="flex items-center justify-between mb-4">
               <span className="text-2xl font-bold text-purple-600">{installmentMonths}</span>
-              <span className="text-sm text-gray-600">месяца</span>
+              <span className="text-sm text-gray-600">
+                {installmentMonths === 1 ? 'месяц' : 
+                 installmentMonths <= 4 ? 'месяца' : 'месяцев'}
+              </span>
             </div>
             
             <RangeSlider
@@ -158,9 +173,9 @@ export default function PaymentConfig({
               <div>
                 <h4 className="font-semibold text-gray-900">Сертификат на скидку</h4>
                 <p className="text-sm text-gray-600">
-                  Скидка 3 000 ₽ при курсе ≥25 000 ₽
+                  Скидка {calculatorSettings?.certificateDiscountAmount?.toLocaleString() || '3 000'} ₽ при курсе ≥{calculatorSettings?.certificateMinCourseAmount?.toLocaleString() || '25 000'} ₽
                 </p>
-                {baseCost < 25000 && (
+                {baseCost < (calculatorSettings?.certificateMinCourseAmount || 25000) && (
                   <p className="text-xs text-red-500 mt-1">
                     Недоступно для текущего курса
                   </p>
@@ -170,7 +185,7 @@ export default function PaymentConfig({
             <Switch
               checked={usedCertificate}
               onCheckedChange={onCertificateChange}
-              disabled={baseCost < 25000}
+              disabled={baseCost < (calculatorSettings?.certificateMinCourseAmount || 25000)}
             />
           </div>
           
@@ -178,7 +193,7 @@ export default function PaymentConfig({
             <div className="mt-3 p-2 bg-green-50 rounded-lg">
               <div className="flex items-center text-sm text-green-700">
                 <Gift className="w-4 h-4 mr-2" />
-                Применена скидка 3 000 ₽
+                Применена скидка {calculatorSettings?.certificateDiscountAmount?.toLocaleString() || '3 000'} ₽
               </div>
             </div>
           )}
