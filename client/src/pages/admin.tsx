@@ -484,6 +484,7 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
               <TabsTrigger value="dashboard">Обзор</TabsTrigger>
               <TabsTrigger value="users">Пользователи</TabsTrigger>
               <TabsTrigger value="services">Услуги</TabsTrigger>
+              <TabsTrigger value="subscriptions">Абонементы</TabsTrigger>
               <TabsTrigger value="packages">Пакеты</TabsTrigger>
               <TabsTrigger value="perks">Преимущества</TabsTrigger>
               <TabsTrigger value="calculator">Настройки</TabsTrigger>
@@ -514,11 +515,34 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
                           Синхронизация услуг с Yclients и управление их отображением в калькуляторе.
                         </p>
                         
+                        <Button onClick={syncServices} disabled={loading} className="btn-primary">
+                          {loading ? "Синхронизация..." : "Синхронизировать услуги"}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <ServicesManagement />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="subscriptions">
+                <div className="space-y-6 max-h-[calc(100vh-250px)] overflow-y-auto">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <Database size={20} />
+                        Управление абонементами
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <p className="text-gray-600">
+                          Синхронизация типов абонементов с Yclients и просмотр их состава.
+                        </p>
+                        
                         <div className="flex gap-2">
-                          <Button onClick={syncServices} disabled={loading} className="btn-primary">
-                            {loading ? "Синхронизация..." : "Синхронизировать услуги"}
-                          </Button>
-                          <Button onClick={syncSubscriptionTypes} disabled={loading} variant="outline">
+                          <Button onClick={syncSubscriptionTypes} disabled={loading} className="btn-primary">
                             {loading ? "Синхронизация..." : "Синхронизировать абонементы"}
                           </Button>
                         </div>
@@ -526,7 +550,6 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
                     </CardContent>
                   </Card>
 
-                  <ServicesManagement />
                   <SubscriptionTypesManagement />
                 </div>
               </TabsContent>
@@ -1017,7 +1040,7 @@ function SubscriptionTypesManagement() {
                           <div className="text-xs text-gray-600">
                             {type.balanceContainer.links.map((link: any, idx: number) => (
                               <span key={idx}>
-                                ID{link.service.id} (×{link.count})
+                                ID{link.service?.id || 'N/A'} (×{link.count})
                                 {idx < type.balanceContainer.links.length - 1 ? ', ' : ''}
                               </span>
                             ))}
