@@ -68,23 +68,6 @@ export default function PaymentConfig({
           <p className="text-sm text-gray-600 mt-2">
             Влияет на доступность пакетов и размер скидки
           </p>
-          
-          {/* Quick Amount Buttons */}
-          <div className="flex flex-wrap gap-2 mt-3">
-            {[5000, 10000, 15000, 25000].map((amount) => (
-              <button
-                key={amount}
-                onClick={() => onDownPaymentChange(amount)}
-                className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
-                  downPayment === amount
-                    ? 'bg-purple-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {formatPrice(amount)}
-              </button>
-            ))}
-          </div>
         </div>
         
         {/* Installment Period */}
@@ -127,9 +110,9 @@ export default function PaymentConfig({
       </div>
       
       {/* Additional Options */}
-      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="mt-8">
         {/* Certificate */}
-        <div className="p-4 border-2 border-dashed border-gray-200 rounded-xl hover:border-purple-300 transition-colors">
+        <div className="p-4 border-2 border-dashed border-gray-200 rounded-xl hover:border-purple-300 transition-colors max-w-md">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Gift className="text-purple-600" size={20} />
@@ -160,19 +143,6 @@ export default function PaymentConfig({
               </div>
             </div>
           )}
-        </div>
-        
-        {/* Free Zone Info */}
-        <div className="p-4 bg-blue-50 rounded-xl">
-          <div className="flex items-center">
-            <Gift className="text-blue-600 mr-3" />
-            <div>
-              <h4 className="font-semibold text-gray-900">Добавить бесплатную зону</h4>
-              <p className="text-sm text-gray-600">
-                Двойной клик на услугу для активации
-              </p>
-            </div>
-          </div>
         </div>
       </div>
 
