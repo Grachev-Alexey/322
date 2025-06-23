@@ -165,7 +165,7 @@ export default function UnifiedPackageComparison({
           <div className="h-full flex flex-col">
             
             {/* Table Header with Package Names */}
-            <div className="grid grid-cols-4 gap-1 lg:gap-2 p-2 lg:p-3 bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 flex-shrink-0">
+            <div className="grid grid-cols-4 gap-1 lg:gap-2 p-2 lg:p-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-600 flex-shrink-0">
               <div></div>
               {packageTypes.map((packageType) => {
                 const info = packageInfo[packageType as keyof typeof packageInfo];
@@ -199,7 +199,7 @@ export default function UnifiedPackageComparison({
               <div className="h-full overflow-y-auto">
                 
                 {/* Discount Row */}
-                <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-100 dark:border-gray-700">
+                <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-50 dark:border-gray-700/50">
                   <div className="flex items-center font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
                     Скидка
                   </div>
@@ -223,7 +223,7 @@ export default function UnifiedPackageComparison({
                   const IconComponent = (Icons as any)[perk.icon] || Check;
                   
                   return (
-                    <div key={perk.id} className="grid grid-cols-4 gap-1 lg:gap-2 py-1 lg:py-2 px-2 lg:px-3 border-b border-gray-100 dark:border-gray-700">
+                    <div key={perk.id} className="grid grid-cols-4 gap-1 lg:gap-2 py-1 lg:py-2 px-2 lg:px-3 border-b border-gray-50 dark:border-gray-700/50">
                       {/* Perk Name */}
                       <div className="flex items-center space-x-1 lg:space-x-2">
                         {perk.icon && perk.icon !== 'none' && (
@@ -294,7 +294,7 @@ export default function UnifiedPackageComparison({
                 })}
 
                 {/* Total Savings Row */}
-                <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-100 dark:border-gray-700">
+                <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-50 dark:border-gray-700/50">
                   <div className="flex items-center font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
                     Экономия
                   </div>
@@ -313,7 +313,7 @@ export default function UnifiedPackageComparison({
                 </div>
 
                 {/* Final Cost Row */}
-                <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-100 dark:border-gray-700">
+                <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-50 dark:border-gray-700/50">
                   <div className="flex items-center font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
                     Итоговая стоимость
                   </div>
@@ -332,20 +332,25 @@ export default function UnifiedPackageComparison({
                 </div>
 
                 {/* Monthly Payment Row */}
-                <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-100 dark:border-gray-700">
+                <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-50 dark:border-gray-700">
                   <div className="flex items-center font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
                     Ежемесячный платеж
                   </div>
                   {packageTypes.map((packageType) => {
                     const data = getPackageData(packageType);
                     const isSelected = selectedPackage === packageType;
+                    const packageData = packages.find((p: Package) => p.type === packageType);
                     
                     return (
                       <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-gray-100 dark:bg-gray-600 rounded-lg' : ''}`}>
-                        <span className="text-xs lg:text-sm font-semibold text-gray-700 dark:text-gray-300">
-                          {data && data.monthlyPayment > 0 ? formatPrice(data.monthlyPayment) : 
-                           (hasValidCalculation && installmentMonths > 1 ? 'Рассчитывается' : '−')}
-                        </span>
+                        {packageData?.requiresFullPayment ? (
+                          <X className="h-3 w-3 lg:h-4 lg:w-4 text-red-400 mx-auto" />
+                        ) : (
+                          <span className="text-xs lg:text-sm font-semibold text-gray-700 dark:text-gray-300">
+                            {data && data.monthlyPayment > 0 ? formatPrice(data.monthlyPayment) : 
+                             (hasValidCalculation && installmentMonths > 1 ? 'Рассчитывается' : '−')}
+                          </span>
+                        )}
                       </div>
                     );
                   })}
@@ -354,7 +359,6 @@ export default function UnifiedPackageComparison({
                 {/* Selection Buttons Row */}
                 <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3">
                   <div className="flex items-center font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
-                    Выбрать пакет
                   </div>
                   {packageTypes.map((packageType) => {
                     const data = getPackageData(packageType);
