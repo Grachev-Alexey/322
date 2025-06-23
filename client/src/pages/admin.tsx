@@ -527,6 +527,7 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
                   </Card>
 
                   <ServicesManagement />
+                  <SubscriptionTypesManagement />
                 </div>
               </TabsContent>
 
@@ -949,13 +950,86 @@ function ServicesManagement() {
                   ID: {service.yclientsId} • Цена от: {service.priceMin} ₽
                 </div>
               </div>
-              <Switch
-                checked={service.isActive}
-                onCheckedChange={(checked) => toggleService(service.yclientsId, checked)}
-                disabled={loading}
-              />
+              <label className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={service.isActive}
+                  onChange={(e) => toggleService(service.yclientsId, e.target.checked)}
+                  disabled={loading}
+                  className="mr-2"
+                />
+                <span className="text-sm">Активна</span>
+              </label>
             </div>
           ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+// Subscription Types Management Component
+function SubscriptionTypesManagement() {
+  const [subscriptionTypes, setSubscriptionTypes] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    loadSubscriptionTypes();
+  }, []);
+
+  const loadSubscriptionTypes = async () => {
+    try {
+      const response = await fetch("/api/admin/subscription-types", { credentials: "include" });
+      if (response.ok) {
+        const data = await response.json();
+        setSubscriptionTypes(data);
+      }
+    } catch (error) {
+      console.error("Error loading subscription types:", error);
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Типы абонементов из Yclients</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-4">
+          {subscriptionTypes.length === 0 ? (
+            <p className="text-gray-500">Нет синхронизированных абонементов. Используйте кнопку "Синхронизировать абонементы" выше.</p>
+          ) : (
+            <div className="space-y-3 max-h-96 overflow-y-auto">
+              {subscriptionTypes.map((type) => (
+                <div key={type.id} className="border rounded-lg p-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h4 className="font-medium">{type.title}</h4>
+                      <p className="text-sm text-gray-600">ID в Yclients: {type.yclientsId}</p>
+                      <p className="text-sm font-medium text-green-600">Стоимость: {parseInt(type.cost).toLocaleString()} ₽</p>
+                      <div className="mt-2 text-xs text-gray-500">
+                        <p>Заморозка: {type.allowFreeze ? `Да (${type.freezeLimit} дней)` : 'Нет'}</p>
+                        <p>Обновлено: {new Date(type.updatedAt).toLocaleString()}</p>
+                      </div>
+                      {type.balanceContainer?.links && (
+                        <div className="mt-2">
+                          <p className="text-xs font-medium text-gray-700">Состав услуг:</p>
+                          <div className="text-xs text-gray-600">
+                            {type.balanceContainer.links.map((link: any, idx: number) => (
+                              <span key={idx}>
+                                ID{link.service.id} (×{link.count})
+                                {idx < type.balanceContainer.links.length - 1 ? ', ' : ''}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
