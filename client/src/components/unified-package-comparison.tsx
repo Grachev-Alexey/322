@@ -292,7 +292,7 @@ export default function UnifiedPackageComparison({
 
               return (
                 <div key={packageType} className="text-center py-1">
-                  <span className="text-base font-bold text-gray-700 dark:text-gray-300">
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                     {giftSessions > 0 ? giftSessions : "-"}
                   </span>
                 </div>
@@ -366,7 +366,7 @@ export default function UnifiedPackageComparison({
 
                 return (
                   <div key={packageType} className="text-center">
-                    <span className="text-sm text-red-500 line-through">
+                    <span className="text-sm font-semibold text-red-500 line-through">
                       {calculation.baseCost.toLocaleString()} ₽
                     </span>
                   </div>
@@ -386,7 +386,7 @@ export default function UnifiedPackageComparison({
 
                 return (
                   <div key={packageType} className="text-center">
-                    <span className="text-sm text-green-600 dark:text-green-400">
+                    <span className="text-sm font-semibold text-green-600 dark:text-green-400">
                       {data && data.totalSavings > 0
                         ? `-${data.totalSavings.toLocaleString()} ₽`
                         : "0 ₽"}
@@ -467,18 +467,22 @@ export default function UnifiedPackageComparison({
               </div>
               {packageTypes.map((packageType) => {
                 const data = getPackageData(packageType);
-                const packageData = packages.find((p) => p.type === packageType);
-                
+                const packageData = packages.find(
+                  (p) => p.type === packageType,
+                );
+
                 // For VIP package with full payment, show "-"
-                const isVipFullPayment = packageType === 'vip' && packageData?.requiresFullPayment;
+                const isVipFullPayment =
+                  packageType === "vip" && packageData?.requiresFullPayment;
 
                 return (
                   <div key={packageType} className="text-center py-1">
                     <span className="text-sm text-gray-700 dark:text-gray-300">
-                      {isVipFullPayment ? "-" : 
-                       data && data.monthlyPayment > 0
-                        ? `${data.monthlyPayment.toLocaleString()} ₽`
-                        : "-"}
+                      {isVipFullPayment
+                        ? "-"
+                        : data && data.monthlyPayment > 0
+                          ? `${data.monthlyPayment.toLocaleString()} ₽`
+                          : "-"}
                     </span>
                   </div>
                 );
