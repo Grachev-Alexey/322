@@ -78,11 +78,28 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
     return (calculation.packages as Record<string, PackageData>)[packageType] || null;
   };
 
-  // Helper function to get max final cost
+  // Helper function to get max final cost from available packages only
   const getMaxFinalCost = (): number => {
     if (!calculation || !calculation.packages) return 25000;
-    const costs = Object.values(calculation.packages as Record<string, PackageData>).map(p => p.finalCost);
-    return Math.max(...costs);
+    const availablePackages = Object.entries(calculation.packages as Record<string, PackageData>)
+      .filter(([_, data]) => data.isAvailable)
+      .map(([_, data]) => data.finalCost);
+    return availablePackages.length > 0 ? Math.max(...availablePackages) : 25000;
+  };
+
+  const getMinDownPayment = (): number => {
+    if (!calculation || !calculation.packages) return 5000;
+    const availablePackages = Object.entries(calculation.packages as Record<string, PackageData>)
+      .filter(([_, data]) => data.isAvailable);
+    if (availablePackages.length === 0) return 5000;
+    
+    // Get minimum required down payment from available packages
+    const minPayments = availablePackages.map(([type, data]) => {
+      const pkg = packages.find(p => p.type === type);
+      if (!pkg) return 5000;
+      return Math.max(5000, data.finalCost * parseFloat(pkg.minDownPaymentPercent.toString()));
+    });
+    return Math.min(...minPayments);
   };
 
   return (
@@ -172,13 +189,13 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
               
               <div className="text-center mb-2">
                 <div className="text-lg font-bold text-premium">{formatPrice(downPayment)}</div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">из {formatPrice(getMaxFinalCost())}</div>
+                <div className="text-xs text-gray-500 dark:text-gray-400">{formatPrice(getMaxFinalCost())}</div>
               </div>
               
               <RangeSlider
-                min={5000}
-                max={calculation?.packages.vip?.finalCost || 50000}
-                step={1000}
+                min={getMinDownPayment()}
+                max={getMaxFinalCost()}
+                step={100}
                 value={downPayment}
                 onChange={setDownPayment}
                 className="dark:bg-gray-700 mb-2"
@@ -283,6 +300,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 onPackageSelect={setSelectedPackage}
                 downPayment={downPayment}
                 installmentMonths={installmentMonths}
+                procedureCount={procedureCount}
               />
             </div>
           )}
