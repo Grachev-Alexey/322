@@ -76,21 +76,21 @@ const packageTypes = ['vip', 'standard', 'economy'];
 const packageInfo = {
   vip: {
     icon: Crown,
-    bgColor: 'bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20',
-    borderColor: 'border-yellow-200 dark:border-yellow-700/50',
-    textColor: 'text-yellow-800 dark:text-yellow-300'
+    bgColor: 'bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20',
+    borderColor: 'border-pink-200 dark:border-pink-700/50',
+    textColor: 'text-pink-600 dark:text-pink-400'
   },
   standard: {
     icon: Star,
-    bgColor: 'bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20',
-    borderColor: 'border-blue-200 dark:border-blue-700/50',
-    textColor: 'text-blue-800 dark:text-blue-300'
+    bgColor: 'bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20',
+    borderColor: 'border-pink-200 dark:border-pink-700/50',
+    textColor: 'text-pink-600 dark:text-pink-400'
   },
   economy: {
     icon: Zap,
-    bgColor: 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20',
-    borderColor: 'border-green-200 dark:border-green-700/50',
-    textColor: 'text-green-800 dark:text-green-300'
+    bgColor: 'bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-900/20 dark:to-rose-900/20',
+    borderColor: 'border-pink-200 dark:border-pink-700/50',
+    textColor: 'text-pink-600 dark:text-pink-400'
   }
 };
 

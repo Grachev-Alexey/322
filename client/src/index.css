@@ -313,23 +313,7 @@
     @apply antialiased;
   }
   
-  .promo-background::before {
-    content: "СПЕЦПРЕДЛОЖЕНИЕ ГОСТЕВОГО ДНЯ";
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%) rotate(-5deg);
-    font-size: clamp(4rem, 15vw, 12rem);
-    font-weight: 900;
-    color: rgba(0, 0, 0, 0.02);
-    z-index: 0;
-    pointer-events: none;
-    white-space: nowrap;
-  }
-  
-  .dark .promo-background::before {
-    color: rgba(255, 255, 255, 0.03);
-  }
+
   
   .slider::-webkit-slider-thumb {
     appearance: none;
