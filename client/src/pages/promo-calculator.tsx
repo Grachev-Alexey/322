@@ -45,6 +45,9 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
   const [showClientModal, setShowClientModal] = useState(false);
   const [isEditingPayment, setIsEditingPayment] = useState(false);
   const [tempPaymentValue, setTempPaymentValue] = useState('');
+  
+  const packagePerksQuery = usePackagePerks();
+  const packagePerkValues = packagePerksQuery.data || [];
 
   const {
     selectedServices,
@@ -384,6 +387,8 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 downPayment={downPayment}
                 installmentMonths={installmentMonths}
                 procedureCount={procedureCount}
+                packagePerkValues={packagePerkValues}
+                usedCertificate={usedCertificate}
               />
             </div>
           )}
