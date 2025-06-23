@@ -107,6 +107,18 @@ export class YclientsAPI {
   }): Promise<YclientsSubscriptionType> {
     const url = `https://yclients.com/api/v1/chain/${this.config.chainId}/loyalty/abonement_types`;
     
+    const serviceRows = subscriptionData.services.map((service, index) => ({
+      key: Math.floor(Math.random() * 10000000) + index,
+      serviceId: service.serviceId,
+      categoryId: parseInt(this.config.categoryId),
+      count: service.count
+    }));
+
+    const servicesObject = subscriptionData.services.reduce((acc, service) => {
+      acc[service.serviceId] = service.count;
+      return acc;
+    }, {} as { [key: number]: number });
+
     const payload = {
       title: subscriptionData.title,
       salon_group_id: parseInt(this.config.chainId),
@@ -118,13 +130,28 @@ export class YclientsAPI {
       freeze_limit: subscriptionData.freezeLimit,
       freeze_limit_unit_id: subscriptionData.freezeLimit > 0 ? 1 : 0, // дни
       is_booking_when_frozen_allowed: false,
-      balance_container: {
-        links: subscriptionData.services.map(service => ({
-          service: { id: service.serviceId },
-          count: service.count
-        }))
-      },
-      category_id: parseInt(this.config.categoryId) || null
+      auto_activation_time_in_days: 0,
+      autoactivation_period: 0,
+      autoactivation_time_unit_id: 1,
+      availability: [],
+      balance_edit_type_id: 2,
+      category_id: null,
+      delete_online_image: false,
+      expiration_type_id: 2,
+      is_allow_empty_code: true,
+      is_archived: false,
+      is_online_sale_enabled: false,
+      is_united_balance: false,
+      online_image: null,
+      online_sale_description: "",
+      online_sale_price: 0,
+      online_sale_title: "",
+      service_categories: {},
+      service_price_correction: true,
+      service_rows: serviceRows,
+      services: servicesObject,
+      united_balance_services_count: 0,
+      weight: null
     };
 
     console.log('Creating subscription type with payload:', JSON.stringify(payload, null, 2));

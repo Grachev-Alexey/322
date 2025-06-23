@@ -76,7 +76,15 @@ The development environment uses Vite's HMR (Hot Module Replacement) for rapid d
 
 ## Recent Changes
 
-- **Calculator Settings Configuration (Latest)**: Completed full configuration system implementation
+- **Yclients Integration Enhancement (Latest)**: Fixed subscription type creation and improved synchronization
+  - Implemented proper pagination for subscription types sync (handles >250 records)
+  - Fixed API payload structure for creating subscription types in Yclients
+  - Added comprehensive logging for API debugging
+  - Corrected service data mapping and conflict handling
+  - Added separate "Абонементы" tab in admin interface
+  - Enhanced error handling and validation for external API calls
+
+- **Calculator Settings Configuration**: Completed full configuration system implementation
   - All calculator parameters now configurable from admin panel (discounts, thresholds, installment options)
   - Fixed certificate discount logic to use fixed amount instead of percentage
   - Implemented dynamic text and values based on admin settings
