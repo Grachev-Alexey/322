@@ -91,20 +91,20 @@ export default function ServiceSelector({
   };
 
   if (isLoading) {
-    return <div className="animate-pulse bg-gray-200 h-20 lg:h-32 rounded-xl"></div>;
+    return <div className="animate-pulse bg-gray-200 h-16 lg:h-20 rounded-xl"></div>;
   }
 
   return (
     <div>
-      <label className="block text-xs lg:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 lg:mb-3">Зоны для процедур</label>
+      <label className="block text-xs lg:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Зоны для процедур</label>
       
       {/* Service Selection */}
-      <div className="relative mb-3 lg:mb-4">
+      <div className="relative mb-2 lg:mb-3">
         <Select value={selectedServiceId} onValueChange={handleServiceSelect}>
-          <SelectTrigger className="input-premium text-xs lg:text-sm">
+          <SelectTrigger className="input-premium text-xs lg:text-sm h-8 lg:h-10">
             <SelectValue placeholder="Поиск и выбор услуг..." />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="z-[9999]">
             {services
               .filter(service => !selectedServices.find(s => s.yclientsId === service.yclientsId))
               .map((service) => (
@@ -119,11 +119,11 @@ export default function ServiceSelector({
       </div>
       
       {/* Selected Services */}
-      <div className="space-y-2">
+      <div className="space-y-1 lg:space-y-2">
         {selectedServices.map((service) => (
           <div
             key={service.yclientsId}
-            className={`flex items-center justify-between bg-gray-50 dark:bg-gray-800 rounded-lg p-2 lg:p-3 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${freeZones.length > 0 ? 'opacity-50' : ''}`}
+            className={`flex items-center justify-between bg-gray-50 dark:bg-gray-800 rounded-lg p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${freeZones.length > 0 ? 'opacity-50' : ''}`}
             onDoubleClick={() => handleDoubleClick(service)}
             title={freeZones.length > 0 ? "Можно добавить только одну бесплатную зону" : "Двойной клик для добавления бесплатной зоны"}
           >
@@ -137,9 +137,9 @@ export default function ServiceSelector({
               variant="ghost"
               size="sm"
               onClick={() => removeService(service.yclientsId)}
-              className="text-red-500 hover:text-red-700 p-1 flex-shrink-0"
+              className="text-red-500 hover:text-red-700 p-1 flex-shrink-0 h-6 w-6"
             >
-              <X size={14} />
+              <X size={12} />
             </Button>
           </div>
         ))}
@@ -147,17 +147,17 @@ export default function ServiceSelector({
 
       {/* Free Zones - only show if there are any */}
       {freeZones.length > 0 && (
-        <div className="mt-4 lg:mt-6">
-          <div className="flex items-center gap-2 mb-2 lg:mb-3">
+        <div className="mt-3 lg:mt-4">
+          <div className="flex items-center gap-2 mb-2">
             <Gift className="w-3 h-3 lg:w-4 lg:h-4 text-green-600" />
             <span className="text-xs lg:text-sm font-medium text-green-700">Бесплатные зоны</span>
           </div>
           
-          <div className="space-y-2">
+          <div className="space-y-1 lg:space-y-2">
             {freeZones.map((zone) => (
               <div
                 key={zone.serviceId}
-                className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-2 lg:p-3"
+                className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-2"
               >
                 <div className="flex items-center min-w-0 flex-1">
                   <Badge variant="secondary" className="bg-green-100 text-green-800 mr-2 text-xs flex-shrink-0">
@@ -172,9 +172,9 @@ export default function ServiceSelector({
                   variant="ghost"
                   size="sm"
                   onClick={() => removeFreeZone(zone.serviceId)}
-                  className="text-red-500 hover:text-red-700 p-1 flex-shrink-0"
+                  className="text-red-500 hover:text-red-700 p-1 flex-shrink-0 h-6 w-6"
                 >
-                  <X size={14} />
+                  <X size={12} />
                 </Button>
               </div>
             ))}

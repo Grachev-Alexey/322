@@ -356,6 +356,19 @@
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background-color: rgba(156, 163, 175, 0.5);
   }
+
+  /* Fix for select dropdown z-index issues */
+  [data-radix-popper-content-wrapper] {
+    z-index: 9999 !important;
+  }
+  
+  [data-radix-select-content] {
+    z-index: 9999 !important;
+  }
+  
+  .input-premium {
+    @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-2 border-gray-200/50 dark:border-gray-600/50 rounded-xl px-4 py-2 focus:border-pink-400 focus:outline-none transition-all duration-200 placeholder:text-gray-400;
+  }
 }
 
 /* Responsive design improvements */
@@ -367,6 +380,24 @@
   .floating-card-enhanced:hover {
     box-shadow: 0 15px 25px -8px rgba(0, 0, 0, 0.25) !important;
     transform: translateY(-1px) !important;
+  }
+  
+  /* Mobile specific fixes */
+  body {
+    overflow: auto !important;
+    height: auto !important;
+  }
+  
+  html {
+    overflow: auto !important;
+    height: auto !important;
+  }
+  
+  /* Ensure mobile scrolling works */
+  .promo-calculator-mobile {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    height: 100vh !important;
   }
 }
 
@@ -387,4 +418,25 @@
 
 .overflow-container > * {
   overflow: visible !important;
+}
+
+/* Mobile touch improvements */
+@media (max-width: 768px) {
+  .slider {
+    height: 8px !important;
+  }
+  
+  .slider::-webkit-slider-thumb {
+    height: 24px !important;
+    width: 24px !important;
+  }
+  
+  /* Better touch targets */
+  button {
+    min-height: 44px;
+  }
+  
+  input[type="range"] {
+    min-height: 44px;
+  }
 }
