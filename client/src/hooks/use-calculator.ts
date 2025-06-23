@@ -97,7 +97,7 @@ export function useCalculator() {
       // Create service map for quick lookup
       const serviceMap = new Map<number, Service>(services.map((s: Service) => [s.yclientsId, s]));
       
-      // Calculate base cost
+      // Calculate base cost from selected services only
       let baseCost = 0;
       for (const selectedService of servicesData) {
         const service = serviceMap.get(selectedService.yclientsId);
@@ -105,17 +105,24 @@ export function useCalculator() {
           baseCost += parseFloat(service.priceMin) * selectedService.quantity * procedures;
         }
       }
+      
+      console.log('=== CALCULATION DEBUG ===');
+      console.log('Selected services:', servicesData);
+      console.log('Base cost:', baseCost);
+      console.log('Procedures count:', procedures);
 
-      // Convert packages array to config object
+      // Convert packages array to config object  
       const packageConfig = packages.reduce((acc: any, pkg: Package) => {
         acc[pkg.type] = {
-          discount: parseFloat(pkg.discount),
-          minCost: parseFloat(pkg.minCost),
-          minDownPaymentPercent: parseFloat(pkg.minDownPaymentPercent),
+          discount: parseFloat(pkg.discount.toString()),
+          minCost: parseFloat(pkg.minCost.toString()),
+          minDownPaymentPercent: parseFloat(pkg.minDownPaymentPercent.toString()),
           requiresFullPayment: pkg.requiresFullPayment
         };
         return acc;
       }, {});
+      
+      console.log('Package config:', packageConfig);
 
       // Prepare calculation parameters
       const calculationParams = {
@@ -132,8 +139,73 @@ export function useCalculator() {
         packageConfig
       };
 
-      // Calculate using frontend logic
-      const result = calculatePackagePricing(baseCost, calculationParams);
+      // Calculate pricing for all packages
+      const result = {
+        baseCost,
+        packages: {} as any,
+        totalProcedures: calculationParams.services.reduce((sum: number, service: any) => sum + service.quantity, 0),
+        freeZonesValue: zones.reduce((sum: number, zone: any) => sum + (zone.quantity * zone.pricePerProcedure), 0)
+      };
+
+      ['vip', 'standard', 'economy'].forEach(packageType => {
+        const packageData = packages.find((p: Package) => p.type === packageType);
+        if (!packageData) {
+          result.packages[packageType] = {
+            isAvailable: false,
+            unavailableReason: "Пакет не найден",
+            finalCost: 0,
+            totalSavings: 0,
+            monthlyPayment: 0,
+            appliedDiscounts: []
+          };
+          return;
+        }
+
+        const minCost = parseFloat(packageData.minCost.toString());
+        const discount = parseFloat(packageData.discount.toString());
+        
+        // Check availability
+        const isAvailable = baseCost >= minCost;
+        if (!isAvailable) {
+          result.packages[packageType] = {
+            isAvailable: false,
+            unavailableReason: `Минимальная стоимость ${minCost}₽`,
+            finalCost: 0,
+            totalSavings: 0,
+            monthlyPayment: 0,
+            appliedDiscounts: []
+          };
+          return;
+        }
+
+        // Calculate discounts
+        const packageDiscount = baseCost * discount;
+        const fifteenPlusProceduresDiscount = result.totalProcedures >= 15 ? baseCost * 0.025 : 0;
+        const totalDiscount = packageDiscount + fifteenPlusProceduresDiscount;
+        
+        // Final cost
+        const finalCost = Math.max(baseCost - totalDiscount, minCost);
+        const monthlyPayment = (finalCost - payment) / months;
+        
+        const appliedDiscounts = [
+          { type: "Скидка пакета", amount: packageDiscount }
+        ];
+        
+        if (fifteenPlusProceduresDiscount > 0) {
+          appliedDiscounts.push({ type: "15+ процедур", amount: fifteenPlusProceduresDiscount });
+        }
+
+        result.packages[packageType] = {
+          isAvailable: true,
+          unavailableReason: "",
+          finalCost,
+          totalSavings: totalDiscount,
+          monthlyPayment: Math.max(monthlyPayment, 0),
+          appliedDiscounts
+        };
+      });
+
+      console.log('Final calculation result:', result);
       setCalculation(result);
     },
     [services, packages]

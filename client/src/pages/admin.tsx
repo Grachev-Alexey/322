@@ -79,56 +79,16 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
         }
       }
 
-      for (const perk of packagePerks) {
-        if (perk.name && perk.name.trim()) {
-          // Remove invalid IDs (timestamps) for new perks
-          const perkToSave = { ...perk };
-          if (perkToSave.id && perkToSave.id > 2147483647) {
-            const { id, ...perkWithoutId } = perkToSave;
-            const response = await fetch("/api/admin/package-perks", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              credentials: "include",
-              body: JSON.stringify(perkWithoutId)
-            });
-
-            if (!response.ok) {
-              throw new Error(`Failed to save perk ${perk.name}`);
-            }
-          } else {
-            const response = await fetch("/api/admin/package-perks", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              credentials: "include",
-              body: JSON.stringify(perkToSave)
-            });
-
-            if (!response.ok) {
-              throw new Error(`Failed to save perk ${perk.name}`);
-            }
-          }
-        }
-      }
-
       // Reload packages from server to refresh the UI
-      console.log('Reloading packages from server...');
       const packagesResponse = await fetch("/api/packages", { credentials: "include" });
       if (packagesResponse.ok) {
         const updatedPackages = await packagesResponse.json();
-        console.log('Loaded packages from server:', updatedPackages);
         setPackages(updatedPackages);
-        console.log('Updated frontend state with:', updatedPackages);
-        
         toast({
           title: "Успешно",
           description: "Настройки пакетов сохранены"
         });
       } else {
-        console.error('Failed to reload packages:', packagesResponse.status);
         throw new Error("Failed to reload packages");
       }
 
@@ -776,40 +736,7 @@ function PackagesManagement({ packages, setPackages, loading, setLoading }: {
         }
       }
 
-      for (const perk of packagePerks) {
-        if (perk.name && perk.name.trim()) {
-          // Remove invalid IDs (timestamps) for new perks
-          const perkToSave = { ...perk };
-          if (perkToSave.id && perkToSave.id > 2147483647) {
-            const { id, ...perkWithoutId } = perkToSave;
-            const response = await fetch("/api/admin/package-perks", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              credentials: "include",
-              body: JSON.stringify(perkWithoutId)
-            });
 
-            if (!response.ok) {
-              throw new Error(`Failed to save perk ${perk.name}`);
-            }
-          } else {
-            const response = await fetch("/api/admin/package-perks", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              credentials: "include",
-              body: JSON.stringify(perkToSave)
-            });
-
-            if (!response.ok) {
-              throw new Error(`Failed to save perk ${perk.name}`);
-            }
-          }
-        }
-      }
 
       toast({
         title: "Успешно",
