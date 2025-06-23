@@ -284,13 +284,13 @@ export default function UnifiedPackageComparison({
                   <div className="text-xs lg:text-sm text-green-600 font-semibold">
                     Экономия: {formatPrice(data.totalSavings)}
                     <div className="text-xs text-gray-500 space-y-0.5 mt-1">
-                      {data.appliedDiscounts.map((discount: any, idx: number) => (
+                      {data.appliedDiscounts.filter((discount: any) => discount.amount > 0).map((discount: any, idx: number) => (
                         <div key={idx} className="flex justify-between">
                           <span>
                             {discount.type === 'package' && `Скидка пакета ${discountPercent}%`}
-                            {discount.type === 'bulk' && `За ${actualThreshold}+ процедур`}
+                            {discount.type === 'bulk' && `За ${safeProcedureCount}+ процедур`}
                             {discount.type === 'certificate' && 'Сертификат'}
-                            {discount.type === 'gift_sessions' && `Подарочные сессии`}
+                            {discount.type === 'gift_sessions' && `Подарочные процедуры`}
                           </span>
                           <span>-{formatPrice(discount.amount)}</span>
                         </div>
@@ -304,7 +304,7 @@ export default function UnifiedPackageComparison({
                   <div className="space-y-1">
                     {packageData.giftSessions > 0 && (
                       <div className="bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-400 px-2 py-1 rounded text-xs text-center font-medium">
-                        +{packageData.giftSessions} <span className="hidden sm:inline">подарочных сеанса</span>
+                        +{packageData.giftSessions} <span className="hidden sm:inline">подарочных процедуры</span>
                       </div>
                     )}
                     
