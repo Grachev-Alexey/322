@@ -107,14 +107,13 @@ export function calculatePackagePricing(
     
 
 
-    // Calculate gift session value based on package type
-    // Gift sessions are full procedure sessions, not individual visits
+    // Calculate gift session value based on package configuration from database
     let giftSessionValue = 0;
-    if (packageType === 'vip') {
-      giftSessionValue = baseCost / totalProcedures * 3; // 3 full sessions for VIP
-    } else if (packageType === 'standard') {
-      giftSessionValue = baseCost / totalProcedures * 1; // 1 full session for Standard
-    }
+    const baseCostPerProcedure = totalProcedures > 0 ? baseCost / totalProcedures : 0;
+    
+    // Get gift sessions from package config (from database)
+    const giftSessions = packageData.giftSessions || 0;
+    giftSessionValue = baseCostPerProcedure * giftSessions;
 
     // Calculate free zones value from params
     const freeZonesValue = params.freeZonesValue || 0;
