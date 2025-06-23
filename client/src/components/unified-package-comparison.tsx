@@ -164,7 +164,7 @@ export default function UnifiedPackageComparison({
     <TooltipProvider>
       <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 shadow-sm overflow-hidden flex flex-col h-full">
         {/* Package Headers */}
-        <div className="bg-gray-50 dark:bg-gray-800 px-2 py-2 border-b border-gray-100">
+        <div className="px-2 py-2 border-b border-gray-100">
           <div className="grid grid-cols-5 gap-0">
             <div className="text-sm font-medium text-gray-700 dark:text-gray-300"></div>
             {packageTypes.map((packageType) => {
