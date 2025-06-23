@@ -30,12 +30,12 @@ export default function PaymentConfig({
   calculation
 }: PaymentConfigProps) {
   const handleDownPaymentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value) || 0;
+    const value = Math.max(0, parseInt(e.target.value) || 0);
     onDownPaymentChange(value);
   };
 
   const handleInstallmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(e.target.value) || 2;
+    const value = Math.max(2, Math.min(6, parseInt(e.target.value) || 2));
     onInstallmentMonthsChange(value);
   };
 
@@ -103,13 +103,14 @@ export default function PaymentConfig({
                 type="range"
                 min="2"
                 max="6"
+                step="1"
                 value={installmentMonths}
                 onChange={handleInstallmentChange}
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
               />
               <div className="flex justify-between text-xs text-gray-400 mt-2">
-                <span>2</span>
-                <span>6</span>
+                <span>2 мес</span>
+                <span>6 мес</span>
               </div>
             </div>
             
