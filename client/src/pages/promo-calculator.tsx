@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { RangeSlider } from "@/components/ui/range-slider";
 import { X, Moon, Sun, Crown, Star, Leaf, Gift, Sparkles, Check } from "lucide-react";
 import * as Icons from "lucide-react";
 import { useCalculator } from "@/hooks/use-calculator";
@@ -147,18 +148,13 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 <div className="text-xs text-gray-500">процедур</div>
               </div>
               
-              <input
-                type="range"
-                min="4"
-                max="20"
+              <RangeSlider
+                min={4}
+                max={20}
                 value={procedureCount}
-                onChange={(e) => setProcedureCount(parseInt(e.target.value))}
-                className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                onChange={setProcedureCount}
+                className="dark:bg-gray-700"
               />
-              <div className="flex justify-between text-xs text-gray-400 mt-1">
-                <span>4</span>
-                <span>20</span>
-              </div>
               
               {procedureCount >= 15 && (
                 <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-950 rounded-lg shadow-inner">
@@ -179,19 +175,15 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 <div className="text-xs text-gray-500 dark:text-gray-400">из {formatPrice(getMaxFinalCost())}</div>
               </div>
               
-              <input
-                type="range"
-                min="5000"
+              <RangeSlider
+                min={5000}
                 max={calculation?.packages.vip?.finalCost || 50000}
-                step="1000"
+                step={1000}
                 value={downPayment}
-                onChange={(e) => setDownPayment(parseInt(e.target.value))}
-                className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer slider mb-2"
+                onChange={setDownPayment}
+                className="dark:bg-gray-700 mb-2"
+                formatLabel={formatPrice}
               />
-              <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500">
-                <span>5 000₽</span>
-                <span>{formatPrice(calculation?.packages.vip?.finalCost || 50000)}</span>
-              </div>
             </div>
 
             {/* Installment configuration - компактный */}
@@ -204,18 +196,13 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                   <div className="text-xs text-gray-500 dark:text-gray-400">месяцев</div>
                 </div>
                 
-                <input
-                  type="range"
-                  min="2"
-                  max="6"
+                <RangeSlider
+                  min={2}
+                  max={6}
                   value={installmentMonths}
-                  onChange={(e) => setInstallmentMonths(parseInt(e.target.value))}
-                  className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer slider"
+                  onChange={setInstallmentMonths}
+                  className="dark:bg-gray-700"
                 />
-                <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500 mt-1">
-                  <span>2</span>
-                  <span>6</span>
-                </div>
                 
                 {selectedPackage && calculation && (
                   <div className="mt-2 text-center">

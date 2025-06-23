@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
+import { RangeSlider } from "@/components/ui/range-slider";
 import { Gift, CreditCard, Calendar } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 
@@ -34,10 +35,7 @@ export default function PaymentConfig({
     onDownPaymentChange(value);
   };
 
-  const handleInstallmentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = Math.max(2, Math.min(6, parseInt(e.target.value) || 2));
-    onInstallmentMonthsChange(value);
-  };
+
 
   const monthlyPayment = selectedPackage && calculation?.packages[selectedPackage] 
     ? (calculation.packages[selectedPackage].finalCost - downPayment) / installmentMonths
@@ -81,21 +79,13 @@ export default function PaymentConfig({
               <span className="text-sm text-gray-600">месяца</span>
             </div>
             
-            <div className="relative">
-              <input
-                type="range"
-                min="2"
-                max="6"
-                step="1"
-                value={installmentMonths}
-                onChange={handleInstallmentChange}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-              />
-              <div className="flex justify-between text-xs text-gray-400 mt-2">
-                <span>2 мес</span>
-                <span>6 мес</span>
-              </div>
-            </div>
+            <RangeSlider
+              min={2}
+              max={6}
+              value={installmentMonths}
+              onChange={onInstallmentMonthsChange}
+              formatLabel={(val) => `${val} мес`}
+            />
             
             {monthlyPayment > 0 && selectedPackage !== 'vip' && (
               <div className="mt-4 text-center">

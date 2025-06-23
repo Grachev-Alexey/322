@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { RangeSlider } from "@/components/ui/range-slider";
 import { Calculator, LogOut, Star } from "lucide-react";
 import ServiceSelector from "@/components/service-selector";
 import UnifiedPackageComparison from "@/components/unified-package-comparison";
@@ -126,20 +127,12 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
                   <span className="text-sm text-gray-600">процедур</span>
                 </div>
                 
-                <div className="relative">
-                  <input
-                    type="range"
-                    min="4"
-                    max="20"
-                    value={procedureCount}
-                    onChange={(e) => setProcedureCount(parseInt(e.target.value))}
-                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider"
-                  />
-                  <div className="flex justify-between text-xs text-gray-400 mt-2">
-                    <span>4</span>
-                    <span>20</span>
-                  </div>
-                </div>
+                <RangeSlider
+                  min={4}
+                  max={20}
+                  value={procedureCount}
+                  onChange={setProcedureCount}
+                />
                 
                 {procedureCount >= 15 && (
                   <div className="mt-4 p-3 bg-blue-50 rounded-lg">
