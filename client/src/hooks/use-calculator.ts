@@ -221,11 +221,7 @@ export function useCalculator() {
           } else {
             // Calculate minimum down payment as percentage of package cost
             const minPaymentPercent = parseFloat(packageConfig.minDownPaymentPercent.toString());
-            const percentageBasedMin = packageData.finalCost * minPaymentPercent;
-            const minCostFromDB = parseFloat(packageConfig.minCost.toString());
-            
-            // Use percentage-based calculation, with absolute minimum as fallback
-            const minPayment = Math.max(percentageBasedMin, Math.min(minCostFromDB, percentageBasedMin));
+            const minPayment = packageData.finalCost * minPaymentPercent;
             const maxPayment = packageData.finalCost; // Can't exceed package cost
             
             // Constrain to valid range
