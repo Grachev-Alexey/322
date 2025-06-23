@@ -147,6 +147,8 @@ export function useCalculator() {
         totalProcedures: servicesData.reduce((sum, s) => sum + s.quantity, 0) * procedures, // For display only
         freeZonesValue: zones.reduce((sum: number, zone: any) => sum + (zone.quantity * zone.pricePerProcedure), 0)
       };
+      
+      console.log('Procedure count for discount calculation:', procedures);
 
       ['vip', 'standard', 'economy'].forEach(packageType => {
         const packageData = packages.find((p: Package) => p.type === packageType);
@@ -186,6 +188,8 @@ export function useCalculator() {
         const fifteenPlusProceduresDiscount = procedureCountForDiscount >= 15 ? baseCost * 0.025 : 0;
         const totalDiscount = packageDiscount + fifteenPlusProceduresDiscount;
         
+        console.log(`Package ${packageType}: procedures=${procedureCountForDiscount}, 15+ discount=${fifteenPlusProceduresDiscount > 0 ? 'YES' : 'NO'}`);
+        
         // Final cost
         const finalCost = Math.max(baseCost - totalDiscount, minCost);
         const monthlyPayment = (finalCost - payment) / months;
@@ -209,6 +213,7 @@ export function useCalculator() {
       });
 
       console.log('Final calculation result:', result);
+      console.log(`15+ discount applied based on slider value: ${procedures}`);
       setCalculation(result);
     },
     [services, packages]

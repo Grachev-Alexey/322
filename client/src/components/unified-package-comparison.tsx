@@ -34,6 +34,7 @@ interface UnifiedPackageComparisonProps {
   packages: Package[];
   downPayment: number;
   installmentMonths: number;
+  procedureCount: number; // Add procedure count to props
 }
 
 export default function UnifiedPackageComparison({ 
