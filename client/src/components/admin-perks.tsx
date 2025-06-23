@@ -255,6 +255,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
     // Update state when currentValue changes
     useEffect(() => {
       if (currentValue) {
+        console.log('PerkValueEditor: currentValue changed:', currentValue);
         setValueType(currentValue.valueType || 'boolean');
         setDisplayValue(currentValue.displayValue || 'Не включено');
         setBooleanValue(currentValue.booleanValue || false);
@@ -301,7 +302,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
       return (
         <div className="flex items-center justify-between p-2 border rounded">
           <div className="flex items-center space-x-2">
-            {currentValue?.customIcon && currentValue.customIcon !== 'none' && (
+            {currentValue?.customIcon && currentValue.customIcon !== 'none' && currentValue.customIcon !== null && (
               <Tooltip>
                 <TooltipTrigger asChild>
                   <span style={{ color: currentValue.customIconColor || '#000000' }} className="cursor-help">
