@@ -7,7 +7,8 @@ ViVi-Calc is a comprehensive sales calculation tool designed for beauty salons. 
 - **2024-12-23**: Successfully migrated project from Replit Agent to Replit environment
 - **2024-12-23**: Set up PostgreSQL database with all required tables
 - **2024-12-23**: Added test data: 10 services and 5 perks with package configurations
-- **2024-12-23**: Application running successfully on port 5000
+- **2024-12-23**: Removed gray background from calculator page per user request
+- **2024-12-23**: Application running successfully on port 5000 - migration complete
 
 ## Project Architecture
 - **Frontend**: React with Vite, TailwindCSS, Radix UI components
@@ -26,6 +27,7 @@ ViVi-Calc is a comprehensive sales calculation tool designed for beauty salons. 
 - Language: Russian
 - Prefers test data without icons in names or descriptions
 - Wants 5 perks without highlighting features
+- Prefers clean white background on calculator page (no gray backgrounds)
 
 ## Development Notes
 - Uses TSX for TypeScript execution

@@ -70,7 +70,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
   };
 
   return (
-    <div className="h-screen flex flex-col" style={{ background: 'var(--gradient-background)' }}>
+    <div className="h-screen flex flex-col bg-white">
       {/* Header */}
       <header className="flex-shrink-0 bg-white/80 backdrop-blur-sm shadow-lg border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
