@@ -43,6 +43,8 @@ interface Package {
 export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorPageProps) {
   const [darkMode, setDarkMode] = useState(false);
   const [showClientModal, setShowClientModal] = useState(false);
+  const [isEditingPayment, setIsEditingPayment] = useState(false);
+  const [tempPaymentValue, setTempPaymentValue] = useState('');
 
   const {
     selectedServices,
@@ -188,20 +190,40 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
               <h4 className="font-semibold text-gray-900 dark:text-white mb-2 text-sm">Первый взнос</h4>
               
               <div className="text-center mb-2">
-                <input
-                  type="number"
-                  value={downPayment}
-                  onChange={(e) => {
-                    const value = parseInt(e.target.value) || 0;
-                    const constrainedValue = Math.max(getMinDownPayment(), Math.min(getMaxFinalCost(), value));
-                    setDownPayment(constrainedValue);
-                  }}
-                  min={getMinDownPayment()}
-                  max={getMaxFinalCost()}
-                  className="text-lg font-bold text-premium bg-transparent border-none text-center w-full focus:outline-none focus:ring-2 focus:ring-purple-500 rounded px-2 py-1"
-                  style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' }}
-                />
-                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">₽</div>
+                {isEditingPayment ? (
+                  <input
+                    type="number"
+                    value={tempPaymentValue}
+                    onChange={(e) => setTempPaymentValue(e.target.value)}
+                    onBlur={() => {
+                      const numericValue = parseInt(tempPaymentValue) || 0;
+                      const constrainedValue = Math.max(getMinDownPayment(), Math.min(getMaxFinalCost(), numericValue));
+                      setDownPayment(constrainedValue);
+                      setIsEditingPayment(false);
+                    }}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        const numericValue = parseInt(tempPaymentValue) || 0;
+                        const constrainedValue = Math.max(getMinDownPayment(), Math.min(getMaxFinalCost(), numericValue));
+                        setDownPayment(constrainedValue);
+                        setIsEditingPayment(false);
+                      }
+                    }}
+                    autoFocus
+                    className="text-lg font-bold text-premium bg-transparent border-none text-center w-full focus:outline-none focus:ring-2 focus:ring-purple-500 rounded px-2 py-1"
+                    style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' }}
+                  />
+                ) : (
+                  <div
+                    onClick={() => {
+                      setTempPaymentValue(downPayment.toString());
+                      setIsEditingPayment(true);
+                    }}
+                    className="text-lg font-bold text-premium cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded px-2 py-1 transition-colors"
+                  >
+                    {formatPrice(downPayment)}
+                  </div>
+                )}
               </div>
               
               <RangeSlider
