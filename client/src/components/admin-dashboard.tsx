@@ -21,6 +21,7 @@ interface PackageData {
   minCost: string;
   minDownPaymentPercent: string;
   requiresFullPayment: boolean;
+  bonusAccountPercent: string;
 }
 
 export default function AdminDashboard() {
@@ -150,6 +151,8 @@ export default function AdminDashboard() {
                 </div>
                 <div className="flex items-center space-x-2 text-sm">
                   <span>Скидка: {(parseFloat(pkg.discount) * 100).toFixed(0)}%</span>
+                  <span>•</span>
+                  <span>Бонусный счет: {(parseFloat(pkg.bonusAccountPercent) * 100).toFixed(0)}%</span>
                   <span>•</span>
                   <span>Мин. стоимость: {parseFloat(pkg.minCost).toLocaleString()} ₽</span>
                   {pkg.requiresFullPayment && (

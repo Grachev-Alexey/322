@@ -49,6 +49,7 @@ interface Package {
   minDownPaymentPercent: string;
   requiresFullPayment: boolean;
   giftSessions: number;
+  bonusAccountPercent: string;
 }
 
 export function useCalculator() {
