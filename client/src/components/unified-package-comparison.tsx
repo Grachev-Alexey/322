@@ -51,9 +51,12 @@ export default function UnifiedPackageComparison({
   
   // Calculate 15+ procedures discount display - based on procedure count slider
   const totalProcedures = calculation?.totalProcedures || 0;
-  const hasAdditionalDiscount = procedureCount >= 15;
+  const hasAdditionalDiscount = safeProcedureCount >= 15;
   
   console.log('UnifiedPackageComparison - procedureCount:', procedureCount, 'hasAdditionalDiscount:', hasAdditionalDiscount);
+  
+  // Add fallback for procedureCount if undefined
+  const safeProcedureCount = procedureCount || 1;
   
   // Package visual configurations
   const packageInfo = {
