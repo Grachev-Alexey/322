@@ -53,6 +53,8 @@ export default function UnifiedPackageComparison({
   const totalProcedures = calculation?.totalProcedures || 0;
   const hasAdditionalDiscount = procedureCount >= 15;
   
+  console.log('UnifiedPackageComparison - procedureCount:', procedureCount, 'hasAdditionalDiscount:', hasAdditionalDiscount);
+  
   // Package visual configurations
   const packageInfo = {
     vip: {
