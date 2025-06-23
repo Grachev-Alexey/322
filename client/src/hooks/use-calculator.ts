@@ -176,6 +176,11 @@ export function useCalculator() {
       };
 
       // Use the centralized calculation function with calculator settings
+      console.log(`=== CALCULATION PARAMS DEBUG ===`);
+      console.log('Procedure count from slider:', procedures);
+      console.log('Calculator settings:', calculatorSettings);
+      console.log('Calculation params:', calculationParams);
+      
       const result = calculatePackagePricing(baseCost, calculationParams, calculatorSettings);
       
 
