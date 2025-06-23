@@ -172,14 +172,12 @@ export function useCalculator() {
         usedCertificate: certificate,
         freeZones: zones,
         serviceMap,
-        packageConfig
+        packageConfig,
+        procedureCount: procedures // ADD this parameter!
       };
 
       // Use the centralized calculation function with calculator settings
-      console.log(`=== CALCULATION PARAMS DEBUG ===`);
-      console.log('Procedure count from slider:', procedures);
-      console.log('Calculator settings:', calculatorSettings);
-      console.log('Calculation params:', calculationParams);
+
       
       const result = calculatePackagePricing(baseCost, calculationParams, calculatorSettings);
       

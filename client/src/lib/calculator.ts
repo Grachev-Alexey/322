@@ -101,12 +101,7 @@ export function calculatePackagePricing(
     const qualifiesForBulkDiscount = sliderProcedureCount >= bulkThreshold;
     const additionalDiscount = qualifiesForBulkDiscount ? baseCost * bulkDiscountPercent : 0;
     
-    console.log(`=== BULK DISCOUNT DEBUG ===`);
-    console.log(`Slider procedure count: ${sliderProcedureCount}`);
-    console.log(`Bulk threshold: ${bulkThreshold}`);
-    console.log(`Bulk discount percent: ${bulkDiscountPercent}`);
-    console.log(`Qualifies for bulk discount: ${qualifiesForBulkDiscount}`);
-    console.log(`Additional discount amount: ${additionalDiscount}`);
+
     
 
 
