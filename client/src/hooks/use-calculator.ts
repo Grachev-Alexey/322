@@ -158,7 +158,7 @@ export function useCalculator() {
         return acc;
       }, {});
       
-      console.log('Package config:', packageConfig);
+
 
       // Prepare calculation parameters
       const calculationParams = {
