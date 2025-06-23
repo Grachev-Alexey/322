@@ -167,13 +167,16 @@ export function useCalculator() {
     if (calculation && calculation.packages) {
       const { vip, standard, economy } = calculation.packages;
       
-      // Set default down payment to available package's maximum cost on first calculation
+      // Set default down payment to VIP cost when available, otherwise highest available package
       if (downPayment === 0) {
-        const availablePackages = Object.entries(calculation.packages)
-          .filter(([_, data]) => data.isAvailable)
-          .map(([_, data]) => data.finalCost);
-        if (availablePackages.length > 0) {
-          setDownPayment(Math.max(...availablePackages));
+        if (vip?.isAvailable) {
+          setDownPayment(vip.finalCost);
+          return;
+        } else if (standard?.isAvailable) {
+          setDownPayment(standard.finalCost);
+          return;
+        } else if (economy?.isAvailable) {
+          setDownPayment(economy.finalCost);
           return;
         }
       }

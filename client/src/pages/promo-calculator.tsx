@@ -80,13 +80,16 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
     return (calculation.packages as Record<string, PackageData>)[packageType] || null;
   };
 
-  // Helper function to get max final cost from available packages only
+  // Helper function to get max final cost - prioritize VIP > Standard > Economy
   const getMaxFinalCost = (): number => {
     if (!calculation || !calculation.packages) return 25000;
-    const availablePackages = Object.entries(calculation.packages as Record<string, PackageData>)
-      .filter(([_, data]) => data.isAvailable)
-      .map(([_, data]) => data.finalCost);
-    return availablePackages.length > 0 ? Math.max(...availablePackages) : 25000;
+    const packages = calculation.packages as Record<string, PackageData>;
+    
+    if (packages.vip?.isAvailable) return packages.vip.finalCost;
+    if (packages.standard?.isAvailable) return packages.standard.finalCost;
+    if (packages.economy?.isAvailable) return packages.economy.finalCost;
+    
+    return 25000;
   };
 
   const getMinDownPayment = (): number => {
