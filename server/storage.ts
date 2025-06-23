@@ -256,6 +256,13 @@ export class DatabaseStorage implements IStorage {
     return newPerkValue;
   }
 
+  async deletePerk(perkId: number): Promise<void> {
+    // First delete all perk values for this perk
+    await db.delete(packagePerkValues).where(eq(packagePerkValues.perkId, perkId));
+    // Then delete the perk itself
+    await db.delete(perks).where(eq(perks.id, perkId));
+  }
+
   async updatePackagePerkValue(id: number, updates: Partial<InsertPackagePerkValue>): Promise<PackagePerkValue | null> {
     const [updated] = await db.update(packagePerkValues)
       .set({ ...updates, updatedAt: new Date() })

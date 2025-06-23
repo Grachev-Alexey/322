@@ -47,6 +47,10 @@ export default function UnifiedPackageComparison({
   
   const packageTypes = ['vip', 'standard', 'economy'];
   
+  // Calculate 15+ procedures discount display
+  const totalProcedures = calculation?.totalProcedures || 0;
+  const hasAdditionalDiscount = totalProcedures >= 15;
+  
   // Package visual configurations
   const packageInfo = {
     vip: {
@@ -270,6 +274,11 @@ export default function UnifiedPackageComparison({
                   <div className="text-xs lg:text-sm text-green-600 font-semibold">
                     Экономия: {formatPrice(data.totalSavings)}
                   </div>
+                  {hasAdditionalDiscount && (
+                    <div className="text-xs text-purple-600 font-medium">
+                      +2.5% за 15+ процедур
+                    </div>
+                  )}
                 </div>
                 
                 {/* Additional Info */}

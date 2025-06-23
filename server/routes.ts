@@ -262,6 +262,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/admin/perks/:id", requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      await storage.deletePerk(parseInt(id));
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error deleting perk:', error);
+      res.status(500).json({ message: "Ошибка удаления перка" });
+    }
+  });
+
   app.put("/api/admin/perk-values/:id", requireAdmin, async (req, res) => {
     try {
       const { id } = req.params;

@@ -134,6 +134,36 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
     }
   };
 
+  const deletePerk = async (perkId: number) => {
+    if (!confirm('Удалить этот перк? Это действие нельзя отменить.')) return;
+    
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/admin/perks/${perkId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        await loadData();
+        toast({
+          title: "Успешно",
+          description: "Перк удален"
+        });
+      } else {
+        throw new Error('Failed to delete perk');
+      }
+    } catch (error) {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось удалить перк",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const getPerkValuesForPerk = (perkId: number) => {
     return packageTypes.map(packageType => {
       const value = perkValues.find(pv => pv.perkId === perkId && pv.packageType === packageType);
@@ -269,16 +299,45 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
             />
             <Select value={newPerk.icon} onValueChange={(value) => setNewPerk({ ...newPerk, icon: value })}>
               <SelectTrigger>
-                <SelectValue />
+                <SelectValue placeholder="Выберите иконку" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Pause">⏸️ Pause (Заморозка)</SelectItem>
+              <SelectContent className="max-h-96 overflow-y-auto">
+                <SelectItem value="Snowflake">❄️ Snowflake (Заморозка)</SelectItem>
+                <SelectItem value="Gift">🎁 Gift (Подарок)</SelectItem>
+                <SelectItem value="Percent">% Percent (Процент)</SelectItem>
+                <SelectItem value="CreditCard">💳 CreditCard (Рассрочка)</SelectItem>
+                <SelectItem value="Clock">🕐 Clock (Время)</SelectItem>
+                <SelectItem value="MessageCircle">💬 MessageCircle (Консультация)</SelectItem>
                 <SelectItem value="Shield">🛡️ Shield (Гарантия)</SelectItem>
-                <SelectItem value="User">👤 User (Менеджер)</SelectItem>
-                <SelectItem value="Gift">🎁 Gift (Подарки)</SelectItem>
-                <SelectItem value="Clock">⏰ Clock (Время)</SelectItem>
-                <SelectItem value="Percent">💰 Percent (Скидка)</SelectItem>
+                <SelectItem value="User">👤 User (Пользователь)</SelectItem>
+                <SelectItem value="Star">⭐ Star (Звезда)</SelectItem>
+                <SelectItem value="Heart">❤️ Heart (Сердце)</SelectItem>
+                <SelectItem value="Zap">⚡ Zap (Молния)</SelectItem>
+                <SelectItem value="Award">🏆 Award (Награда)</SelectItem>
                 <SelectItem value="Check">✅ Check (Галочка)</SelectItem>
+                <SelectItem value="Crown">👑 Crown (Корона)</SelectItem>
+                <SelectItem value="Diamond">💎 Diamond (Алмаз)</SelectItem>
+                <SelectItem value="Gem">💍 Gem (Драгоценность)</SelectItem>
+                <SelectItem value="Sparkles">✨ Sparkles (Блеск)</SelectItem>
+                <SelectItem value="Calendar">📅 Calendar (Календарь)</SelectItem>
+                <SelectItem value="Phone">📞 Phone (Телефон)</SelectItem>
+                <SelectItem value="Mail">📧 Mail (Почта)</SelectItem>
+                <SelectItem value="Settings">⚙️ Settings (Настройки)</SelectItem>
+                <SelectItem value="Lock">🔒 Lock (Замок)</SelectItem>
+                <SelectItem value="Key">🗝️ Key (Ключ)</SelectItem>
+                <SelectItem value="Eye">👁️ Eye (Глаз)</SelectItem>
+                <SelectItem value="Target">🎯 Target (Цель)</SelectItem>
+                <SelectItem value="Bookmark">🔖 Bookmark (Закладка)</SelectItem>
+                <SelectItem value="Flag">🚩 Flag (Флаг)</SelectItem>
+                <SelectItem value="Thumbsup">👍 ThumbsUp (Лайк)</SelectItem>
+                <SelectItem value="TrendingUp">📈 TrendingUp (Рост)</SelectItem>
+                <SelectItem value="Handshake">🤝 Handshake (Рукопожатие)</SelectItem>
+                <SelectItem value="Coffee">☕ Coffee (Кофе)</SelectItem>
+                <SelectItem value="Sun">☀️ Sun (Солнце)</SelectItem>
+                <SelectItem value="Moon">🌙 Moon (Луна)</SelectItem>
+                <SelectItem value="Flame">🔥 Flame (Огонь)</SelectItem>
+                <SelectItem value="Leaf">🍃 Leaf (Лист)</SelectItem>
+                <SelectItem value="Flower">🌸 Flower (Цветок)</SelectItem>
               </SelectContent>
             </Select>
             <Button onClick={createPerk} disabled={loading || !newPerk.name.trim()}>

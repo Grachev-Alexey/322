@@ -54,7 +54,7 @@ interface Package {
 export function useCalculator() {
   const [selectedServices, setSelectedServices] = useState<SelectedService[]>([]);
   const [procedureCount, setProcedureCount] = useState(10);
-  const [downPayment, setDownPayment] = useState(0);
+  const [downPayment, setDownPayment] = useState(15000);
   const [installmentMonths, setInstallmentMonths] = useState(4);
   const [usedCertificate, setUsedCertificate] = useState(false);
   const [freeZones, setFreeZones] = useState<FreeZone[]>([]);
@@ -151,30 +151,47 @@ export function useCalculator() {
     );
   }, [selectedServices, procedureCount, downPayment, installmentMonths, usedCertificate, freeZones, calculateInstantly]);
 
-  // Auto-select VIP package by default, set down payment to VIP cost
+  // Auto-select package based on down payment amount
   useEffect(() => {
-    if (calculation) {
-      const vipCost = calculation.packages.vip?.finalCost;
-      if (vipCost && downPayment === 15000) {
-        setDownPayment(Math.min(vipCost, 25000)); // Set to VIP cost but cap at 25k
+    if (calculation && calculation.packages) {
+      const { vip, standard, economy } = calculation.packages;
+      
+      // Set max slider value to VIP package cost
+      const maxSliderValue = vip?.finalCost || 50000;
+      
+      // Auto-select package based on down payment amount
+      let newSelectedPackage = null;
+      
+      if (downPayment >= (vip?.finalCost || Infinity) * 0.9) {
+        // If down payment is 90%+ of VIP cost, select VIP
+        newSelectedPackage = vip?.isAvailable ? 'vip' : null;
+      } else if (downPayment >= (standard?.finalCost || Infinity) * 0.5) {
+        // If down payment is 50%+ of Standard cost, select Standard
+        newSelectedPackage = standard?.isAvailable ? 'standard' : null;
+      } else {
+        // Otherwise select Economy if available
+        newSelectedPackage = economy?.isAvailable ? 'economy' : null;
       }
       
-      if (!selectedPackage) {
-        // Auto-select the first available package
+      // Fallback to first available package
+      if (!newSelectedPackage) {
         const availablePackages = Object.entries(calculation.packages)
           .filter(([_, data]) => data.isAvailable)
           .sort((a, b) => {
-            // Prefer standard > vip > economy
-            const order = { standard: 0, vip: 1, economy: 2 };
+            const order = { vip: 0, standard: 1, economy: 2 };
             return order[a[0] as keyof typeof order] - order[b[0] as keyof typeof order];
           });
 
         if (availablePackages.length > 0) {
-          setSelectedPackage(availablePackages[0][0]);
+          newSelectedPackage = availablePackages[0][0];
         }
       }
+      
+      if (newSelectedPackage !== selectedPackage) {
+        setSelectedPackage(newSelectedPackage);
+      }
     }
-  }, [calculation, selectedPackage]);
+  }, [calculation, downPayment]);
 
   return {
     selectedServices,
@@ -194,6 +211,7 @@ export function useCalculator() {
     setUsedCertificate,
     setFreeZones,
     setSelectedPackage,
-    isLoading: !calculation && selectedServices.length > 0
+    isLoading: !calculation && selectedServices.length > 0,
+    getMaxDownPayment: () => calculation?.packages.vip?.finalCost || 50000
   };
 }

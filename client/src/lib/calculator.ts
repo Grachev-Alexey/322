@@ -99,8 +99,8 @@ export function calculatePackagePricing(
     // Calculate certificate discount (max 3000 RUB)
     const certificateDiscount = params.usedCertificate ? Math.min(baseCost * 0.05, 3000) : 0;
     
-    // Calculate bulk discount (2.5% for 8+ procedures)
-    const additionalDiscount = totalProcedures >= 8 ? baseCost * 0.025 : 0;
+    // Calculate bulk discount (2.5% for 15+ procedures)
+    const additionalDiscount = totalProcedures >= 15 ? baseCost * 0.025 : 0;
 
     // Calculate gift session value based on package type
     // Gift sessions are full procedure sessions, not individual visits

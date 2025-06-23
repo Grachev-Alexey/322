@@ -182,15 +182,15 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
               <input
                 type="range"
                 min="5000"
-                max={selectedPackage && calculation ? getPackageData(selectedPackage)?.finalCost || 25000 : 25000}
-                step="1"
+                max={calculation?.packages.vip?.finalCost || 50000}
+                step="1000"
                 value={downPayment}
                 onChange={(e) => setDownPayment(parseInt(e.target.value))}
                 className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-lg appearance-none cursor-pointer slider mb-2"
               />
               <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500">
                 <span>5 000₽</span>
-                <span>{selectedPackage && calculation ? formatPrice(getPackageData(selectedPackage)?.finalCost || 25000) : '25 000₽'}</span>
+                <span>{formatPrice(calculation?.packages.vip?.finalCost || 50000)}</span>
               </div>
             </div>
 
