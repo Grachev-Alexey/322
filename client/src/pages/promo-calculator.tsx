@@ -138,7 +138,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
           {/* Scrollable content area with custom scrollbar */}
           <div className="flex-1 overflow-y-auto space-y-2 lg:space-y-3 pr-1 custom-left-scrollbar max-h-[40vh] lg:max-h-none">
             {/* Service selection card */}
-            <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border-0 shadow-none">
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200">
               <h3 className="text-sm lg:text-base font-bold text-gray-900 dark:text-white mb-2">Выбор услуг</h3>
               <ServiceSelector
                 selectedServices={selectedServices}
@@ -149,7 +149,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             </div>
 
             {/* Procedure count - компактный */}
-            <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border-0 shadow-none">
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200">
               <h4 className="font-semibold text-gray-900 dark:text-white mb-2 text-sm">Количество процедур</h4>
               <div className="text-center mb-2">
                 <div className="text-xl lg:text-2xl font-bold text-premium">{procedureCount}</div>
@@ -177,7 +177,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             </div>
 
             {/* Payment settings - минималистичный дизайн */}
-            <div className="floating-card-enhanced backdrop-blur-xl rounded-lg p-3 border transition-all duration-300 bg-white/95 dark:bg-gray-900/95 border-white/20 dark:border-gray-700/20">
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200">
               <div className="flex items-center justify-center mb-2">
                 <h4 className="font-semibold mb-0 text-sm text-gray-900 dark:text-white">
                   {selectedPackage === 'vip' ? 'Полная предоплата' : 'Первый взнос'}
@@ -268,7 +268,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
 
             {/* Installment configuration - компактный */}
             {downPayment < (selectedPackage && calculation ? getPackageData(selectedPackage)?.finalCost || 25000 : 25000) && (
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border-0 shadow-none">
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200">
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2 text-sm">Рассрочка</h4>
                 
                 <div className="text-center mb-2">
@@ -299,7 +299,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             )}
 
             {/* Certificate option - компактный */}
-            <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border-0 shadow-none">
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-white text-sm">Сертификат</h4>
@@ -331,7 +331,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             <div className="flex-shrink-0 mt-2 lg:mt-3">
               <Button
                 onClick={handleProceedToOrder}
-                className="btn-premium w-full text-xs lg:text-sm py-2 border-0 shadow-none"
+                className="btn-premium w-full text-xs lg:text-sm py-2"
                 disabled={!selectedServices.length}
               >
                 <Star className="w-3 h-3 lg:w-4 lg:h-4 mr-1" />

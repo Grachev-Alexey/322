@@ -287,7 +287,7 @@ export default function ServiceSelector({
                 className="flex items-center justify-between bg-green-50 rounded-lg p-2 border border-green-200"
               >
                 <div className="flex items-center min-w-0 flex-1">
-                  <Badge variant="secondary" className="bg-green-100 text-green-800 mr-2 text-xs flex-shrink-0 border-0 shadow-none">
+                  <Badge variant="secondary" className="bg-green-100 text-green-800 mr-2 text-xs flex-shrink-0">
                     ПОДАРОК
                   </Badge>
                   <span className="text-xs lg:text-sm font-medium truncate">{zone.title}</span>

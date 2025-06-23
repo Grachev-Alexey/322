@@ -145,7 +145,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
                 />
                 
                 {procedureCount >= 15 && (
-                  <div className="mt-4 p-3 bg-blue-50 rounded-lg">
+                  <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
                     <div className="flex items-center text-sm text-blue-700">
                       <Star className="w-4 h-4 mr-2" />
                       При выборе ≥15 процедур дополнительная скидка +2,5%
