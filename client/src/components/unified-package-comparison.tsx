@@ -59,33 +59,39 @@ export default function UnifiedPackageComparison({
   // Calculate bulk procedures discount display - based on procedure count slider
   const totalProcedures = calculation?.totalProcedures || 0;
   const safeProcedureCount = procedureCount || 1;
-  const actualThreshold = bulkThreshold || 15;
+  const actualThreshold = (typeof bulkThreshold === 'number' ? bulkThreshold : 15);
   const hasAdditionalDiscount = safeProcedureCount >= actualThreshold;
   
 
   
-  // Package visual configurations
-  const packageInfo = {
+  // Package visual configurations - unified styling
+  const packageInfo: Record<string, {
+    title: string;
+    icon: any;
+    gradient: string;
+    borderColor: string;
+    bgColor: string;
+  }> = {
     vip: {
       title: 'VIP',
       icon: Crown,
-      gradient: 'from-purple-500 to-pink-500',
-      borderColor: 'border-purple-500',
-      bgColor: 'bg-purple-50 dark:bg-purple-900/20'
+      gradient: 'from-gray-500 to-gray-600',
+      borderColor: 'border-gray-500',
+      bgColor: 'bg-gray-50 dark:bg-gray-900/20'
     },
     standard: {
       title: 'Standard',
       icon: Diamond,
-      gradient: 'from-blue-500 to-cyan-500',
-      borderColor: 'border-blue-500',
-      bgColor: 'bg-blue-50 dark:bg-blue-900/20'
+      gradient: 'from-gray-500 to-gray-600',
+      borderColor: 'border-gray-500',
+      bgColor: 'bg-gray-50 dark:bg-gray-900/20'
     },
     economy: {
       title: 'Economy',
       icon: Shield,
-      gradient: 'from-green-500 to-emerald-500',
-      borderColor: 'border-green-500',
-      bgColor: 'bg-green-50 dark:bg-green-900/20'
+      gradient: 'from-gray-500 to-gray-600',
+      borderColor: 'border-gray-500',
+      bgColor: 'bg-gray-50 dark:bg-gray-900/20'
     }
   };
 
@@ -200,8 +206,7 @@ export default function UnifiedPackageComparison({
                       }`}>
                         {!perkValue || !perkValue.isActive ? (
                           <div className="text-center">
-                            <X className="h-3 w-3 lg:h-4 lg:w-4 text-red-400 mx-auto mb-1" />
-                            <span className="text-xs text-gray-400 hidden lg:block">Нет</span>
+                            <X className="h-3 w-3 lg:h-4 lg:w-4 text-red-400 mx-auto" />
                           </div>
                         ) : (
                           <div className="text-center">
@@ -211,10 +216,9 @@ export default function UnifiedPackageComparison({
                                   {perkValue.customIcon && perkValue.customIcon !== 'none' ? (
                                     <Tooltip>
                                       <TooltipTrigger asChild>
-                                        <div className={`p-1 rounded-lg bg-gradient-to-r ${info.gradient} mx-auto w-fit shadow cursor-help`}>
+                                        <div className="p-1 rounded-lg bg-green-500 mx-auto w-fit shadow cursor-help">
                                           {React.createElement((Icons as any)[perkValue.customIcon] || Check, { 
-                                            className: "h-2.5 w-2.5 lg:h-3 lg:w-3",
-                                            style: { color: perkValue.customIconColor || '#ffffff' }
+                                            className: "h-2.5 w-2.5 lg:h-3 lg:w-3 text-white"
                                           })}
                                         </div>
                                       </TooltipTrigger>
@@ -225,18 +229,14 @@ export default function UnifiedPackageComparison({
                                       )}
                                     </Tooltip>
                                   ) : (
-                                    <div className={`p-1 rounded-lg bg-gradient-to-r ${info.gradient} mx-auto w-fit shadow`}>
+                                    <div className="p-1 rounded-lg bg-green-500 mx-auto w-fit shadow">
                                       <Check className="h-2.5 w-2.5 lg:h-3 lg:w-3 text-white" />
                                     </div>
                                   )}
-                                  <span className="text-xs text-gray-600 dark:text-gray-300 mt-1 block">
-                                    {perkValue.displayValue}
-                                  </span>
                                 </>
                               ) : (
                                 <div className="text-center">
-                                  <X className="h-3 w-3 lg:h-4 lg:w-4 text-red-400 mx-auto mb-1" />
-                                  <span className="text-xs text-gray-400 hidden lg:block">Нет</span>
+                                  <X className="h-3 w-3 lg:h-4 lg:w-4 text-red-400 mx-auto" />
                                 </div>
                               )
                             ) : (
@@ -244,9 +244,9 @@ export default function UnifiedPackageComparison({
                                 {perkValue.tooltip ? (
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <div className={`text-xs lg:text-sm font-semibold cursor-help ${perkValue.isHighlighted ? `font-bold text-white bg-gradient-to-r ${info.gradient} px-2 py-1 rounded shadow` : 'text-gray-700 dark:text-gray-300'}`}>
+                                      <div className={`text-xs lg:text-sm font-semibold cursor-help ${perkValue.isHighlighted ? `font-bold text-white bg-green-500 px-2 py-1 rounded shadow` : 'text-gray-700 dark:text-gray-300'}`}>
                                         {perkValue.customIcon && perkValue.customIcon !== 'none' && (
-                                          <span className="inline-block mr-1" style={{ color: perkValue.customIconColor || '#000000' }}>
+                                          <span className="inline-block mr-1 text-green-600">
                                             {React.createElement((Icons as any)[perkValue.customIcon] || Check, { className: "h-3 w-3 inline" })}
                                           </span>
                                         )}
@@ -263,9 +263,9 @@ export default function UnifiedPackageComparison({
                                     </TooltipContent>
                                   </Tooltip>
                                 ) : (
-                                  <div className={`text-xs lg:text-sm font-semibold ${perkValue.isHighlighted ? `font-bold text-white bg-gradient-to-r ${info.gradient} px-2 py-1 rounded shadow` : 'text-gray-700 dark:text-gray-300'}`}>
+                                  <div className={`text-xs lg:text-sm font-semibold ${perkValue.isHighlighted ? `font-bold text-white bg-green-500 px-2 py-1 rounded shadow` : 'text-gray-700 dark:text-gray-300'}`}>
                                     {perkValue.customIcon && perkValue.customIcon !== 'none' && (
-                                      <span className="inline-block mr-1" style={{ color: perkValue.customIconColor || '#000000' }}>
+                                      <span className="inline-block mr-1 text-green-600">
                                         {React.createElement((Icons as any)[perkValue.customIcon] || Check, { className: "h-3 w-3 inline" })}
                                       </span>
                                     )}
@@ -348,9 +348,9 @@ export default function UnifiedPackageComparison({
                 </div>
                 
                 {/* Additional Info */}
-                {(packageData.giftSessions > 0 || data.monthlyPayment > 0) && (
+                {((packageData?.giftSessions && packageData.giftSessions > 0) || data.monthlyPayment > 0) && (
                   <div className="space-y-1">
-                    {packageData.giftSessions > 0 && (
+                    {packageData?.giftSessions && packageData.giftSessions > 0 && (
                       <div className="bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-400 px-2 py-1 rounded text-xs text-center font-medium">
                         +{packageData.giftSessions} <span className="hidden sm:inline">подарочных процедуры</span>
                       </div>
