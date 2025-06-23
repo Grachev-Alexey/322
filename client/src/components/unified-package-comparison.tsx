@@ -168,7 +168,7 @@ export default function UnifiedPackageComparison({
             <div className="grid grid-cols-4 gap-1 lg:gap-2 p-2 lg:p-3 bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 flex-shrink-0">
               <div></div>
               {packageTypes.map((packageType) => {
-                const info = packageInfo[packageType];
+                const info = packageInfo[packageType as keyof typeof packageInfo];
                 const packageData = packages.find((p: Package) => p.type === packageType);
                 const Icon = info.icon;
                 const isSelected = selectedPackage === packageType;
@@ -206,7 +206,7 @@ export default function UnifiedPackageComparison({
                   {packageTypes.map((packageType) => {
                     const packageData = packages.find((p: Package) => p.type === packageType);
                     const isSelected = selectedPackage === packageType;
-                    const discountPercent = packageData ? parseFloat(packageData.discount) : 0;
+                    const discountPercent = packageData ? Math.round(parseFloat(packageData.discount) * 100) : 0;
                     
                     return (
                       <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-gray-100 dark:bg-gray-600 rounded-lg' : ''}`}>
