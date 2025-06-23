@@ -70,6 +70,8 @@ interface UnifiedPackageComparisonProps {
   downPayment: number;
   installmentMonths: number;
   procedureCount: number;
+  packagePerkValues?: PackagePerkValue[];
+  usedCertificate: boolean;
 }
 
 export default function UnifiedPackageComparison({ 
@@ -79,7 +81,9 @@ export default function UnifiedPackageComparison({
   packages,
   downPayment,
   installmentMonths,
-  procedureCount 
+  procedureCount,
+  packagePerkValues = [],
+  usedCertificate = false
 }: UnifiedPackageComparisonProps) {
   const packageTypes = ['vip', 'standard', 'economy'];
   const hasValidCalculation = calculation && calculation.baseCost > 0;
@@ -91,6 +95,16 @@ export default function UnifiedPackageComparison({
 
   const formatPrice = (price: number): string => {
     return `${Math.round(price).toLocaleString()} ₽`;
+  };
+
+  // Get unique perks for display
+  const uniquePerks = Array.from(
+    new Map(packagePerkValues.map(pv => [pv.perk.id, pv.perk])).values()
+  ).sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
+
+  // Helper function to get perk value for a specific package
+  const getPerkValue = (perkId: number, packageType: string) => {
+    return packagePerkValues.find(pv => pv.perkId === perkId && pv.packageType === packageType);
   };
 
   const getPackageIcon = (packageType: string) => {
@@ -134,7 +148,7 @@ export default function UnifiedPackageComparison({
       <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
         {/* Package Headers */}
         <div className="bg-gradient-to-r from-green-100 to-green-200 dark:from-green-900 dark:to-green-800 px-4 py-3">
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-4 gap-1">
             <div className="text-sm font-medium text-gray-800 dark:text-gray-200"></div>
             {packageTypes.map((packageType) => {
               const Icon = getPackageIcon(packageType);
@@ -166,125 +180,88 @@ export default function UnifiedPackageComparison({
         </div>
 
         {/* Table Content */}
-        <div className="max-h-96 overflow-y-auto">
+        <div className="overflow-y-auto">
           
-          {/* Guarantee Money Back Row */}
-          <div className="grid grid-cols-4 gap-2 py-3 px-4 border-b border-gray-100 dark:border-gray-700">
-            <div className="text-sm text-gray-900 dark:text-white">
-              <div className="font-medium">Гарантия возврата денег, если нет результата</div>
-              <div className="text-xs text-gray-500 mt-1">(только для абонемента)</div>
-            </div>
-            {packageTypes.map((packageType) => {
-              const isSelected = selectedPackage === packageType;
-              const hasGuarantee = packageType === 'vip' || packageType === 'standard';
-              
-              return (
-                <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20 rounded-lg' : ''}`}>
-                  {hasGuarantee ? (
-                    <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-500">
-                      <Check className="h-3 w-3 text-white" />
-                    </div>
-                  ) : (
-                    <span className="text-red-500 font-semibold">-</span>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Club Card Row */}
-          <div className="grid grid-cols-4 gap-2 py-3 px-4 border-b border-gray-100 dark:border-gray-700">
-            <div className="text-sm font-medium text-gray-900 dark:text-white">
-              Клубная карта навсегда
-            </div>
-            {packageTypes.map((packageType) => {
-              const isSelected = selectedPackage === packageType;
-              
-              return (
-                <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20 rounded-lg' : ''}`}>
-                  {packageType === 'vip' && (
-                    <div className="text-xs">
-                      <div className="font-semibold text-yellow-600">Золотая</div>
-                      <div className="font-semibold text-gray-900 dark:text-white">35%</div>
+          {/* Database Perks Rows */}
+          {uniquePerks.map((perk, index) => {
+            const IconComponent = (Icons as any)[perk.icon] || Check;
+            
+            return (
+              <div key={perk.id} className="grid grid-cols-4 gap-1 py-2 px-4 border-b border-gray-100 dark:border-gray-700">
+                {/* Perk Name */}
+                <div className="flex items-center space-x-2">
+                  {perk.icon && perk.icon !== 'none' && (
+                    <div className="p-1 rounded-lg bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 flex-shrink-0">
+                      <IconComponent 
+                        className="h-3 w-3"
+                        style={{ color: perk.iconColor || '#3B82F6' }} 
+                      />
                     </div>
                   )}
-                  {packageType === 'standard' && (
-                    <div className="text-xs">
-                      <div className="font-semibold text-gray-500">Серебряная</div>
-                      <div className="font-semibold text-gray-900 dark:text-white">30%</div>
-                    </div>
-                  )}
-                  {packageType === 'economy' && (
-                    <span className="text-red-500 font-semibold">-</span>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Freeze Row */}
-          <div className="grid grid-cols-4 gap-2 py-3 px-4 border-b border-gray-100 dark:border-gray-700">
-            <div className="text-sm font-medium text-gray-900 dark:text-white">
-              Заморозка
-            </div>
-            {packageTypes.map((packageType) => {
-              const isSelected = selectedPackage === packageType;
-              const freezeText = packageType === 'vip' ? 'бессрочно' : packageType === 'standard' ? '6 мес' : '3 мес';
-              
-              return (
-                <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20 rounded-lg' : ''}`}>
-                  <span className="text-sm font-medium text-gray-900 dark:text-white">
-                    {freezeText}
+                  <span className="font-medium text-gray-900 dark:text-white text-sm">
+                    {perk.name}
                   </span>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Priority Service Row */}
-          <div className="grid grid-cols-4 gap-2 py-3 px-4 border-b border-gray-100 dark:border-gray-700">
-            <div className="text-sm text-gray-900 dark:text-white">
-              <div className="font-medium">Приоритетное обслуживание (запись/отмена в любое время, вне резерва)</div>
-            </div>
-            {packageTypes.map((packageType) => {
-              const isSelected = selectedPackage === packageType;
-              const hasPriority = packageType !== 'economy';
-              
-              return (
-                <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20 rounded-lg' : ''}`}>
-                  {hasPriority ? (
-                    <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-500">
-                      <Check className="h-3 w-3 text-white" />
-                    </div>
-                  ) : (
-                    <span className="text-red-500 font-semibold">-</span>
+                  {perk.description && (
+                    <div className="text-xs text-gray-500 mt-1">{perk.description}</div>
                   )}
                 </div>
-              );
-            })}
-          </div>
 
-          {/* Premium Massage Course Row */}
-          <div className="grid grid-cols-4 gap-2 py-3 px-4 border-b border-gray-100 dark:border-gray-700">
-            <div className="text-sm text-gray-900 dark:text-white">
-              <div className="font-medium">Курс массажа вокруг глаз премиум-класса</div>
-              <div className="text-xs text-gray-500 mt-1">(только для абонемента) 10 000 руб</div>
-            </div>
-            {packageTypes.map((packageType) => {
-              const isSelected = selectedPackage === packageType;
-              
-              return (
-                <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20 rounded-lg' : ''}`}>
-                  <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-500">
-                    <Check className="h-3 w-3 text-white" />
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                {/* Perk Values for each package */}
+                {packageTypes.map((packageType) => {
+                  const perkValue = getPerkValue(perk.id, packageType);
+                  const isSelected = selectedPackage === packageType;
+                  
+                  if (!perkValue) {
+                    return (
+                      <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20 rounded-lg' : ''}`}>
+                        <span className="text-red-500 font-semibold">-</span>
+                      </div>
+                    );
+                  }
+
+                  const content = (
+                    <div className={`text-center py-1 ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20 rounded-lg' : ''}`}>
+                      {perkValue.valueType === 'boolean' ? (
+                        perkValue.booleanValue ? (
+                          <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-500">
+                            <Check className="h-3 w-3 text-white" />
+                          </div>
+                        ) : (
+                          <span className="text-red-500 font-semibold">-</span>
+                        )
+                      ) : (
+                        <span className={`text-sm font-semibold ${
+                          perkValue.isHighlighted 
+                            ? 'text-blue-600 dark:text-blue-400' 
+                            : 'text-gray-700 dark:text-gray-300'
+                        }`}>
+                          {perkValue.displayValue}
+                        </span>
+                      )}
+                    </div>
+                  );
+
+                  return perkValue.tooltip ? (
+                    <Tooltip key={packageType}>
+                      <TooltipTrigger asChild>
+                        {content}
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{perkValue.tooltip}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  ) : (
+                    <div key={packageType}>
+                      {content}
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
 
           {/* Free Sessions Row */}
-          <div className="grid grid-cols-4 gap-2 py-3 px-4 border-b border-gray-100 dark:border-gray-700">
+          <div className="grid grid-cols-4 gap-1 py-2 px-4 border-b border-gray-100 dark:border-gray-700">
             <div className="text-sm font-medium text-gray-900 dark:text-white">
               Сеансы в подарок
             </div>
@@ -304,7 +281,7 @@ export default function UnifiedPackageComparison({
           </div>
 
           {/* Discount Row */}
-          <div className="grid grid-cols-4 gap-2 py-3 px-4 border-b border-gray-100 dark:border-gray-700">
+          <div className="grid grid-cols-4 gap-1 py-2 px-4 border-b border-gray-100 dark:border-gray-700">
             <div className="text-sm font-medium text-gray-900 dark:text-white">
               Скидка
             </div>
@@ -324,7 +301,7 @@ export default function UnifiedPackageComparison({
           </div>
 
           {/* Bonus Account Row */}
-          <div className="grid grid-cols-4 gap-2 py-3 px-4 border-b border-gray-100 dark:border-gray-700">
+          <div className="grid grid-cols-4 gap-1 py-2 px-4 border-b border-gray-100 dark:border-gray-700">
             <div className="text-sm font-medium text-gray-900 dark:text-white">
               Бонусный счет
             </div>
@@ -350,7 +327,7 @@ export default function UnifiedPackageComparison({
             <div className="font-bold text-gray-900 dark:text-white text-sm mb-3">Итого стоимость абонемента</div>
             
             {/* Original Cost Row */}
-            <div className="grid grid-cols-4 gap-2 py-2 border-b border-gray-200 dark:border-gray-600">
+            <div className="grid grid-cols-4 gap-1 py-2 border-b border-gray-200 dark:border-gray-600">
               <div className="text-sm text-gray-700 dark:text-gray-300">
                 Первоначальная
               </div>
@@ -360,7 +337,7 @@ export default function UnifiedPackageComparison({
                 return (
                   <div key={packageType} className={`text-center ${isSelected ? 'bg-white dark:bg-gray-700 rounded-lg py-1' : ''}`}>
                     <span className="text-sm text-red-500 line-through">
-                      р.{calculation.baseCost.toLocaleString()}
+                      {calculation.baseCost.toLocaleString()} ₽
                     </span>
                   </div>
                 );
@@ -368,7 +345,7 @@ export default function UnifiedPackageComparison({
             </div>
 
             {/* Discount Amount Row */}
-            <div className="grid grid-cols-4 gap-2 py-2">
+            <div className="grid grid-cols-4 gap-1 py-2">
               <div className="text-sm text-gray-700 dark:text-gray-300">
                 Скидка
               </div>
@@ -379,7 +356,7 @@ export default function UnifiedPackageComparison({
                 return (
                   <div key={packageType} className={`text-center ${isSelected ? 'bg-white dark:bg-gray-700 rounded-lg py-1' : ''}`}>
                     <span className="text-sm text-green-600 dark:text-green-400">
-                      {data && data.totalSavings > 0 ? `-р.${data.totalSavings.toLocaleString()}` : '0'}
+                      {data && data.totalSavings > 0 ? `-${data.totalSavings.toLocaleString()} ₽` : '0 ₽'}
                     </span>
                   </div>
                 );
@@ -387,28 +364,30 @@ export default function UnifiedPackageComparison({
             </div>
           </div>
 
-          {/* Certificate Section */}
-          <div className="bg-green-50 dark:bg-green-900/20 py-3 px-4 border-t border-green-200 dark:border-green-700">
-            <div className="grid grid-cols-4 gap-2 py-2">
-              <div className="text-sm font-medium text-gray-900 dark:text-white">
-                Сертификат
+          {/* Certificate Section - Only show if certificate is used */}
+          {usedCertificate && (
+            <div className="py-3 px-4">
+              <div className="grid grid-cols-4 gap-1 py-2">
+                <div className="text-sm font-medium text-gray-900 dark:text-white">
+                  Сертификат
+                </div>
+                {packageTypes.map((packageType) => {
+                  const isSelected = selectedPackage === packageType;
+                  
+                  return (
+                    <div key={packageType} className={`text-center ${isSelected ? 'bg-gray-100 dark:bg-gray-700 rounded-lg py-1' : ''}`}>
+                      <span className="text-sm font-semibold text-green-600 dark:text-green-400">
+                        -3 000 ₽
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
-              {packageTypes.map((packageType) => {
-                const isSelected = selectedPackage === packageType;
-                
-                return (
-                  <div key={packageType} className={`text-center ${isSelected ? 'bg-green-100 dark:bg-green-800 rounded-lg py-1' : ''}`}>
-                    <span className="text-sm font-semibold text-green-600 dark:text-green-400">
-                      -р.3 000
-                    </span>
-                  </div>
-                );
-              })}
             </div>
-          </div>
+          )}
 
           {/* Final Cost Row */}
-          <div className="grid grid-cols-4 gap-2 py-3 px-4 border-b border-gray-100 dark:border-gray-700">
+          <div className="grid grid-cols-4 gap-1 py-3 px-4 border-b border-gray-100 dark:border-gray-700">
             <div className="text-sm font-bold text-gray-900 dark:text-white">
               Итого стоимость курса:
             </div>
@@ -420,10 +399,10 @@ export default function UnifiedPackageComparison({
                 <div key={packageType} className={`text-center ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20 rounded-lg py-1' : ''}`}>
                   <div className="text-sm">
                     <div className="font-bold text-blue-700 dark:text-blue-300">
-                      {data && data.finalCost ? `р.${data.finalCost.toLocaleString()}` : 'Выберите услуги'}
+                      {data && data.finalCost ? `${data.finalCost.toLocaleString()} ₽` : 'Выберите услуги'}
                     </div>
                     <div className="text-gray-500 text-xs">
-                      {data && data.monthlyPayment ? `р.${data.monthlyPayment.toLocaleString()}` : ''}
+                      {data && data.monthlyPayment ? `${data.monthlyPayment.toLocaleString()} ₽` : ''}
                     </div>
                   </div>
                 </div>
@@ -434,7 +413,7 @@ export default function UnifiedPackageComparison({
           {/* Payment Details */}
           <div className="bg-gray-50 dark:bg-gray-800 py-3 px-4">
             {/* Down Payment Row */}
-            <div className="grid grid-cols-4 gap-2 py-2 border-b border-gray-200 dark:border-gray-600">
+            <div className="grid grid-cols-4 gap-1 py-2 border-b border-gray-200 dark:border-gray-600">
               <div className="text-sm text-gray-700 dark:text-gray-300">
                 Первый взнос:
               </div>
@@ -444,7 +423,7 @@ export default function UnifiedPackageComparison({
                 return (
                   <div key={packageType} className={`text-center ${isSelected ? 'bg-white dark:bg-gray-700 rounded-lg py-1' : ''}`}>
                     <span className="text-sm text-gray-900 dark:text-white">
-                      р.{downPayment.toLocaleString()}
+                      {downPayment.toLocaleString()} ₽
                     </span>
                   </div>
                 );
@@ -452,7 +431,7 @@ export default function UnifiedPackageComparison({
             </div>
 
             {/* Monthly Payment Row */}
-            <div className="grid grid-cols-4 gap-2 py-2">
+            <div className="grid grid-cols-4 gap-1 py-2">
               <div className="text-sm text-gray-700 dark:text-gray-300">
                 Платеж в месяц
               </div>
@@ -463,7 +442,7 @@ export default function UnifiedPackageComparison({
                 return (
                   <div key={packageType} className={`text-center ${isSelected ? 'bg-white dark:bg-gray-700 rounded-lg py-1' : ''}`}>
                     <span className="text-sm text-gray-900 dark:text-white">
-                      {data && data.monthlyPayment ? `р.${data.monthlyPayment.toLocaleString()}` : '0'}
+                      {data && data.monthlyPayment ? `${data.monthlyPayment.toLocaleString()} ₽` : '0 ₽'}
                     </span>
                   </div>
                 );
@@ -478,7 +457,7 @@ export default function UnifiedPackageComparison({
             </div>
             
             {/* Gift Procedures Cost Row */}
-            <div className="grid grid-cols-4 gap-2 py-2 border-b border-blue-200 dark:border-blue-700">
+            <div className="grid grid-cols-4 gap-1 py-2 border-b border-blue-200 dark:border-blue-700">
               <div className="text-sm text-gray-900 dark:text-white">
                 Стоимость подарочных процедур
               </div>
@@ -495,7 +474,7 @@ export default function UnifiedPackageComparison({
                 return (
                   <div key={packageType} className={`text-center ${isSelected ? 'bg-blue-200 dark:bg-blue-800 rounded-lg py-1' : ''}`}>
                     <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
-                      {giftValue > 0 ? `р.${Math.round(giftValue).toLocaleString()}` : '-'}
+                      {giftValue > 0 ? `${Math.round(giftValue).toLocaleString()} ₽` : '-'}
                     </span>
                   </div>
                 );
@@ -503,7 +482,7 @@ export default function UnifiedPackageComparison({
             </div>
 
             {/* Bonus Account Row */}
-            <div className="grid grid-cols-4 gap-2 py-2 border-b border-blue-200 dark:border-blue-700">
+            <div className="grid grid-cols-4 gap-1 py-2 border-b border-blue-200 dark:border-blue-700">
               <div className="text-sm text-gray-900 dark:text-white">
                 Бонусный счет
               </div>
@@ -518,7 +497,7 @@ export default function UnifiedPackageComparison({
                 return (
                   <div key={packageType} className={`text-center ${isSelected ? 'bg-blue-200 dark:bg-blue-800 rounded-lg py-1' : ''}`}>
                     <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
-                      {bonusAmount > 0 ? `${Math.round(bonusAmount).toLocaleString()}` : '-'}
+                      {bonusAmount > 0 ? `${Math.round(bonusAmount).toLocaleString()} ₽` : '-'}
                     </span>
                   </div>
                 );
@@ -526,7 +505,7 @@ export default function UnifiedPackageComparison({
             </div>
 
             {/* Total Gifts Value Row */}
-            <div className="grid grid-cols-4 gap-2 py-2">
+            <div className="grid grid-cols-4 gap-1 py-2">
               <div className="text-sm font-bold text-gray-900 dark:text-white">
                 Итого стоимость подарков:
               </div>
@@ -548,52 +527,12 @@ export default function UnifiedPackageComparison({
                 return (
                   <div key={packageType} className={`text-center ${isSelected ? 'bg-blue-200 dark:bg-blue-800 rounded-lg py-1' : ''}`}>
                     <span className="text-sm font-bold text-blue-700 dark:text-blue-300">
-                      {totalGifts > 0 ? `р.${Math.round(totalGifts).toLocaleString()}` : '-'}
+                      {totalGifts > 0 ? `${Math.round(totalGifts).toLocaleString()} ₽` : '-'}
                     </span>
                   </div>
                 );
               })}
             </div>
-          </div>
-        </div>
-
-        {/* Selection Buttons */}
-        <div className="p-4 bg-gray-50 dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-          <div className="grid grid-cols-3 gap-3">
-            {packageTypes.map((packageType) => {
-              const data = getPackageData(packageType);
-              const isSelected = selectedPackage === packageType;
-              const isAvailable = data?.isAvailable !== false;
-              
-              return (
-                <Button
-                  key={packageType}
-                  onClick={() => onPackageSelect(packageType)}
-                  disabled={!isAvailable}
-                  className={`h-auto py-3 px-4 text-sm font-medium transition-all duration-200 ${
-                    isSelected
-                      ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg transform scale-105'
-                      : isAvailable
-                      ? 'bg-white hover:bg-gray-50 text-gray-900 border border-gray-300 shadow-sm'
-                      : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  }`}
-                >
-                  <div className="text-center">
-                    <div className="font-semibold">{getPackageName(packageType)}</div>
-                    {data && isAvailable && (
-                      <div className="text-xs mt-1 opacity-75">
-                        {formatPrice(data.finalCost)}
-                      </div>
-                    )}
-                    {!isAvailable && data?.unavailableReason && (
-                      <div className="text-xs mt-1 text-red-500">
-                        {data.unavailableReason}
-                      </div>
-                    )}
-                  </div>
-                </Button>
-              );
-            })}
           </div>
         </div>
       </div>

@@ -9,6 +9,7 @@ import UnifiedPackageComparison from "@/components/unified-package-comparison";
 import PaymentConfig from "@/components/payment-config";
 import ClientModal from "@/components/client-modal";
 import { useCalculator } from "@/hooks/use-calculator";
+import { usePackagePerks } from "@/hooks/use-package-perks";
 import { formatPrice } from "@/lib/utils";
 
 interface User {
@@ -27,11 +28,17 @@ interface Package {
   type: string;
   name: string;
   discount: string;
+  minCost: string;
+  minDownPaymentPercent: string;
+  requiresFullPayment: boolean;
   giftSessions: number;
+  bonusAccountPercent: string;
 }
 
 export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) {
   const [showClientModal, setShowClientModal] = useState(false);
+  const packagePerksQuery = usePackagePerks();
+  const packagePerkValues = packagePerksQuery.data || [];
   const {
     selectedServices,
     procedureCount,
@@ -179,6 +186,8 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
             downPayment={downPayment}
             installmentMonths={installmentMonths}
             procedureCount={procedureCount}
+            packagePerkValues={packagePerkValues}
+            usedCertificate={usedCertificate}
           />
         )}
 

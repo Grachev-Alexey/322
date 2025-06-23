@@ -76,7 +76,16 @@ The development environment uses Vite's HMR (Hot Module Replacement) for rapid d
 
 ## Recent Changes
 
-- **Subscription Naming System (Latest)**: Implemented unique subscription naming with Russian package types
+- **Table Redesign (Latest)**: Completely redesigned package comparison table to match Google Sheets specification
+  - Removed hardcoded perks and now display database perks dynamically
+  - Fixed currency formatting to show "1 000 ₽" instead of "р.1 000"
+  - Reduced column spacing to prevent excessive head movement
+  - Made certificate section conditional (only shows when usedCertificate=true)
+  - Removed bottom selection buttons - users click package headers instead
+  - Fixed bonus account calculations to use actual database values
+  - Added proper database perk integration with icons and tooltips
+
+- **Subscription Naming System**: Implemented unique subscription naming with Russian package types
   - Generated unique number combinations in format "X.XXX" (first digit 1-4)
   - Added Russian package names (ВИП, Стандарт, Эконом) instead of English
   - Implemented duplicate checking based on services, cost and package type
