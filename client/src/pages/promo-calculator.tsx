@@ -56,6 +56,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
     calculation,
     selectedPackage,
     packages,
+    calculatorSettings,
     setSelectedServices,
     setProcedureCount,
     setDownPayment,

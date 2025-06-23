@@ -42,6 +42,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
     calculation,
     selectedPackage,
     packages,
+    calculatorSettings,
     setSelectedServices,
     setProcedureCount,
     setDownPayment,
@@ -49,7 +50,9 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
     setUsedCertificate,
     setFreeZones,
     setSelectedPackage,
-    isLoading
+    isLoading,
+    getMinDownPayment,
+    getMaxDownPayment
   } = useCalculator();
 
   const handleProceedToOrder = () => {
