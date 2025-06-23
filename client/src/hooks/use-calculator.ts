@@ -74,7 +74,7 @@ export function useCalculator() {
     gcTime: 0  // Updated from cacheTime to gcTime
   });
 
-  // Calculate total procedures
+  // Calculate total procedures (for display only, not for discount calculation)
   const totalProcedures = useMemo(() => {
     return selectedServices.reduce((sum, service) => sum + service.quantity, 0) * procedureCount;
   }, [selectedServices, procedureCount]);
@@ -109,7 +109,8 @@ export function useCalculator() {
       console.log('=== CALCULATION DEBUG ===');
       console.log('Selected services:', servicesData);
       console.log('Base cost:', baseCost);
-      console.log('Procedures count:', procedures);
+      console.log('Procedures count (slider):', procedures);
+      console.log('Total service instances:', servicesData.reduce((sum, s) => sum + s.quantity, 0));
 
       // Convert packages array to config object  
       const packageConfig = packages.reduce((acc: any, pkg: Package) => {
@@ -143,7 +144,7 @@ export function useCalculator() {
       const result = {
         baseCost,
         packages: {} as any,
-        totalProcedures: calculationParams.services.reduce((sum: number, service: any) => sum + service.quantity, 0),
+        totalProcedures: servicesData.reduce((sum, s) => sum + s.quantity, 0) * procedures, // For display only
         freeZonesValue: zones.reduce((sum: number, zone: any) => sum + (zone.quantity * zone.pricePerProcedure), 0)
       };
 
@@ -180,7 +181,9 @@ export function useCalculator() {
 
         // Calculate discounts
         const packageDiscount = baseCost * discount;
-        const fifteenPlusProceduresDiscount = result.totalProcedures >= 15 ? baseCost * 0.025 : 0;
+        // 15+ procedures discount applies only based on procedure COUNT slider, not services count
+        const procedureCountForDiscount = procedures; // This is the slider value
+        const fifteenPlusProceduresDiscount = procedureCountForDiscount >= 15 ? baseCost * 0.025 : 0;
         const totalDiscount = packageDiscount + fifteenPlusProceduresDiscount;
         
         // Final cost
@@ -192,7 +195,7 @@ export function useCalculator() {
         ];
         
         if (fifteenPlusProceduresDiscount > 0) {
-          appliedDiscounts.push({ type: "15+ процедур", amount: fifteenPlusProceduresDiscount });
+          appliedDiscounts.push({ type: "15+ посещений", amount: fifteenPlusProceduresDiscount });
         }
 
         result.packages[packageType] = {
