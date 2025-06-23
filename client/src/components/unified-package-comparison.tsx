@@ -143,14 +143,7 @@ export default function UnifiedPackageComparison({
                   : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
               }`}
             >
-              {/* Check if this package is marked as "Best" */}
-              {perkValues && perkValues.some((pv: any) => pv.packageType === packageType && pv.isBest) && (
-                <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
-                  <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-2 py-1">
-                    Лучшее
-                  </Badge>
-                </div>
-              )}
+
               
               <div className="text-center">
                 <div className={`w-6 h-6 lg:w-8 lg:h-8 mx-auto mb-1 lg:mb-2 bg-gradient-to-r ${info.gradient} rounded-lg flex items-center justify-center shadow-lg`}>
@@ -258,6 +251,11 @@ export default function UnifiedPackageComparison({
                                           </span>
                                         )}
                                         {perkValue.displayValue}
+                                        {perkValue.isBest && (
+                                          <Badge className="ml-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs">
+                                            Лучшее
+                                          </Badge>
+                                        )}
                                       </div>
                                     </TooltipTrigger>
                                     <TooltipContent>
@@ -272,6 +270,11 @@ export default function UnifiedPackageComparison({
                                       </span>
                                     )}
                                     {perkValue.displayValue}
+                                    {perkValue.isBest && (
+                                      <Badge className="ml-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs">
+                                        Лучшее
+                                      </Badge>
+                                    )}
                                   </div>
                                 )}
                               </div>

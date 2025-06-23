@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Trash2, Edit, Check, X, Save, Crown, Diamond, Shield, Heart, Star, Zap, Gift, Award, Calendar, Clock, Percent, User, Users, UserCheck, Sparkles, Target, Gem, Coins } from "lucide-react";
+import { Plus, Trash2, Edit, Check, X, Save, Crown, Diamond, Shield, Heart, Star, Zap, Gift, Award, Calendar, Clock, Percent, User, Users, UserCheck, Sparkles, Target, Gem, Coins, Phone, MessageCircle, Mail, Timer, DollarSign, CreditCard, Tag, MapPin, Navigation, Compass, Car, Truck, Plane, Scissors, Flower, Leaf, Cherry, Smartphone, Laptop, Monitor, Wifi, Camera, Video, Mic, Bell, Volume2, Eye, ThumbsUp, Flag, Bookmark, Flame, Activity, TrendingUp, BarChart, Home, Building, Store, Coffee, Wine, Utensils, Settings, Headphones } from "lucide-react";
 import * as Icons from "lucide-react";
 import { type Perk, type PackagePerkValue } from "@/hooks/use-package-perks";
 
@@ -22,24 +22,93 @@ interface AdminPerksProps {
 // Available icons for perks
 const availableIcons = [
   { name: 'Check', component: Check, label: 'Галочка' },
+  { name: 'X', component: X, label: 'Крестик' },
+  { name: 'Plus', component: Plus, label: 'Плюс' },
+  
+  // Premium и VIP
   { name: 'Crown', component: Crown, label: 'Корона' },
   { name: 'Diamond', component: Diamond, label: 'Алмаз' },
-  { name: 'Shield', component: Shield, label: 'Щит' },
-  { name: 'Heart', component: Heart, label: 'Сердце' },
-  { name: 'Star', component: Star, label: 'Звезда' },
-  { name: 'Zap', component: Zap, label: 'Молния' },
-  { name: 'Gift', component: Gift, label: 'Подарок' },
-  { name: 'Award', component: Award, label: 'Награда' },
-  { name: 'Calendar', component: Calendar, label: 'Календарь' },
-  { name: 'Clock', component: Clock, label: 'Часы' },
-  { name: 'Percent', component: Percent, label: 'Процент' },
-  { name: 'User', component: User, label: 'Пользователь' },
-  { name: 'Users', component: Users, label: 'Пользователи' },
-  { name: 'UserCheck', component: UserCheck, label: 'Проверенный пользователь' },
-  { name: 'Sparkles', component: Sparkles, label: 'Блеск' },
-  { name: 'Target', component: Target, label: 'Цель' },
   { name: 'Gem', component: Gem, label: 'Драгоценный камень' },
-  { name: 'Coins', component: Coins, label: 'Монеты' }
+  { name: 'Star', component: Star, label: 'Звезда' },
+  { name: 'Sparkles', component: Sparkles, label: 'Блеск' },
+  { name: 'Award', component: Award, label: 'Награда' },
+  { name: 'Gift', component: Gift, label: 'Подарок' },
+  
+  // Качество и защита
+  { name: 'Shield', component: Shield, label: 'Щит' },
+
+  
+  // Сервис и поддержка
+  { name: 'Heart', component: Heart, label: 'Сердце' },
+  { name: 'Users', component: Users, label: 'Люди' },
+  { name: 'UserCheck', component: UserCheck, label: 'VIP клиент' },
+  { name: 'User', component: User, label: 'Пользователь' },
+  { name: 'Phone', component: Phone, label: 'Телефон' },
+  { name: 'Headphones', component: Headphones, label: 'Поддержка' },
+  { name: 'MessageCircle', component: MessageCircle, label: 'Сообщения' },
+  { name: 'Mail', component: Mail, label: 'Почта' },
+  
+  // Время и календарь
+  { name: 'Clock', component: Clock, label: 'Время' },
+  { name: 'Calendar', component: Calendar, label: 'Календарь' },
+  { name: 'Timer', component: Timer, label: 'Таймер' },
+  
+  // Деньги и скидки
+  { name: 'DollarSign', component: DollarSign, label: 'Деньги' },
+  { name: 'Coins', component: Coins, label: 'Монеты' },
+  { name: 'CreditCard', component: CreditCard, label: 'Карта' },
+  { name: 'Percent', component: Percent, label: 'Процент' },
+  { name: 'Tag', component: Tag, label: 'Ценник' },
+  
+  // Местоположение
+  { name: 'MapPin', component: MapPin, label: 'Местоположение' },
+  { name: 'Navigation', component: Navigation, label: 'Навигация' },
+  { name: 'Compass', component: Compass, label: 'Компас' },
+  { name: 'Car', component: Car, label: 'Машина' },
+  { name: 'Truck', component: Truck, label: 'Доставка' },
+  { name: 'Plane', component: Plane, label: 'Самолет' },
+  
+  // Красота и здоровье
+  { name: 'Scissors', component: Scissors, label: 'Ножницы' },
+  { name: 'Flower', component: Flower, label: 'Цветок' },
+  { name: 'Leaf', component: Leaf, label: 'Лист' },
+  { name: 'Cherry', component: Cherry, label: 'Вишня' },
+  
+  // Технологии
+  { name: 'Smartphone', component: Smartphone, label: 'Смартфон' },
+  { name: 'Laptop', component: Laptop, label: 'Ноутбук' },
+  { name: 'Monitor', component: Monitor, label: 'Монитор' },
+  { name: 'Wifi', component: Wifi, label: 'Wi-Fi' },
+  { name: 'Camera', component: Camera, label: 'Камера' },
+  { name: 'Video', component: Video, label: 'Видео' },
+  { name: 'Mic', component: Mic, label: 'Микрофон' },
+  
+  // Уведомления и статус
+  { name: 'Bell', component: Bell, label: 'Уведомления' },
+  { name: 'Volume2', component: Volume2, label: 'Звук' },
+  { name: 'Eye', component: Eye, label: 'Просмотр' },
+  { name: 'ThumbsUp', component: ThumbsUp, label: 'Лайк' },
+  { name: 'Flag', component: Flag, label: 'Флаг' },
+  { name: 'Bookmark', component: Bookmark, label: 'Закладка' },
+  
+  // Активность и спорт
+  { name: 'Zap', component: Zap, label: 'Энергия' },
+  { name: 'Flame', component: Flame, label: 'Огонь' },
+  { name: 'Target', component: Target, label: 'Цель' },
+  { name: 'Activity', component: Activity, label: 'Активность' },
+  { name: 'TrendingUp', component: TrendingUp, label: 'Рост' },
+  { name: 'BarChart', component: BarChart, label: 'График' },
+  
+  // Дом и комфорт
+  { name: 'Home', component: Home, label: 'Дом' },
+  { name: 'Building', component: Building, label: 'Здание' },
+  { name: 'Store', component: Store, label: 'Салон' },
+  { name: 'Coffee', component: Coffee, label: 'Кофе' },
+  { name: 'Wine', component: Wine, label: 'Вино' },
+  { name: 'Utensils', component: Utensils, label: 'Столовые приборы' },
+  
+  // Инструменты и настройки
+  { name: 'Settings', component: Settings, label: 'Настройки' }
 ];
 
 // Predefined colors
