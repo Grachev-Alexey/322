@@ -973,16 +973,11 @@ function ServicesManagement() {
                   ID: {service.yclientsId} • Цена от: {service.priceMin} ₽
                 </div>
               </div>
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={service.isActive}
-                  onChange={(e) => toggleService(service.yclientsId, e.target.checked)}
-                  disabled={loading}
-                  className="mr-2"
-                />
-                <span className="text-sm">Активна</span>
-              </label>
+              <Switch
+                checked={service.isActive}
+                onCheckedChange={(checked) => toggleService(service.yclientsId, checked)}
+                disabled={loading}
+              />
             </div>
           ))}
         </div>
