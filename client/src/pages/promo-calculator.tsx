@@ -125,7 +125,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
         <div className="w-full lg:w-72 xl:w-80 flex flex-col h-auto lg:h-full order-2 lg:order-1">
           {/* Hero badge - fixed at top */}
           <div className="text-center mb-2 lg:mb-3 flex-shrink-0">
-            <Badge className="bg-gradient-to-r from-pink-400 to-orange-400 text-white px-3 lg:px-4 py-1 text-xs font-medium shadow-lg">
+            <Badge className="bg-gradient-to-r from-pink-400 to-orange-400 text-white px-3 lg:px-4 py-1 text-xs font-medium border-0 shadow-none">
               <Sparkles className="w-3 h-3 mr-1" />
               Спецпредложение гостевого дня
             </Badge>
@@ -134,7 +134,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
           {/* Scrollable content area with custom scrollbar */}
           <div className="flex-1 overflow-y-auto space-y-2 lg:space-y-3 pr-1 custom-left-scrollbar max-h-[40vh] lg:max-h-none">
             {/* Service selection card */}
-            <div className="floating-card-enhanced bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-lg p-3 border border-white/20 dark:border-gray-700/20">
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border-0 shadow-none">
               <h3 className="text-sm lg:text-base font-bold text-gray-900 dark:text-white mb-2">Выбор услуг</h3>
               <ServiceSelector
                 selectedServices={selectedServices}
@@ -145,7 +145,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             </div>
 
             {/* Procedure count - компактный */}
-            <div className="floating-card-enhanced bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-lg p-3 border border-white/20 dark:border-gray-700/20">
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border-0 shadow-none">
               <h4 className="font-semibold text-gray-900 dark:text-white mb-2 text-sm">Количество процедур</h4>
               <div className="text-center mb-2">
                 <div className="text-xl lg:text-2xl font-bold text-premium">{procedureCount}</div>
@@ -286,7 +286,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
 
             {/* Installment configuration - компактный */}
             {downPayment < (selectedPackage && calculation ? getPackageData(selectedPackage)?.finalCost || 25000 : 25000) && (
-              <div className="floating-card-enhanced bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-lg p-3 border border-white/20 dark:border-gray-700/20">
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border-0 shadow-none">
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2 text-sm">Рассрочка</h4>
                 
                 <div className="text-center mb-2">
@@ -317,7 +317,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             )}
 
             {/* Certificate option - компактный */}
-            <div className="floating-card-enhanced bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-lg p-3 border border-white/20 dark:border-gray-700/20">
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border-0 shadow-none">
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-white text-sm">Сертификат</h4>
@@ -349,7 +349,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             <div className="flex-shrink-0 mt-2 lg:mt-3">
               <Button
                 onClick={handleProceedToOrder}
-                className="btn-premium w-full text-xs lg:text-sm py-2 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-105"
+                className="btn-premium w-full text-xs lg:text-sm py-2 border-0 shadow-none"
                 disabled={!selectedServices.length}
               >
                 <Star className="w-3 h-3 lg:w-4 lg:h-4 mr-1" />

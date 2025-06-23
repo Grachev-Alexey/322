@@ -284,10 +284,10 @@ export default function ServiceSelector({
             {freeZones.map((zone) => (
               <div
                 key={zone.serviceId}
-                className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-2"
+                className="flex items-center justify-between bg-green-50 border-0 shadow-none rounded-lg p-2"
               >
                 <div className="flex items-center min-w-0 flex-1">
-                  <Badge variant="secondary" className="bg-green-100 text-green-800 mr-2 text-xs flex-shrink-0">
+                  <Badge variant="secondary" className="bg-green-100 text-green-800 mr-2 text-xs flex-shrink-0 border-0 shadow-none">
                     ПОДАРОК
                   </Badge>
                   <span className="text-xs lg:text-sm font-medium truncate">{zone.title}</span>

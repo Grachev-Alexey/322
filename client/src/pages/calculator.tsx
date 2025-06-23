@@ -107,7 +107,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
         
           {/* Hero Section */}
           <div className="text-center mb-8">
-            <Badge className="mb-4 bg-gradient-to-r from-yellow-500/10 to-green-500/10 text-yellow-700 border-yellow-200">
+            <Badge className="mb-4 bg-gradient-to-r from-yellow-500/10 to-green-500/10 text-yellow-700 border-0 shadow-none">
               <Star className="w-4 h-4 mr-2" />
               Специальное предложение гостевого дня
             </Badge>
@@ -118,7 +118,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
           </div>
 
           {/* Service Selection */}
-          <Card className="floating-card bg-white/80 backdrop-blur-sm border-0 rounded-2xl p-8 mb-8 relative z-10">
+          <Card className="bg-white rounded-xl border-0 shadow-none p-8 mb-8">
           <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--graphite)' }}>Выбор услуг</h3>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
