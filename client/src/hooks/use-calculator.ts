@@ -141,6 +141,15 @@ export function useCalculator() {
         }
       }
 
+      // Subtract free zones from base cost
+      let freeZonesValue = 0;
+      for (const freeZone of zones) {
+        freeZonesValue += freeZone.pricePerProcedure * freeZone.quantity * procedures;
+      }
+      
+      // Reduce base cost by free zones value
+      baseCost = Math.max(0, baseCost - freeZonesValue);
+
 
       // Convert packages array to config object  
       const packageConfig = packages.reduce((acc: any, pkg: Package) => {
@@ -168,13 +177,14 @@ export function useCalculator() {
         freeZones: zones,
         serviceMap,
         packageConfig,
-        procedureCount: procedures // ADD this parameter!
+        procedureCount: procedures,
+        freeZonesValue: freeZonesValue
       };
 
       // Use the centralized calculation function with calculator settings
 
       
-      const result = calculatePackagePricing(baseCost, calculationParams, calculatorSettings);
+      const result = calculatePackagePricing(baseCost, calculationParams, calculatorSettings || {});
       
 
       setCalculation(result);
@@ -202,9 +212,8 @@ export function useCalculator() {
 
   // Initialize default installment months based on settings - set to minimum available
   useEffect(() => {
-    if (calculatorSettings?.installmentMonthsOptions?.length > 0) {
+    if (calculatorSettings?.installmentMonthsOptions?.length) {
       const minMonths = Math.min(...calculatorSettings.installmentMonthsOptions);
-
       setInstallmentMonths(minMonths);
     }
   }, [calculatorSettings]);
