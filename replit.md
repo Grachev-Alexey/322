@@ -1,55 +1,34 @@
-# ViVi-Calc - Калькулятор Абонементов
+# ViVi-Calc - Sales Calculator
 
-## Обзор проекта
-Калькулятор абонементов для студии лазерной эпиляции с системой пакетов (VIP, Стандарт, Эконом), рассчетом стоимости, скидок и рассрочки.
+## Project Overview
+ViVi-Calc is a comprehensive sales calculation tool designed for beauty salons. It helps calculate package deals, discounts, installment payments, and manages client data with different subscription types.
 
-## Последние изменения
+## Recent Changes
+- **2024-12-23**: Successfully migrated project from Replit Agent to Replit environment
+- **2024-12-23**: Set up PostgreSQL database with all required tables
+- **2024-12-23**: Added test data: 10 services and 5 perks with package configurations
+- **2024-12-23**: Application running successfully on port 5000
 
-### Миграция в Replit (23.06.2025)
-- ✓ Создана база данных PostgreSQL с настройкой подключения
-- ✓ Выполнена миграция схемы базы данных через Drizzle
-- ✓ Установлены все зависимости Node.js
-- ✓ Добавлены тестовые услуги (20 услуг лазерной эпиляции)
-- ✓ Добавлены тестовые перки (8 перков для всех пакетов)
-- ✓ Настроены значения перков для VIP, Стандарт и Эконом пакетов
-- ✓ Приложение успешно запущено и работает на порту 5000
-- ✓ Все API эндпоинты функционируют корректно
-- ✓ Исправлено отображение перков в таблице сравнения
-- ✓ Убрана зеленая заливка заголовка таблицы
-- ✓ Исправлено задвоение в бонусном счете (убрано "+20%")
-- ✓ Убрана заливка строк при выборе пакета
-- ✓ Сделана таблица адаптивной по высоте
-- ✓ Минимизированы расстояния между элементами таблицы
-- ✓ Увеличены размеры заголовков и ключевых значений
-- ✓ Добавлено отображение суммы бесплатных зон в подарках
-- ✓ Сделаны незаметными разделители между строками
-- ✓ Убрана синяя заливка в блоке подарков
-- ✓ Исправлен расчет и отображение бесплатных зон (показываются только при активации)
-- ✓ Добавлен пустой столбец справа для компактного расположения данных
-- ✓ Убраны все обводки, тени и лишние эффекты для чистого дизайна
-- ✓ Единообразные размеры заголовков и важных значений
-- ✓ Обновлена стилизация полос прокрутки (ультратонкие 1px полупрозрачные слева от блоков)
-- ✓ Убраны яркие градиенты VIP слайдера, сделан минималистичным как стандартный
-- ✓ Исправлен текст VIP с "VIP Полная Предоплата" на "Полная предоплата"
-- ✓ Убран дублирующий текст "100% предоплата" и декоративные элементы
-- ✓ Убрана розовая заливка ползунка VIP слайдера, сделан нейтральным серым
+## Project Architecture
+- **Frontend**: React with Vite, TailwindCSS, Radix UI components
+- **Backend**: Express.js with TypeScript
+- **Database**: PostgreSQL (Neon) with Drizzle ORM
+- **Authentication**: PIN-based system with roles (master/admin)
+- **Key Features**:
+  - Package calculation (VIP, Standard, Economy)
+  - Service selection and pricing
+  - Installment payment calculations
+  - Client management
+  - Sales tracking
+  - Configurable perks and discounts
 
-### Архитектура проекта
-- **Frontend**: React + TypeScript + Vite
-- **Backend**: Express.js + TypeScript
-- **База данных**: PostgreSQL (Neon) + Drizzle ORM
-- **UI**: Tailwind CSS + Radix UI
-- **Аутентификация**: Session-based с PIN-кодами
+## User Preferences
+- Language: Russian
+- Prefers test data without icons in names or descriptions
+- Wants 5 perks without highlighting features
 
-### Пользовательские предпочтения
-- Требуется отображение перков пакетов в начале таблицы сравнения
-- Убрать лишние визуальные эффекты (заливки при выборе)
-- Таблица должна быть адаптивной по высоте
-- Четкое отображение информации без дублирования
-- Минимальные расстояния между строками и столбцами
-- Увеличенные заголовки секций и размеры ключевых значений
-- Отображение суммы бесплатных зон в подарках
-- Незаметные разделители между строками
-
-### Текущее состояние
-Проект полностью мигрирован в Replit и готов к дальнейшей разработке. Все основные функции работают корректно.
+## Development Notes
+- Uses TSX for TypeScript execution
+- Database migrations handled via Drizzle Kit
+- Environment configured for Replit deployment
+- Client/server separation maintained for security
