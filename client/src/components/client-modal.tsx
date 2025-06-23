@@ -160,12 +160,6 @@ export default function ClientModal({
           <DialogTitle className="text-center text-2xl font-bold text-gray-900">
             {isCompleted ? "Абонемент создан!" : "Данные клиента"}
           </DialogTitle>
-          <p className="text-center text-gray-600">
-            {isCompleted 
-              ? "Абонемент успешно создан в системе Yclients" 
-              : "Заполните контактную информацию для оформления"
-            }
-          </p>
         </DialogHeader>
         
         {isCompleted ? (
