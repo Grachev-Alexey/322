@@ -748,7 +748,7 @@ function getFreezePolicyForPackage(packageType: string): boolean {
 
 function getFreezeLimitForPackage(packageType: string): number {
   const limits = {
-    vip: 3650, // Unlimited (10 years)
+    vip: 999, // Maximum allowed by Yclients
     standard: 180, // 6 months
     economy: 90 // 3 months
   };

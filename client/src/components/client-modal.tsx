@@ -71,7 +71,7 @@ export default function ClientModal({
           services: selectedServices.map(service => ({
             id: service.yclientsId,
             name: service.title,
-            quantity: 1 // This would be dynamic in a real implementation
+            quantity: service.quantity || 1
           })),
           packageType: selectedPackage,
           baseCost: calculation.baseCost,
