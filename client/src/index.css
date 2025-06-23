@@ -120,11 +120,16 @@
 /* Ultra thin scrollbar for promo calculator left panel */
 .custom-left-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: hsl(338, 55%, 68%) transparent;
+  scrollbar-color: rgba(216, 119, 157, 0.3) transparent;
+  direction: rtl;
+}
+
+.custom-left-scrollbar > * {
+  direction: ltr;
 }
 
 .custom-left-scrollbar::-webkit-scrollbar {
-  width: 2px;
+  width: 1px;
 }
 
 .custom-left-scrollbar::-webkit-scrollbar-track {
@@ -132,38 +137,37 @@
 }
 
 .custom-left-scrollbar::-webkit-scrollbar-thumb {
-  background: hsl(338, 55%, 68%);
-  border-radius: 1px;
+  background: rgba(216, 119, 157, 0.3);
+  border-radius: 0px;
   transition: background-color 0.2s ease;
 }
 
 .custom-left-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: hsl(338, 55%, 58%);
+  background: rgba(216, 119, 157, 0.5);
 }
 
 /* Ultra thin pink scrollbar for promo calculator */
 .beautiful-scroll {
   scrollbar-width: thin;
-  scrollbar-color: hsl(338, 55%, 68%) transparent;
+  scrollbar-color: rgba(216, 119, 157, 0.3) transparent;
 }
 
 .beautiful-scroll::-webkit-scrollbar {
-  width: 2px;
+  width: 1px;
 }
 
 .beautiful-scroll::-webkit-scrollbar-track {
   background: transparent;
-  margin: 2px 0;
 }
 
 .beautiful-scroll::-webkit-scrollbar-thumb {
-  background: hsl(338, 55%, 68%);
-  border-radius: 1px;
+  background: rgba(216, 119, 157, 0.3);
+  border-radius: 0px;
   transition: background-color 0.2s ease;
 }
 
 .beautiful-scroll::-webkit-scrollbar-thumb:hover {
-  background: hsl(338, 55%, 58%);
+  background: rgba(216, 119, 157, 0.5);
 }
 
 /* Compact scrollbar for tables */
