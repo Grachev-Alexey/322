@@ -49,9 +49,9 @@ export default function UnifiedPackageComparison({
   
   const packageTypes = ['vip', 'standard', 'economy'];
   
-  // Calculate 15+ procedures discount display
+  // Calculate 15+ procedures discount display - based on procedure count slider
   const totalProcedures = calculation?.totalProcedures || 0;
-  const hasAdditionalDiscount = totalProcedures >= 15;
+  const hasAdditionalDiscount = procedureCount >= 15;
   
   // Package visual configurations
   const packageInfo = {

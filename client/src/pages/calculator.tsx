@@ -182,6 +182,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
             packages={packages as Package[]}
             downPayment={downPayment}
             installmentMonths={installmentMonths}
+            procedureCount={procedureCount}
           />
         )}
 
