@@ -319,7 +319,7 @@ export function useCalculator() {
       const minPaymentPercent = parseFloat(packageConfig.minDownPaymentPercent.toString());
       const percentageBasedMin = Math.round(packageData.finalCost * minPaymentPercent);
       
-      // Use the higher of percentage-based minimum or global minimum from settings
+      // Use the higher of percentage-based minimum or global minimum
       const globalMin = calculatorSettings?.minimumDownPayment || 5000;
       return Math.max(percentageBasedMin, globalMin);
     }

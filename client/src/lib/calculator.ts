@@ -47,27 +47,27 @@ export function calculatePackagePricing(
   
   const { packageConfig, freeZones } = params;
   
-  // Use package configuration from database, fallback only if truly missing
+  // Default package configuration if not provided
   const defaultPackages = {
     vip: { 
       discount: 0.30, 
-      minCost: calculatorSettings?.minimumDownPayment || 25000, 
+      minCost: 25000, 
       requiresFullPayment: true,
       minDownPaymentPercent: 1.0
     },
     standard: { 
       discount: 0.25, 
-      minDownPayment: calculatorSettings?.minimumDownPayment || 15000, 
+      minDownPayment: 15000, 
       minDownPaymentPercent: 0.50,
-      minCost: calculatorSettings?.minimumDownPayment || 15000
+      minCost: 15000
     },
     economy: { 
       discount: 0.20, 
-      minDownPayment: calculatorSettings?.minimumDownPayment || 5000, 
+      minDownPayment: 5000, 
       dynamicDiscount: 0.30, 
       dynamicThreshold: 10000,
       minDownPaymentPercent: 0.30,
-      minCost: calculatorSettings?.minimumDownPayment || 5000
+      minCost: 5000
     }
   };
 
@@ -107,13 +107,14 @@ export function calculatePackagePricing(
     
 
 
-    // Calculate gift session value based on package configuration from database
+    // Calculate gift session value based on package type
+    // Gift sessions are full procedure sessions, not individual visits
     let giftSessionValue = 0;
-    const baseCostPerProcedure = totalProcedures > 0 ? baseCost / totalProcedures : 0;
-    
-    // Get gift sessions from package config (from database)
-    const giftSessions = packageData.giftSessions || 0;
-    giftSessionValue = baseCostPerProcedure * giftSessions;
+    if (packageType === 'vip') {
+      giftSessionValue = baseCost / totalProcedures * 3; // 3 full sessions for VIP
+    } else if (packageType === 'standard') {
+      giftSessionValue = baseCost / totalProcedures * 1; // 1 full session for Standard
+    }
 
     // Calculate free zones value from params
     const freeZonesValue = params.freeZonesValue || 0;

@@ -267,7 +267,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             </div>
 
             {/* Installment configuration - компактный */}
-            {downPayment < (selectedPackage && calculation ? getPackageData(selectedPackage)?.finalCost || (calculatorSettings?.minimumDownPayment * 5 || 25000) : (calculatorSettings?.minimumDownPayment * 5 || 25000)) && (
+            {downPayment < (selectedPackage && calculation ? getPackageData(selectedPackage)?.finalCost || 25000 : 25000) && (
               <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200">
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2 text-sm">Рассрочка</h4>
                 
@@ -304,7 +304,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-white text-sm">Сертификат</h4>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Скидка {(calculatorSettings?.certificateDiscountAmount || 3000).toLocaleString()}₽
+                    Скидка {calculatorSettings?.certificateDiscountAmount?.toLocaleString() || '3 000'}₽
                   </p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">

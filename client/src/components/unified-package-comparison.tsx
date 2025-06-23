@@ -410,7 +410,7 @@ export default function UnifiedPackageComparison({
                   return (
                     <div key={packageType} className="text-center">
                       <span className="text-sm font-semibold text-green-600 dark:text-green-400">
-                        -{calculation?.packages?.[packageType]?.appliedDiscounts?.find(d => d.type === 'certificate')?.amount?.toLocaleString() || '3 000'} ₽
+                        -3 000 ₽
                       </span>
                     </div>
                   );
@@ -508,13 +508,13 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Calculate gift procedures value using base cost per procedure
+                // Calculate gift procedures value
                 const giftValue =
                   data &&
                   packageData &&
                   (packageData.giftSessions || 0) > 0 &&
                   calculation.totalProcedures > 0
-                    ? (calculation.baseCost / calculation.totalProcedures) *
+                    ? (data.finalCost / calculation.totalProcedures) *
                       (packageData.giftSessions || 0)
                     : 0;
 
@@ -598,13 +598,13 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Calculate total gifts value using base cost per procedure
+                // Calculate total gifts value
                 const giftValue =
                   data &&
                   packageData &&
                   (packageData.giftSessions || 0) > 0 &&
                   calculation.totalProcedures > 0
-                    ? (calculation.baseCost / calculation.totalProcedures) *
+                    ? (data.finalCost / calculation.totalProcedures) *
                       (packageData.giftSessions || 0)
                     : 0;
 
