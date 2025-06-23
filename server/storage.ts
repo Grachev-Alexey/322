@@ -42,6 +42,7 @@ export interface IStorage {
   getPerks(): Promise<Perk[]>;
   createPerk(perk: InsertPerk): Promise<Perk>;
   updatePerk(id: number, updates: Partial<InsertPerk>): Promise<Perk | null>;
+  deletePerk(id: number): Promise<void>;
   getPackagePerkValues(): Promise<(PackagePerkValue & { perk: Perk })[]>;
   createPackagePerkValue(perkValue: InsertPackagePerkValue): Promise<PackagePerkValue>;
   updatePackagePerkValue(id: number, updates: Partial<InsertPackagePerkValue>): Promise<PackagePerkValue | null>;

@@ -5,6 +5,7 @@ export interface Perk {
   name: string;
   description?: string;
   icon: string;
+  iconColor?: string;
   displayOrder: number;
   isActive: boolean;
 }
@@ -18,7 +19,11 @@ export interface PackagePerkValue {
   textValue?: string;
   numberValue?: number;
   displayValue: string;
+  tooltip?: string;
+  customIcon?: string;
+  customIconColor?: string;
   isHighlighted: boolean;
+  isBest?: boolean;
   isActive: boolean;
   perk: Perk;
 }

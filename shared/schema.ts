@@ -64,6 +64,7 @@ export const perks = pgTable("perks", {
   name: text("name").notNull(),
   description: text("description"),
   icon: text("icon").notNull(), // Lucide icon name
+  iconColor: text("icon_color").default("#000000"), // Color for the icon
   displayOrder: integer("display_order").default(0),
   isActive: boolean("is_active").default(true),
   updatedAt: timestamp("updated_at").defaultNow(),
@@ -79,7 +80,11 @@ export const packagePerkValues = pgTable("package_perk_values", {
   textValue: text("text_value"), // "180 дней", "Без ограничений", etc.
   numberValue: decimal("number_value", { precision: 10, scale: 2 }), // numeric values
   displayValue: text("display_value").notNull(), // What to show to user
+  tooltip: text("tooltip"), // Tooltip text to show on hover
+  customIcon: text("custom_icon"), // Custom icon for this specific package value
+  customIconColor: text("custom_icon_color"), // Custom icon color for this specific package value
   isHighlighted: boolean("is_highlighted").default(false), // Special styling
+  isBest: boolean("is_best").default(false), // Show "Лучшее" badge
   isActive: boolean("is_active").default(true),
   updatedAt: timestamp("updated_at").defaultNow(),
 });

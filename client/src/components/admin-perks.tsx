@@ -7,8 +7,10 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useToast } from "@/hooks/use-toast";
-import { Plus, Trash2, Edit, Check, X } from "lucide-react";
+import { Plus, Trash2, Edit, Check, X, Save, Crown, Diamond, Shield, Heart, Star, Zap, Gift, Award, Calendar, Clock, Percent, User, Users, UserCheck, Sparkles, Target, Gem, Coins } from "lucide-react";
 import * as Icons from "lucide-react";
 import { type Perk, type PackagePerkValue } from "@/hooks/use-package-perks";
 
@@ -16,6 +18,43 @@ interface AdminPerksProps {
   loading: boolean;
   setLoading: (loading: boolean) => void;
 }
+
+// Available icons for perks
+const availableIcons = [
+  { name: 'Check', component: Check, label: 'Галочка' },
+  { name: 'Crown', component: Crown, label: 'Корона' },
+  { name: 'Diamond', component: Diamond, label: 'Алмаз' },
+  { name: 'Shield', component: Shield, label: 'Щит' },
+  { name: 'Heart', component: Heart, label: 'Сердце' },
+  { name: 'Star', component: Star, label: 'Звезда' },
+  { name: 'Zap', component: Zap, label: 'Молния' },
+  { name: 'Gift', component: Gift, label: 'Подарок' },
+  { name: 'Award', component: Award, label: 'Награда' },
+  { name: 'Calendar', component: Calendar, label: 'Календарь' },
+  { name: 'Clock', component: Clock, label: 'Часы' },
+  { name: 'Percent', component: Percent, label: 'Процент' },
+  { name: 'User', component: User, label: 'Пользователь' },
+  { name: 'Users', component: Users, label: 'Пользователи' },
+  { name: 'UserCheck', component: UserCheck, label: 'Проверенный пользователь' },
+  { name: 'Sparkles', component: Sparkles, label: 'Блеск' },
+  { name: 'Target', component: Target, label: 'Цель' },
+  { name: 'Gem', component: Gem, label: 'Драгоценный камень' },
+  { name: 'Coins', component: Coins, label: 'Монеты' }
+];
+
+// Predefined colors
+const colorOptions = [
+  { value: '#000000', label: 'Черный' },
+  { value: '#8B5CF6', label: 'Фиолетовый' },
+  { value: '#3B82F6', label: 'Синий' },
+  { value: '#10B981', label: 'Зеленый' },
+  { value: '#F59E0B', label: 'Оранжевый' },
+  { value: '#EF4444', label: 'Красный' },
+  { value: '#EC4899', label: 'Розовый' },
+  { value: '#6B7280', label: 'Серый' },
+  { value: '#D97706', label: 'Янтарный' },
+  { value: '#059669', label: 'Изумрудный' }
+];
 
 export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
   const [perks, setPerks] = useState<Perk[]>([]);
@@ -25,6 +64,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
     name: '',
     description: '',
     icon: 'Check',
+    iconColor: '#000000',
     displayOrder: 0
   });
   const { toast } = useToast();
@@ -69,7 +109,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
       if (response.ok) {
         const createdPerk = await response.json();
         setPerks([...perks, createdPerk]);
-        setNewPerk({ name: '', description: '', icon: 'Check', displayOrder: 0 });
+        setNewPerk({ name: '', description: '', icon: 'Check', iconColor: '#000000', displayOrder: 0 });
         
         // Create default values for all packages
         for (const packageType of packageTypes) {
@@ -81,7 +121,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
         }
         
         toast({ title: "Перк создан", description: "Новый перк добавлен успешно" });
-        await loadData(); // Reload to get fresh data
+        await loadData();
       }
     } catch (error) {
       console.error('Error creating perk:', error);
@@ -102,6 +142,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
           packageType,
           isActive: true,
           isHighlighted: false,
+          isBest: false,
           ...valueData
         })
       });
@@ -134,6 +175,29 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
     }
   };
 
+  const updatePerk = async (perkId: number, updates: any) => {
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/admin/perks/${perkId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(updates)
+      });
+
+      if (response.ok) {
+        await loadData();
+        setEditingPerk(null);
+        toast({ title: "Обновлено", description: "Перк обновлен" });
+      }
+    } catch (error) {
+      console.error('Error updating perk:', error);
+      toast({ title: "Ошибка", description: "Не удалось обновить перк", variant: "destructive" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const deletePerk = async (perkId: number) => {
     if (!confirm('Удалить этот перк? Это действие нельзя отменить.')) return;
     
@@ -146,19 +210,10 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
 
       if (response.ok) {
         await loadData();
-        toast({
-          title: "Успешно",
-          description: "Перк удален"
-        });
-      } else {
-        throw new Error('Failed to delete perk');
+        toast({ title: "Успешно", description: "Перк удален" });
       }
     } catch (error) {
-      toast({
-        title: "Ошибка",
-        description: "Не удалось удалить перк",
-        variant: "destructive"
-      });
+      toast({ title: "Ошибка", description: "Не удалось удалить перк", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -171,7 +226,6 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
     });
   };
 
-  // Create a separate component for perk value editor to avoid hooks issues
   const PerkValueEditor = ({ perkId, packageType, currentValue }: { 
     perkId: number; 
     packageType: string; 
@@ -182,7 +236,12 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
     const [displayValue, setDisplayValue] = useState(currentValue?.displayValue || 'Не включено');
     const [booleanValue, setBooleanValue] = useState(currentValue?.booleanValue || false);
     const [textValue, setTextValue] = useState(currentValue?.textValue || '');
+    const [numberValue, setNumberValue] = useState(currentValue?.numberValue?.toString() || '');
+    const [tooltip, setTooltip] = useState(currentValue?.tooltip || '');
+    const [customIcon, setCustomIcon] = useState(currentValue?.customIcon || '');
+    const [customIconColor, setCustomIconColor] = useState(currentValue?.customIconColor || '#000000');
     const [isHighlighted, setIsHighlighted] = useState(currentValue?.isHighlighted || false);
+    const [isBest, setIsBest] = useState(currentValue?.isBest || false);
 
     const saveValue = async () => {
       const updates = {
@@ -190,7 +249,12 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
         displayValue,
         booleanValue: valueType === 'boolean' ? booleanValue : null,
         textValue: valueType === 'text' ? textValue : null,
-        isHighlighted
+        numberValue: valueType === 'number' ? parseFloat(numberValue) || null : null,
+        tooltip: tooltip || null,
+        customIcon: customIcon || null,
+        customIconColor: customIconColor || null,
+        isHighlighted,
+        isBest
       };
 
       if (currentValue) {
@@ -205,16 +269,17 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
       return (
         <div className="flex items-center justify-between p-2 border rounded">
           <div className="flex items-center space-x-2">
-            {currentValue?.booleanValue !== null && (
-              currentValue?.booleanValue ? 
-                <Check className="h-4 w-4 text-green-500" /> : 
-                <X className="h-4 w-4 text-gray-400" />
+            {currentValue?.customIcon && (
+              <span style={{ color: currentValue.customIconColor || '#000000' }}>
+                {React.createElement((Icons as any)[currentValue.customIcon] || Check, { className: "h-4 w-4" })}
+              </span>
             )}
-            <span className={currentValue?.isHighlighted ? 'font-bold text-blue-600' : ''}>
-              {currentValue?.displayValue || 'Не задано'}
-            </span>
+            <span className="text-sm">{currentValue?.displayValue || 'Не задано'}</span>
+            {currentValue?.isBest && (
+              <Badge variant="secondary" className="text-xs">Лучшее</Badge>
+            )}
             {currentValue?.isHighlighted && (
-              <Badge variant="secondary" className="text-xs">Выделено</Badge>
+              <Badge variant="outline" className="text-xs">Выделено</Badge>
             )}
           </div>
           <Button variant="ghost" size="sm" onClick={() => setEditing(true)}>
@@ -225,174 +290,384 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
     }
 
     return (
-      <div className="space-y-2 p-2 border rounded bg-gray-50">
-        <Select value={valueType} onValueChange={setValueType}>
-          <SelectTrigger className="h-8">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="boolean">Да/Нет</SelectItem>
-            <SelectItem value="text">Текст</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="space-y-3 p-3 border rounded bg-gray-50">
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <Label className="text-xs">Тип значения</Label>
+            <Select value={valueType} onValueChange={setValueType}>
+              <SelectTrigger className="h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="boolean">Да/Нет</SelectItem>
+                <SelectItem value="text">Текст</SelectItem>
+                <SelectItem value="number">Число</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className="text-xs">Отображаемое значение</Label>
+            <Input 
+              value={displayValue} 
+              onChange={(e) => setDisplayValue(e.target.value)}
+              placeholder="Как показать пользователю"
+              className="h-8"
+            />
+          </div>
+        </div>
 
-        {valueType === 'boolean' ? (
+        {valueType === 'boolean' && (
           <div className="flex items-center space-x-2">
             <Switch checked={booleanValue} onCheckedChange={setBooleanValue} />
-            <Label className="text-sm">Включено</Label>
+            <Label className="text-xs">Включено</Label>
           </div>
-        ) : (
-          <Input
-            placeholder="Значение (например: 90 дней, 15%)"
-            value={textValue}
-            onChange={(e) => setTextValue(e.target.value)}
-            className="h-8"
-          />
         )}
 
-        <Input
-          placeholder="Текст для отображения"
-          value={displayValue}
-          onChange={(e) => setDisplayValue(e.target.value)}
-          className="h-8"
-        />
+        {valueType === 'text' && (
+          <div>
+            <Label className="text-xs">Текстовое значение</Label>
+            <Input 
+              value={textValue} 
+              onChange={(e) => setTextValue(e.target.value)}
+              placeholder="Например: 365 дней"
+              className="h-8"
+            />
+          </div>
+        )}
 
-        <div className="flex items-center justify-between">
+        {valueType === 'number' && (
+          <div>
+            <Label className="text-xs">Числовое значение</Label>
+            <Input 
+              type="number"
+              value={numberValue} 
+              onChange={(e) => setNumberValue(e.target.value)}
+              placeholder="Например: 25"
+              className="h-8"
+            />
+          </div>
+        )}
+
+        <div>
+          <Label className="text-xs">Подсказка при наведении</Label>
+          <Textarea 
+            value={tooltip} 
+            onChange={(e) => setTooltip(e.target.value)}
+            placeholder="Скидка 50% на все процедуры"
+            className="h-16 text-xs"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <Label className="text-xs">Кастомная иконка</Label>
+            <Select value={customIcon} onValueChange={setCustomIcon}>
+              <SelectTrigger className="h-8">
+                <SelectValue placeholder="Выберите иконку" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="">Без иконки</SelectItem>
+                {availableIcons.map(icon => (
+                  <SelectItem key={icon.name} value={icon.name}>
+                    <div className="flex items-center space-x-2">
+                      {React.createElement(icon.component, { className: "h-3 w-3" })}
+                      <span>{icon.label}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className="text-xs">Цвет иконки</Label>
+            <Select value={customIconColor} onValueChange={setCustomIconColor}>
+              <SelectTrigger className="h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {colorOptions.map(color => (
+                  <SelectItem key={color.value} value={color.value}>
+                    <div className="flex items-center space-x-2">
+                      <div 
+                        className="w-3 h-3 rounded border" 
+                        style={{ backgroundColor: color.value }}
+                      />
+                      <span>{color.label}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
             <Switch checked={isHighlighted} onCheckedChange={setIsHighlighted} />
-            <Label className="text-sm">Выделить</Label>
+            <Label className="text-xs">Выделить</Label>
           </div>
-          <div className="flex space-x-1">
-            <Button variant="ghost" size="sm" onClick={() => setEditing(false)}>
-              <X className="h-3 w-3" />
-            </Button>
-            <Button variant="ghost" size="sm" onClick={saveValue}>
-              <Check className="h-3 w-3" />
-            </Button>
+          <div className="flex items-center space-x-2">
+            <Switch checked={isBest} onCheckedChange={setIsBest} />
+            <Label className="text-xs">"Лучшее"</Label>
           </div>
+        </div>
+
+        <div className="flex space-x-2">
+          <Button size="sm" onClick={saveValue} className="h-7">
+            <Save className="h-3 w-3 mr-1" />
+            Сохранить
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setEditing(false)} className="h-7">
+            <X className="h-3 w-3 mr-1" />
+            Отмена
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
+  const PerkEditor = ({ perk }: { perk: Perk }) => {
+    const [name, setName] = useState(perk.name);
+    const [description, setDescription] = useState(perk.description || '');
+    const [icon, setIcon] = useState(perk.icon);
+    const [iconColor, setIconColor] = useState(perk.iconColor || '#000000');
+    const [displayOrder, setDisplayOrder] = useState(perk.displayOrder);
+
+    const save = () => {
+      updatePerk(perk.id, { name, description, icon, iconColor, displayOrder });
+    };
+
+    return (
+      <div className="space-y-3 p-3 border rounded bg-blue-50">
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <Label className="text-xs">Название</Label>
+            <Input 
+              value={name} 
+              onChange={(e) => setName(e.target.value)}
+              className="h-8"
+            />
+          </div>
+          <div>
+            <Label className="text-xs">Порядок отображения</Label>
+            <Input 
+              type="number"
+              value={displayOrder} 
+              onChange={(e) => setDisplayOrder(parseInt(e.target.value) || 0)}
+              className="h-8"
+            />
+          </div>
+        </div>
+
+        <div>
+          <Label className="text-xs">Описание</Label>
+          <Textarea 
+            value={description} 
+            onChange={(e) => setDescription(e.target.value)}
+            className="h-16 text-xs"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-2">
+          <div>
+            <Label className="text-xs">Иконка</Label>
+            <Select value={icon} onValueChange={setIcon}>
+              <SelectTrigger className="h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {availableIcons.map(iconOption => (
+                  <SelectItem key={iconOption.name} value={iconOption.name}>
+                    <div className="flex items-center space-x-2">
+                      {React.createElement(iconOption.component, { className: "h-3 w-3" })}
+                      <span>{iconOption.label}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label className="text-xs">Цвет иконки</Label>
+            <Select value={iconColor} onValueChange={setIconColor}>
+              <SelectTrigger className="h-8">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {colorOptions.map(color => (
+                  <SelectItem key={color.value} value={color.value}>
+                    <div className="flex items-center space-x-2">
+                      <div 
+                        className="w-3 h-3 rounded border" 
+                        style={{ backgroundColor: color.value }}
+                      />
+                      <span>{color.label}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="flex space-x-2">
+          <Button size="sm" onClick={save} className="h-7">
+            <Save className="h-3 w-3 mr-1" />
+            Сохранить
+          </Button>
+          <Button variant="outline" size="sm" onClick={() => setEditingPerk(null)} className="h-7">
+            <X className="h-3 w-3 mr-1" />
+            Отмена
+          </Button>
         </div>
       </div>
     );
   };
 
   return (
-    <div className="space-y-6">
-      {/* Create New Perk */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Plus className="h-5 w-5" />
-            <span>Создать новый перк</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-            <Input
-              placeholder="Название перка"
-              value={newPerk.name}
-              onChange={(e) => setNewPerk({ ...newPerk, name: e.target.value })}
-            />
-            <Input
-              placeholder="Описание"
-              value={newPerk.description}
-              onChange={(e) => setNewPerk({ ...newPerk, description: e.target.value })}
-            />
-            <Select value={newPerk.icon} onValueChange={(value) => setNewPerk({ ...newPerk, icon: value })}>
-              <SelectTrigger>
-                <SelectValue placeholder="Выберите иконку" />
-              </SelectTrigger>
-              <SelectContent className="max-h-96 overflow-y-auto">
-                <SelectItem value="Snowflake">❄️ Snowflake (Заморозка)</SelectItem>
-                <SelectItem value="Gift">🎁 Gift (Подарок)</SelectItem>
-                <SelectItem value="Percent">% Percent (Процент)</SelectItem>
-                <SelectItem value="CreditCard">💳 CreditCard (Рассрочка)</SelectItem>
-                <SelectItem value="Clock">🕐 Clock (Время)</SelectItem>
-                <SelectItem value="MessageCircle">💬 MessageCircle (Консультация)</SelectItem>
-                <SelectItem value="Shield">🛡️ Shield (Гарантия)</SelectItem>
-                <SelectItem value="User">👤 User (Пользователь)</SelectItem>
-                <SelectItem value="Star">⭐ Star (Звезда)</SelectItem>
-                <SelectItem value="Heart">❤️ Heart (Сердце)</SelectItem>
-                <SelectItem value="Zap">⚡ Zap (Молния)</SelectItem>
-                <SelectItem value="Award">🏆 Award (Награда)</SelectItem>
-                <SelectItem value="Check">✅ Check (Галочка)</SelectItem>
-                <SelectItem value="Crown">👑 Crown (Корона)</SelectItem>
-                <SelectItem value="Diamond">💎 Diamond (Алмаз)</SelectItem>
-                <SelectItem value="Gem">💍 Gem (Драгоценность)</SelectItem>
-                <SelectItem value="Sparkles">✨ Sparkles (Блеск)</SelectItem>
-                <SelectItem value="Calendar">📅 Calendar (Календарь)</SelectItem>
-                <SelectItem value="Phone">📞 Phone (Телефон)</SelectItem>
-                <SelectItem value="Mail">📧 Mail (Почта)</SelectItem>
-                <SelectItem value="Settings">⚙️ Settings (Настройки)</SelectItem>
-                <SelectItem value="Lock">🔒 Lock (Замок)</SelectItem>
-                <SelectItem value="Key">🗝️ Key (Ключ)</SelectItem>
-                <SelectItem value="Eye">👁️ Eye (Глаз)</SelectItem>
-                <SelectItem value="Target">🎯 Target (Цель)</SelectItem>
-                <SelectItem value="Bookmark">🔖 Bookmark (Закладка)</SelectItem>
-                <SelectItem value="Flag">🚩 Flag (Флаг)</SelectItem>
-                <SelectItem value="Thumbsup">👍 ThumbsUp (Лайк)</SelectItem>
-                <SelectItem value="TrendingUp">📈 TrendingUp (Рост)</SelectItem>
-                <SelectItem value="Handshake">🤝 Handshake (Рукопожатие)</SelectItem>
-                <SelectItem value="Coffee">☕ Coffee (Кофе)</SelectItem>
-                <SelectItem value="Sun">☀️ Sun (Солнце)</SelectItem>
-                <SelectItem value="Moon">🌙 Moon (Луна)</SelectItem>
-                <SelectItem value="Flame">🔥 Flame (Огонь)</SelectItem>
-                <SelectItem value="Leaf">🍃 Leaf (Лист)</SelectItem>
-                <SelectItem value="Flower">🌸 Flower (Цветок)</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button onClick={createPerk} disabled={loading || !newPerk.name.trim()}>
-              Создать
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+    <TooltipProvider>
+      <div className="space-y-6">
+        {/* Add New Perk */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Создать новый перк</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div>
+                <Label>Название</Label>
+                <Input
+                  value={newPerk.name}
+                  onChange={(e) => setNewPerk({ ...newPerk, name: e.target.value })}
+                  placeholder="Название перка"
+                />
+              </div>
+              <div>
+                <Label>Описание</Label>
+                <Input
+                  value={newPerk.description}
+                  onChange={(e) => setNewPerk({ ...newPerk, description: e.target.value })}
+                  placeholder="Описание перка"
+                />
+              </div>
+              <div>
+                <Label>Иконка</Label>
+                <Select value={newPerk.icon} onValueChange={(value) => setNewPerk({ ...newPerk, icon: value })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableIcons.map(icon => (
+                      <SelectItem key={icon.name} value={icon.name}>
+                        <div className="flex items-center space-x-2">
+                          {React.createElement(icon.component, { className: "h-4 w-4" })}
+                          <span>{icon.label}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label>Цвет иконки</Label>
+                <Select value={newPerk.iconColor} onValueChange={(value) => setNewPerk({ ...newPerk, iconColor: value })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {colorOptions.map(color => (
+                      <SelectItem key={color.value} value={color.value}>
+                        <div className="flex items-center space-x-2">
+                          <div 
+                            className="w-4 h-4 rounded border" 
+                            style={{ backgroundColor: color.value }}
+                          />
+                          <span>{color.label}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-end">
+                <Button onClick={createPerk} disabled={loading || !newPerk.name.trim()}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Создать
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
-      {/* Perks Management */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Управление перками и их значениями</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-6">
-            {perks.map((perk) => {
-              const IconComponent = (Icons as any)[perk.icon] || Icons.Check;
-              const perkValuesData = getPerkValuesForPerk(perk.id);
-              
-              return (
-                <div key={perk.id} className="border rounded-lg p-4 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <IconComponent className="h-5 w-5 text-gray-600" />
-                      <div>
-                        <h3 className="font-medium">{perk.name}</h3>
-                        {perk.description && (
-                          <p className="text-sm text-gray-500">{perk.description}</p>
-                        )}
+        {/* Perks Management */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Управление перками и их значениями</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {perks.map((perk) => {
+                const IconComponent = (Icons as any)[perk.icon] || Check;
+                const perkValuesData = getPerkValuesForPerk(perk.id);
+                
+                return (
+                  <div key={perk.id} className="border rounded-lg p-4 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <IconComponent 
+                          className="h-5 w-5" 
+                          style={{ color: perk.iconColor || '#000000' }}
+                        />
+                        <div>
+                          <h3 className="font-medium">{perk.name}</h3>
+                          {perk.description && (
+                            <p className="text-sm text-gray-500">{perk.description}</p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <Badge variant="outline">Порядок: {perk.displayOrder}</Badge>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setEditingPerk(editingPerk === perk.id ? null : perk.id)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => deletePerk(perk.id)}
+                          className="text-red-600"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </div>
-                    <Badge variant="outline">Порядок: {perk.displayOrder}</Badge>
+                    
+                    {editingPerk === perk.id && (
+                      <PerkEditor perk={perk} />
+                    )}
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {perkValuesData.map(({ packageType, value }) => (
+                        <div key={packageType} className="space-y-2">
+                          <h4 className="font-medium text-sm">{packageNames[packageType]}</h4>
+                          <PerkValueEditor
+                            perkId={perk.id}
+                            packageType={packageType}
+                            currentValue={value}
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {perkValuesData.map(({ packageType, value }) => (
-                      <div key={packageType} className="space-y-2">
-                        <Label className="font-medium text-center block">
-                          {packageNames[packageType]}
-                        </Label>
-                        <PerkValueEditor 
-                          perkId={perk.id} 
-                          packageType={packageType} 
-                          currentValue={value} 
-                        />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </TooltipProvider>
   );
 }

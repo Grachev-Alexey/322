@@ -1,5 +1,6 @@
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { formatPrice } from "../lib/utils";
 import { Package, PackagePerkValue, Perk } from "@/../../shared/schema";
 import { Crown, Diamond, Shield, Check, X, Sparkles } from "lucide-react";
@@ -121,7 +122,8 @@ export default function UnifiedPackageComparison({
   };
 
   return (
-    <div className="flex flex-col space-y-2 lg:space-y-3 h-full shadow-safe">
+    <TooltipProvider>
+      <div className="flex flex-col space-y-2 lg:space-y-3 h-full shadow-safe">
       {/* Package Headers - компактные */}
       <div className="grid grid-cols-4 gap-1 lg:gap-2 flex-shrink-0 shadow-container">
         <div></div>
@@ -141,9 +143,12 @@ export default function UnifiedPackageComparison({
                   : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
               }`}
             >
-              {packageType === 'vip' && (
-                <div className="absolute -top-1 -right-1 w-5 h-5 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center z-10">
-                  <Crown className="text-white" size={10} />
+              {/* Check if this package is marked as "Best" */}
+              {perkValues && perkValues.some((pv: any) => pv.packageType === packageType && pv.isBest) && (
+                <div className="absolute -top-2 left-1/2 transform -translate-x-1/2">
+                  <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs font-bold px-2 py-1">
+                    Лучшее
+                  </Badge>
                 </div>
               )}
               
@@ -173,12 +178,20 @@ export default function UnifiedPackageComparison({
                   {/* Perk Name */}
                   <div className="flex items-center space-x-1 lg:space-x-2">
                     <div className="p-1 rounded-lg bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 flex-shrink-0">
-                      <IconComponent className="h-3 w-3 lg:h-4 lg:w-4 text-blue-600 dark:text-blue-400" />
+                      <IconComponent 
+                        className="h-3 w-3 lg:h-4 lg:w-4" 
+                        style={{ color: perk.iconColor || '#2563eb' }}
+                      />
                     </div>
                     <div className="min-w-0">
                       <div className="font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
                         {perk.name}
                       </div>
+                      {perk.description && (
+                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                          {perk.description}
+                        </div>
+                      )}
                     </div>
                   </div>
                   
@@ -202,35 +215,66 @@ export default function UnifiedPackageComparison({
                             {perkValue.valueType === 'boolean' ? (
                               perkValue.booleanValue ? (
                                 <>
-                                  <div className={`p-1 rounded-lg bg-gradient-to-r ${info.gradient} mx-auto w-fit shadow`}>
-                                    <Check className="h-2.5 w-2.5 lg:h-3 lg:w-3 text-white" />
-                                  </div>
-                                  <span className="text-xs font-medium text-green-600 dark:text-green-400 block mt-1 hidden lg:block">Да</span>
+                                  {perkValue.customIcon ? (
+                                    <Tooltip>
+                                      <TooltipTrigger asChild>
+                                        <div className={`p-1 rounded-lg bg-gradient-to-r ${info.gradient} mx-auto w-fit shadow cursor-help`}>
+                                          {React.createElement((Icons as any)[perkValue.customIcon] || Check, { 
+                                            className: "h-2.5 w-2.5 lg:h-3 lg:w-3",
+                                            style: { color: perkValue.customIconColor || '#ffffff' }
+                                          })}
+                                        </div>
+                                      </TooltipTrigger>
+                                      {perkValue.tooltip && (
+                                        <TooltipContent>
+                                          <p>{perkValue.tooltip}</p>
+                                        </TooltipContent>
+                                      )}
+                                    </Tooltip>
+                                  ) : (
+                                    <div className={`p-1 rounded-lg bg-gradient-to-r ${info.gradient} mx-auto w-fit shadow`}>
+                                      <Check className="h-2.5 w-2.5 lg:h-3 lg:w-3 text-white" />
+                                    </div>
+                                  )}
+                                  <span className="text-xs text-gray-600 dark:text-gray-300 mt-1 block">
+                                    {perkValue.displayValue}
+                                  </span>
                                 </>
                               ) : (
-                                <>
+                                <div className="text-center">
                                   <X className="h-3 w-3 lg:h-4 lg:w-4 text-red-400 mx-auto mb-1" />
                                   <span className="text-xs text-gray-400 hidden lg:block">Нет</span>
-                                </>
+                                </div>
                               )
                             ) : (
-                              <>
-                                <div className={`px-2 py-1 rounded-lg text-xs font-semibold ${
-                                  perkValue.isHighlighted 
-                                    ? `bg-gradient-to-r ${info.gradient} text-white shadow-lg`
-                                    : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200'
-                                }`}>
-                                  {perkValue.displayValue}
-                                </div>
-                                {perkValue.isHighlighted && (
-                                  <div className="flex items-center justify-center space-x-1 mt-1 hidden lg:flex">
-                                    <Sparkles className="h-2.5 w-2.5 text-yellow-500" />
-                                    <span className="text-xs text-yellow-600 dark:text-yellow-400 font-medium">
-                                      Лучшее
-                                    </span>
+                              <div className="text-center">
+                                {perkValue.tooltip ? (
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <div className={`text-xs lg:text-sm font-semibold cursor-help ${perkValue.isHighlighted ? `text-transparent bg-clip-text bg-gradient-to-r ${info.gradient}` : 'text-gray-700 dark:text-gray-300'}`}>
+                                        {perkValue.customIcon && (
+                                          <span className="inline-block mr-1" style={{ color: perkValue.customIconColor || '#000000' }}>
+                                            {React.createElement((Icons as any)[perkValue.customIcon] || Check, { className: "h-3 w-3 inline" })}
+                                          </span>
+                                        )}
+                                        {perkValue.displayValue}
+                                      </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                      <p>{perkValue.tooltip}</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                ) : (
+                                  <div className={`text-xs lg:text-sm font-semibold ${perkValue.isHighlighted ? `text-transparent bg-clip-text bg-gradient-to-r ${info.gradient}` : 'text-gray-700 dark:text-gray-300'}`}>
+                                    {perkValue.customIcon && (
+                                      <span className="inline-block mr-1" style={{ color: perkValue.customIconColor || '#000000' }}>
+                                        {React.createElement((Icons as any)[perkValue.customIcon] || Check, { className: "h-3 w-3 inline" })}
+                                      </span>
+                                    )}
+                                    {perkValue.displayValue}
                                   </div>
                                 )}
-                              </>
+                              </div>
                             )}
                           </div>
                         )}
@@ -347,6 +391,7 @@ export default function UnifiedPackageComparison({
           );
         })}
       </div>
-    </div>
+      </div>
+    </TooltipProvider>
   );
 }
