@@ -35,7 +35,7 @@ interface UnifiedPackageComparisonProps {
   packages: Package[];
   downPayment: number;
   installmentMonths: number;
-  procedureCount: number; // Add procedure count to props
+  procedureCount: number;
 }
 
 export default function UnifiedPackageComparison({ 
@@ -61,8 +61,6 @@ export default function UnifiedPackageComparison({
   const safeProcedureCount = procedureCount || 1;
   const actualThreshold = (typeof bulkThreshold === 'number' ? bulkThreshold : 15);
   const hasAdditionalDiscount = safeProcedureCount >= actualThreshold;
-  
-
   
   // Package visual configurations - unified styling
   const packageInfo: Record<string, {
@@ -130,50 +128,68 @@ export default function UnifiedPackageComparison({
   return (
     <TooltipProvider>
       <div className="flex flex-col space-y-2 lg:space-y-3 h-full shadow-safe">
-      {/* Package Headers - компактные */}
-      <div className="grid grid-cols-4 gap-1 lg:gap-2 flex-shrink-0 shadow-container">
-        <div></div>
-        {packageTypes.map((packageType) => {
-          const info = packageInfo[packageType];
-          const packageData = packages.find((p: Package) => p.type === packageType);
-          const Icon = info.icon;
-          const isSelected = selectedPackage === packageType;
-          const isPopular = packageType === 'vip';
-
-          return (
-            <div 
-              key={packageType}
-              className={`relative p-2 rounded-lg border-2 transition-all duration-300 ${
-                isSelected 
-                  ? `${info.borderColor} shadow-lg ${info.bgColor}` 
-                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
-              }`}
-            >
-
-              
-              <div className="text-center">
-                <div className={`w-6 h-6 lg:w-8 lg:h-8 mx-auto mb-1 lg:mb-2 bg-gradient-to-r ${info.gradient} rounded-lg flex items-center justify-center shadow-lg`}>
-                  <Icon className="text-white" size={12} />
-                </div>
-                <h3 className="font-bold text-gray-900 dark:text-white text-xs lg:text-sm">
-                  {packageData?.name || info.title}
-                </h3>
+        {/* Unified Table */}
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 overflow-hidden flex-1 min-h-0">
+          <div className="overflow-y-auto table-scroll" style={{ maxHeight: 'min(500px, calc(100vh - 200px))', minHeight: '400px' }}>
+            
+            {/* Table Header with Package Names */}
+            <div className="grid grid-cols-4 gap-1 lg:gap-2 p-2 lg:p-3 bg-gray-100 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-600 sticky top-0 z-10">
+              <div className="font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
+                Характеристика
               </div>
-            </div>
-          );
-        })}
-      </div>
+              {packageTypes.map((packageType) => {
+                const info = packageInfo[packageType];
+                const packageData = packages.find((p: Package) => p.type === packageType);
+                const Icon = info.icon;
+                const isSelected = selectedPackage === packageType;
 
-      {/* Perks Comparison Table - with smart scrolling */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 overflow-hidden flex-1 min-h-0">         
-          {/* Контент таблицы - скроллируемый */}
-          <div className="overflow-y-auto table-scroll" style={{ maxHeight: 'min(400px, calc(100vh - 350px))', minHeight: uniquePerks.length > 6 ? '300px' : 'auto' }}>
-            <div className="divide-y divide-gray-100 dark:divide-gray-700">
-              {uniquePerks.map((perk, index) => {
+                return (
+                  <div 
+                    key={packageType}
+                    className={`text-center p-2 rounded-lg border transition-all duration-300 cursor-pointer ${
+                      isSelected 
+                        ? 'border-gray-400 bg-gray-200 dark:bg-gray-600 shadow-md' 
+                        : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700'
+                    }`}
+                    onClick={() => onPackageSelect(packageType)}
+                  >
+                    <div className="flex items-center justify-center space-x-1 mb-1">
+                      <Icon className="text-gray-600 dark:text-gray-400" size={14} />
+                      <span className="text-xs lg:text-sm font-bold text-gray-900 dark:text-white">
+                        {packageData?.name || info.title}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Discount Row */}
+            <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-750">
+              <div className="flex items-center font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
+                Скидка
+              </div>
+              {packageTypes.map((packageType) => {
+                const packageData = packages.find((p: Package) => p.type === packageType);
+                const isSelected = selectedPackage === packageType;
+                const discountPercent = packageData ? Math.round(parseFloat(packageData.discount)) : 0;
+                
+                return (
+                  <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-gray-100 dark:bg-gray-600 rounded-lg' : ''}`}>
+                    <span className="text-xs lg:text-sm font-semibold text-green-600 dark:text-green-400">
+                      {discountPercent}%
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Perks Rows */}
+            {uniquePerks.map((perk, index) => {
               const IconComponent = (Icons as any)[perk.icon] || Check;
               
               return (
-                <div key={perk.id} className={`grid grid-cols-4 gap-1 lg:gap-2 py-1.5 lg:py-2 px-2 lg:px-3 ${index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-750' : 'bg-white dark:bg-gray-800'}`}>
+                <div key={perk.id} className={`grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-100 dark:border-gray-700 ${index % 2 === 0 ? 'bg-white dark:bg-gray-800' : 'bg-gray-50 dark:bg-gray-750'}`}>
                   {/* Perk Name */}
                   <div className="flex items-center space-x-1 lg:space-x-2">
                     {perk.icon && perk.icon !== 'none' && (
@@ -288,115 +304,86 @@ export default function UnifiedPackageComparison({
                   })}
                 </div>
               );
+            })}
+
+            {/* Cost Calculation Rows */}
+            <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-100 dark:border-gray-700 bg-blue-50 dark:bg-blue-900/20">
+              <div className="flex items-center font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
+                Итоговая стоимость
+              </div>
+              {packageTypes.map((packageType) => {
+                const data = getPackageData(packageType);
+                const isSelected = selectedPackage === packageType;
+                
+                return (
+                  <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-blue-100 dark:bg-blue-800 rounded-lg' : ''}`}>
+                    <span className="text-xs lg:text-sm font-bold text-blue-700 dark:text-blue-300">
+                      {data ? formatPrice(data.finalCost) : '-'}
+                    </span>
+                  </div>
+                );
               })}
             </div>
-          </div>
-      </div>
 
-      {/* Package Pricing and Selection - компактные */}
-      <div className="grid grid-cols-4 gap-1 lg:gap-2 flex-shrink-0 shadow-container">
-        <div></div>
-        {packageTypes.map((packageType) => {
-          const info = packageInfo[packageType];
-          const packageData = packages.find((p: Package) => p.type === packageType);
-          const data = getPackageData(packageType);
-          const isSelected = selectedPackage === packageType;
-          const discountPercent = packageData ? Math.round(parseFloat(packageData.discount) * 100) : 0;
-
-          if (!data || !packageData) return null;
-
-          return (
-            <div 
-              key={packageType}
-              className={`border-2 transition-all duration-300 rounded-lg overflow-hidden shadow ${
-                isSelected 
-                  ? `${info.borderColor} shadow-lg ${info.bgColor}` 
-                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
-              }`}
-            >
-              {/* Discount Badge */}
-              <div className={`p-1.5 lg:p-2 text-center bg-gradient-to-r ${info.gradient}`}>
-                <div className="text-xs lg:text-sm font-bold text-white">
-                  {discountPercent}% скидка
-                </div>
+            {/* Monthly Payment Row */}
+            <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-100 dark:border-gray-700">
+              <div className="flex items-center font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
+                Ежемесячный платеж
               </div>
-              
-              {/* Pricing */}
-              <div className="p-2 lg:p-3 space-y-1 lg:space-y-2">
-                <div className="text-center">
-                  <div className="text-xs text-gray-500 line-through">
-                    {formatPrice(calculation.baseCost)}
-                  </div>
-                  <div className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white">
-                    {formatPrice(data.finalCost)}
-                  </div>
-                  <div className="text-xs lg:text-sm text-green-600 font-semibold">
-                    Экономия: {formatPrice(data.totalSavings)}
-                    <div className="text-xs text-gray-500 space-y-0.5 mt-1">
-                      {data.appliedDiscounts.filter((discount: any) => discount.amount > 0).map((discount: any, idx: number) => (
-                        <div key={idx} className="flex justify-between">
-                          <span>
-                            {discount.type === 'package' && `Скидка пакета ${discountPercent}%`}
-                            {discount.type === 'bulk' && `За ${actualThreshold}+ процедур`}
-                            {discount.type === 'certificate' && 'Сертификат'}
-                            {discount.type === 'free_zones' && 'Бесплатная зона'}
-                            {discount.type === 'gift_sessions' && `Подарочные процедуры`}
-                          </span>
-                          <span>-{formatPrice(discount.amount)}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+              {packageTypes.map((packageType) => {
+                const data = getPackageData(packageType);
+                const isSelected = selectedPackage === packageType;
                 
-                {/* Additional Info */}
-                {((packageData?.giftSessions && packageData.giftSessions > 0) || data.monthlyPayment > 0) && (
-                  <div className="space-y-1">
-                    {packageData?.giftSessions && packageData.giftSessions > 0 && (
-                      <div className="bg-pink-100 dark:bg-pink-900/30 text-pink-700 dark:text-pink-400 px-2 py-1 rounded text-xs text-center font-medium">
-                        +{packageData.giftSessions} <span className="hidden sm:inline">подарочных процедуры</span>
-                      </div>
-                    )}
-                    
-                    {data.monthlyPayment > 0 && (
-                      <div className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 px-2 py-1 rounded text-xs text-center font-medium">
-                        {formatPrice(data.monthlyPayment)}/мес
-                      </div>
-                    )}
+                return (
+                  <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-gray-100 dark:bg-gray-600 rounded-lg' : ''}`}>
+                    <span className="text-xs lg:text-sm font-semibold text-gray-700 dark:text-gray-300">
+                      {data && data.monthlyPayment > 0 ? formatPrice(data.monthlyPayment) : '-'}
+                    </span>
                   </div>
-                )}
-                
-                {/* Select Button */}
-                <Button
-                  onClick={() => onPackageSelect(packageType)}
-                  disabled={!data.isAvailable}
-                  className={`w-full transition-all duration-300 text-xs py-1.5 lg:py-2 ${
-                    isSelected 
-                      ? 'bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700' 
-                      : `bg-gradient-to-r ${info.gradient} hover:opacity-90`
-                  }`}
-                  size="sm"
-                >
-                  {isSelected ? (
-                    <div className="flex items-center space-x-1">
-                      <Check className="h-3 w-3" />
-                      <span>Выбрано</span>
-                    </div>
-                  ) : (
-                    <span>Выбрать пакет</span>
-                  )}
-                </Button>
-                
-                {!data.isAvailable && (
-                  <p className="text-xs text-red-600 text-center">
-                    {data.unavailableReason}
-                  </p>
-                )}
-              </div>
+                );
+              })}
             </div>
-          );
-        })}
-      </div>
+
+            {/* Selection Buttons Row */}
+            <div className="grid grid-cols-4 gap-1 lg:gap-2 py-3 lg:py-4 px-2 lg:px-3 bg-gray-100 dark:bg-gray-700">
+              <div className="flex items-center font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
+                Выбор пакета
+              </div>
+              {packageTypes.map((packageType) => {
+                const data = getPackageData(packageType);
+                const isSelected = selectedPackage === packageType;
+                
+                return (
+                  <div key={packageType} className="text-center">
+                    <Button
+                      variant={isSelected ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => onPackageSelect(packageType)}
+                      disabled={!data?.isAvailable}
+                      className="w-full h-8"
+                    >
+                      {isSelected ? (
+                        <div className="flex items-center space-x-1">
+                          <Check className="h-3 w-3" />
+                          <span>Выбрано</span>
+                        </div>
+                      ) : (
+                        <span>Выбрать</span>
+                      )}
+                    </Button>
+                    
+                    {data && !data.isAvailable && (
+                      <p className="text-xs text-red-600 text-center mt-1">
+                        {data.unavailableReason}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+          </div>
+        </div>
       </div>
     </TooltipProvider>
   );
