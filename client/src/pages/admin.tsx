@@ -34,6 +34,7 @@ interface PackageType {
   minDownPaymentPercent: string;
   requiresFullPayment: boolean;
   giftSessions: number;
+  bonusAccountPercent: string;
   isActive: boolean;
 }
 
@@ -1081,6 +1082,7 @@ function PackagesManagement({ packages, setPackages, loading, setLoading }: {
             minDownPaymentPercent: pkg.minDownPaymentPercent,
             requiresFullPayment: pkg.requiresFullPayment,
             giftSessions: pkg.giftSessions,
+            bonusAccountPercent: pkg.bonusAccountPercent,
             isActive: true
           })
         });
@@ -1176,6 +1178,22 @@ function PackagesManagement({ packages, setPackages, loading, setLoading }: {
                     onChange={(e) => {
                       const updatedPackages = packages.map((p: PackageType) => 
                         p.type === pkg.type ? { ...p, giftSessions: parseInt(e.target.value) || 0 } : p
+                      );
+                      setPackages(updatedPackages);
+                    }}
+                  />
+                </div>
+                <div>
+                  <Label htmlFor={`${pkg.type}-bonusAccount`}>Бонусный счет (%)</Label>
+                  <Input
+                    id={`${pkg.type}-bonusAccount`}
+                    type="number"
+                    min="0"
+                    max="100"
+                    value={parseFloat(pkg.bonusAccountPercent || '0') * 100}
+                    onChange={(e) => {
+                      const updatedPackages = packages.map((p: PackageType) => 
+                        p.type === pkg.type ? { ...p, bonusAccountPercent: (parseFloat(e.target.value) / 100).toString() } : p
                       );
                       setPackages(updatedPackages);
                     }}
