@@ -97,9 +97,10 @@ export function calculatePackagePricing(
       discount = Math.max(discount, packageData.dynamicDiscount);
     }
 
-    // Calculate certificate discount using configurable percentage
-    const certificateDiscountPercent = calculatorSettings?.certificateDiscountPercentage || 0.025;
-    const certificateDiscount = params.usedCertificate ? baseCost * certificateDiscountPercent : 0;
+    // Calculate certificate discount using configurable fixed amount
+    const certificateDiscountAmount = calculatorSettings?.certificateDiscountAmount || 3000;
+    const certificateMinAmount = calculatorSettings?.certificateMinCourseAmount || 25000;
+    const certificateDiscount = params.usedCertificate && baseCost >= certificateMinAmount ? certificateDiscountAmount : 0;
     
     // Calculate bulk discount using configurable threshold and percentage
     const bulkThreshold = calculatorSettings?.bulkDiscountThreshold || 15;

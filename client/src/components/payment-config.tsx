@@ -52,6 +52,17 @@ export default function PaymentConfig({
     enabled: true
   });
 
+  // Get calculator settings for installment options
+  const { data: calculatorSettings } = useQuery({
+    queryKey: ['/api/config/calculator-settings'],
+    queryFn: async () => {
+      const response = await fetch('/api/config/installment_months_options', { credentials: 'include' });
+      const monthsOptions = response.ok ? await response.json() : [2, 3, 4, 5, 6];
+      return { installmentMonthsOptions: monthsOptions };
+    },
+    enabled: true
+  });
+
   // Find current package config
   const currentPackageConfig = selectedPackage ? packages.find(p => p.type === selectedPackage) : null;
   const handleDownPaymentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -117,8 +128,8 @@ export default function PaymentConfig({
             </div>
             
             <RangeSlider
-              min={2}
-              max={6}
+              min={Math.min(...(calculatorSettings?.installmentMonthsOptions || [2]))}
+              max={Math.max(...(calculatorSettings?.installmentMonthsOptions || [6]))}
               step={1}
               value={installmentMonths}
               onChange={onInstallmentMonthsChange}

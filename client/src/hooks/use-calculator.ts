@@ -88,10 +88,11 @@ export function useCalculator() {
         fetch('/api/config/bulk_discount_threshold', { credentials: 'include' }),
         fetch('/api/config/bulk_discount_percentage', { credentials: 'include' }),
         fetch('/api/config/installment_months_options', { credentials: 'include' }),
-        fetch('/api/config/certificate_discount_percentage', { credentials: 'include' })
+        fetch('/api/config/certificate_discount_percentage', { credentials: 'include' }),
+        fetch('/api/config/certificate_min_course_amount', { credentials: 'include' })
       ]);
 
-      const [minPayment, bulkThreshold, bulkPercentage, monthsOptions, certificateDiscount] = await Promise.all(
+      const [minPayment, bulkThreshold, bulkPercentage, monthsOptions, certificateAmount, certificateMinAmount] = await Promise.all(
         configs.map(response => response.ok ? response.json() : null)
       );
 
@@ -100,7 +101,8 @@ export function useCalculator() {
         bulkDiscountThreshold: bulkThreshold || 15,
         bulkDiscountPercentage: bulkPercentage || 0.05,
         installmentMonthsOptions: monthsOptions || [2, 3, 4, 5, 6],
-        certificateDiscountPercentage: certificateDiscount || 0.025
+        certificateDiscountAmount: certificateAmount || 3000,
+        certificateMinCourseAmount: certificateMinAmount || 25000
       };
     },
     enabled: true,
@@ -180,7 +182,7 @@ export function useCalculator() {
       console.log(`15+ discount applied based on slider value: ${procedures}`);
       setCalculation(result);
     },
-    [services, packages]
+    [services, packages, calculatorSettings]
   );
 
   // Debounced calculation trigger
@@ -219,6 +221,7 @@ export function useCalculator() {
     calculation,
     packages,
     totalProcedures,
+    calculatorSettings,
     setSelectedServices,
     setProcedureCount,
     setDownPayment: useCallback((value: number) => {

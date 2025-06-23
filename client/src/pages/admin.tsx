@@ -46,7 +46,8 @@ function CalculatorSettings({ loading, setLoading }: { loading: boolean; setLoad
     bulkDiscountThreshold: 15,
     bulkDiscountPercentage: 0.05,
     installmentMonthsOptions: [2, 3, 4, 5, 6],
-    certificateDiscountPercentage: 0.025
+    certificateDiscountAmount: 3000,
+    certificateMinCourseAmount: 25000
   });
   const { toast } = useToast();
 
@@ -61,19 +62,21 @@ function CalculatorSettings({ loading, setLoading }: { loading: boolean; setLoad
         fetch('/api/config/bulk_discount_threshold', { credentials: 'include' }),
         fetch('/api/config/bulk_discount_percentage', { credentials: 'include' }),
         fetch('/api/config/installment_months_options', { credentials: 'include' }),
-        fetch('/api/config/certificate_discount_percentage', { credentials: 'include' })
+        fetch('/api/config/certificate_discount_percentage', { credentials: 'include' }),
+        fetch('/api/config/certificate_min_course_amount', { credentials: 'include' })
       ]);
 
-      const [minPayment, bulkThreshold, bulkPercentage, monthsOptions, certificateDiscount] = await Promise.all(
+      const [minPayment, bulkThreshold, bulkPercentage, monthsOptions, certificateAmount, certificateMinAmount] = await Promise.all(
         configs.map(response => response.ok ? response.json() : null)
       );
 
       setSettings({
-        minimumDownPayment: minPayment || 5000,
-        bulkDiscountThreshold: bulkThreshold || 15,
-        bulkDiscountPercentage: bulkPercentage || 0.05,
+        minimumDownPayment: Number(minPayment) || 5000,
+        bulkDiscountThreshold: Number(bulkThreshold) || 15,
+        bulkDiscountPercentage: Number(bulkPercentage) || 0.05,
         installmentMonthsOptions: monthsOptions || [2, 3, 4, 5, 6],
-        certificateDiscountPercentage: certificateDiscount || 0.025
+        certificateDiscountAmount: Number(certificateAmount) || 3000,
+        certificateMinCourseAmount: Number(certificateMinAmount) || 25000
       });
     } catch (error) {
       console.error('Error loading settings:', error);
@@ -88,7 +91,8 @@ function CalculatorSettings({ loading, setLoading }: { loading: boolean; setLoad
         { key: 'bulk_discount_threshold', value: settings.bulkDiscountThreshold },
         { key: 'bulk_discount_percentage', value: settings.bulkDiscountPercentage },
         { key: 'installment_months_options', value: settings.installmentMonthsOptions },
-        { key: 'certificate_discount_percentage', value: settings.certificateDiscountPercentage }
+        { key: 'certificate_discount_percentage', value: settings.certificateDiscountAmount },
+        { key: 'certificate_min_course_amount', value: settings.certificateMinCourseAmount }
       ];
 
       await Promise.all(
@@ -183,22 +187,38 @@ function CalculatorSettings({ loading, setLoading }: { loading: boolean; setLoad
             </div>
 
             <div>
-              <Label htmlFor="certificateDiscount">Скидка по сертификату (%)</Label>
+              <Label htmlFor="certificateDiscount">Скидка по сертификату (руб.)</Label>
               <Input
                 id="certificateDiscount"
                 type="number"
-                step="0.01"
-                max="1"
                 min="0"
-                value={settings.certificateDiscountPercentage * 100}
+                value={settings.certificateDiscountAmount}
                 onChange={(e) => setSettings({
                   ...settings,
-                  certificateDiscountPercentage: (parseFloat(e.target.value) || 0) / 100
+                  certificateDiscountAmount: parseInt(e.target.value) || 0
                 })}
-                placeholder="2.5"
+                placeholder="3000"
               />
               <p className="text-sm text-gray-500 mt-1">
-                Процент скидки при использовании сертификата (например, 2.5 для 2.5%)
+                Фиксированная сумма скидки при использовании сертификата
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="certificateMinAmount">Минимальная сумма курса для сертификата (руб.)</Label>
+              <Input
+                id="certificateMinAmount"
+                type="number"
+                min="0"
+                value={settings.certificateMinCourseAmount}
+                onChange={(e) => setSettings({
+                  ...settings,
+                  certificateMinCourseAmount: parseInt(e.target.value) || 0
+                })}
+                placeholder="25000"
+              />
+              <p className="text-sm text-gray-500 mt-1">
+                От какой суммы курса можно применить сертификат
               </p>
             </div>
 

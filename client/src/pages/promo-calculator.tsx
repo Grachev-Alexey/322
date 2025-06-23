@@ -240,8 +240,8 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 </div>
                 
                 <RangeSlider
-                  min={2}
-                  max={6}
+                  min={Math.min(...(calculatorSettings?.installmentMonthsOptions || [2]))}
+                  max={Math.max(...(calculatorSettings?.installmentMonthsOptions || [6]))}
                   value={installmentMonths}
                   onChange={setInstallmentMonths}
                   className="dark:bg-gray-700"
