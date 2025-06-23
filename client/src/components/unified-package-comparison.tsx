@@ -410,7 +410,7 @@ export default function UnifiedPackageComparison({
                   return (
                     <div key={packageType} className="text-center">
                       <span className="text-sm font-semibold text-green-600 dark:text-green-400">
-                        -3 000 ₽
+                        -{calculation?.packages?.[packageType]?.appliedDiscounts?.find(d => d.type === 'certificate')?.amount?.toLocaleString() || '3 000'} ₽
                       </span>
                     </div>
                   );

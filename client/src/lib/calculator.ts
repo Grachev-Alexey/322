@@ -47,27 +47,27 @@ export function calculatePackagePricing(
   
   const { packageConfig, freeZones } = params;
   
-  // Default package configuration if not provided
+  // Use package configuration from database, fallback only if truly missing
   const defaultPackages = {
     vip: { 
       discount: 0.30, 
-      minCost: 25000, 
+      minCost: calculatorSettings?.minimumDownPayment || 25000, 
       requiresFullPayment: true,
       minDownPaymentPercent: 1.0
     },
     standard: { 
       discount: 0.25, 
-      minDownPayment: 15000, 
+      minDownPayment: calculatorSettings?.minimumDownPayment || 15000, 
       minDownPaymentPercent: 0.50,
-      minCost: 15000
+      minCost: calculatorSettings?.minimumDownPayment || 15000
     },
     economy: { 
       discount: 0.20, 
-      minDownPayment: 5000, 
+      minDownPayment: calculatorSettings?.minimumDownPayment || 5000, 
       dynamicDiscount: 0.30, 
       dynamicThreshold: 10000,
       minDownPaymentPercent: 0.30,
-      minCost: 5000
+      minCost: calculatorSettings?.minimumDownPayment || 5000
     }
   };
 

@@ -13,6 +13,9 @@ ViVi-Calc is a comprehensive sales calculation tool designed for beauty salons. 
 - **2024-12-23**: Removed gray background from package comparison table header for consistent white design
 - **2024-12-23**: Fixed gift procedures calculation to use base cost per procedure instead of discounted cost
 - **2024-12-23**: Updated gift sessions logic to use database values (VIP: 2, Standard: 1, Economy: 0)
+- **2024-12-23**: Removed hardcoded values - now using admin configuration settings from database
+- **2024-12-23**: Added default config values: min payment (5000₽), bulk discount (15 procedures, 2.5%), certificate discount (3000₽, min 25000₽)
+- **2024-12-23**: Updated server calculation logic to load settings dynamically from config table
 - **2024-12-23**: Application running successfully on port 5000 - migration and styling complete
 
 ## Project Architecture

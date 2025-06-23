@@ -617,11 +617,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   return httpServer;
 }
 
-function calculatePackagePricing(baseCost: number, calculation: any, packages: any) {
+async function calculatePackagePricing(baseCost: number, calculation: any, packages: any) {
   const { services, packageType, downPayment, installmentMonths, usedCertificate, freeZones } = calculation;
   
   // Calculate procedure count
   const totalProcedures = services.reduce((sum: number, service: any) => sum + service.quantity, 0);
+  
+  // Load configuration settings
+  const bulkThresholdConfig = await storage.getConfig('bulk_discount_threshold');
+  const bulkPercentageConfig = await storage.getConfig('bulk_discount_percentage'); 
+  const certificateAmountConfig = await storage.getConfig('certificate_discount_percentage');
+  const certificateMinConfig = await storage.getConfig('certificate_min_course_amount');
+  
+  const bulkThreshold = bulkThresholdConfig?.value || 15;
+  const bulkPercentage = bulkPercentageConfig?.value || 0.025;
+  const certificateDiscountAmount = certificateAmountConfig?.value || 3000;
+  const certificateMinAmount = certificateMinConfig?.value || 25000;
   
   // Base package discounts - get from packages array
   const packageMap = {};
@@ -644,15 +655,15 @@ function calculatePackagePricing(baseCost: number, calculation: any, packages: a
   // Additional discounts
   let additionalDiscount = 0;
   
-  // Bulk procedure discount
-  if (totalProcedures >= 15) {
-    additionalDiscount += 0.025; // +2.5%
+  // Bulk procedure discount using configurable values
+  if (totalProcedures >= bulkThreshold) {
+    additionalDiscount += bulkPercentage;
   }
   
-  // Certificate discount
+  // Certificate discount using configurable values
   let certificateDiscount = 0;
-  if (usedCertificate && baseCost >= 25000) {
-    certificateDiscount = 3000;
+  if (usedCertificate && baseCost >= certificateMinAmount) {
+    certificateDiscount = certificateDiscountAmount;
   }
 
   // Calculate for each package
@@ -661,8 +672,9 @@ function calculatePackagePricing(baseCost: number, calculation: any, packages: a
   for (const [pkg, discount] of Object.entries(packageDiscounts)) {
     let finalDiscount = discount as number + additionalDiscount;
     
-    // Special logic for economy package
-    if (pkg === 'economy' && downPayment > 10000) {
+    // Special logic for economy package - use configurable threshold
+    const economyThreshold = 10000; // TODO: Make this configurable
+    if (pkg === 'economy' && downPayment > economyThreshold) {
       finalDiscount = Math.max(finalDiscount, 0.30);
     }
     
@@ -710,7 +722,7 @@ function calculatePackagePricing(baseCost: number, calculation: any, packages: a
       monthlyPayment,
       appliedDiscounts: [
         { type: 'package', amount: discountAmount },
-        ...(additionalDiscount > 0 ? [{ type: 'bulk', amount: baseCost * 0.025 }] : []),
+        ...(additionalDiscount > 0 ? [{ type: 'bulk', amount: baseCost * bulkPercentage }] : []),
         ...(certificateDiscount > 0 ? [{ type: 'certificate', amount: certificateDiscount }] : [])
       ]
     };
