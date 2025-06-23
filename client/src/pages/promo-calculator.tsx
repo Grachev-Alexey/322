@@ -104,6 +104,20 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
     return Math.min(...minPayments);
   };
 
+  // Auto-adjust down payment when calculation changes
+  useEffect(() => {
+    if (calculation && calculation.packages) {
+      const minPayment = getMinDownPayment();
+      const maxPayment = getMaxFinalCost();
+      
+      // If current down payment is outside valid range, adjust it
+      if (downPayment < minPayment || downPayment > maxPayment) {
+        // Set to maximum available package cost for best user experience
+        setDownPayment(maxPayment);
+      }
+    }
+  }, [calculation, packages, downPayment]);
+
   return (
     <div className={`min-h-screen overflow-hidden promo-background glass-pattern ${darkMode ? 'dark' : ''}`}>
       {/* Background decorative elements */}
