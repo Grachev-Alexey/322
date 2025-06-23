@@ -35,7 +35,6 @@ function App() {
         setUser(userData.user);
       }
     } catch (error) {
-      console.log("User not authenticated");
     } finally {
       setLoading(false);
     }

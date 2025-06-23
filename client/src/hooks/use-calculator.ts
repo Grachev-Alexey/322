@@ -140,12 +140,7 @@ export function useCalculator() {
           baseCost += parseFloat(service.priceMin) * selectedService.quantity * procedures;
         }
       }
-      
-      console.log('=== CALCULATION DEBUG ===');
-      console.log('Selected services:', servicesData);
-      console.log('Base cost:', baseCost);
-      console.log('Procedures count (slider):', procedures);
-      console.log('Total service instances:', servicesData.reduce((sum, s) => sum + s.quantity, 0));
+
 
       // Convert packages array to config object  
       const packageConfig = packages.reduce((acc: any, pkg: Package) => {

@@ -191,9 +191,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get packages configuration
   app.get("/api/packages", requireAuth, async (req, res) => {
     try {
-      console.log('=== PACKAGES GET REQUEST ===');
       const packages = await storage.getPackages();
-      console.log('Retrieved packages from DB:', JSON.stringify(packages, null, 2));
       res.json(packages);
     } catch (error) {
       console.error('Error getting packages:', error);
@@ -280,9 +278,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { id } = req.params;
       const updates = req.body;
-      console.log('API: Updating perk value', { id, updates });
       const result = await storage.updatePackagePerkValue(parseInt(id), updates);
-      console.log('API: Update result', result);
       res.json(result);
     } catch (error) {
       console.error('Error updating perk value:', error);
@@ -406,11 +402,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/packages", requireAdmin, async (req, res) => {
     try {
       const packageData = req.body;
-      console.log('=== PACKAGE SAVE REQUEST ===');
-      console.log('Received package data:', JSON.stringify(packageData, null, 2));
       
       const result = await storage.createOrUpdatePackage(packageData);
-      console.log('Package saved to DB:', JSON.stringify(result, null, 2));
       
       res.json(result);
     } catch (error) {
@@ -432,7 +425,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/package-perks", requireAdmin, async (req, res) => {
     try {
       const perkData = req.body;
-      console.log('Saving perk:', perkData);
       const result = await storage.upsertPackagePerk(perkData);
       res.json(result);
     } catch (error) {

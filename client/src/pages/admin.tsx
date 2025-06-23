@@ -182,7 +182,7 @@ function CalculatorSettings({ loading, setLoading }: { loading: boolean; setLoad
                 placeholder="5"
               />
               <p className="text-sm text-gray-500 mt-1">
-                Процент скидки за количество процедур (например, 5 для 5%)
+                Процент скидки за количество процедур
               </p>
             </div>
 
@@ -457,7 +457,7 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
               <TabsTrigger value="users">Пользователи</TabsTrigger>
               <TabsTrigger value="services">Услуги</TabsTrigger>
               <TabsTrigger value="packages">Пакеты</TabsTrigger>
-              <TabsTrigger value="perks">Перки</TabsTrigger>
+              <TabsTrigger value="perks">Преимущества</TabsTrigger>
               <TabsTrigger value="calculator">Настройки</TabsTrigger>
               <TabsTrigger value="yclients">Yclients API</TabsTrigger>
             </TabsList>
@@ -985,7 +985,7 @@ function PackagesManagement({ packages, setPackages, loading, setLoading }: {
   return (
     <div className="space-y-6 max-h-[calc(100vh-250px)] overflow-y-auto">
       <p className="text-gray-600">
-        Настройка пакетов услуг. Для управления преимуществами перейдите в раздел "Перки".
+        Настройка пакетов услуг. Для управления преимуществами перейдите в раздел "Преимущества".
       </p>
       
       {packages.map((pkg: PackageType) => (

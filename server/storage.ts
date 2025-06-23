@@ -204,11 +204,8 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createOrUpdatePackage(pkg: InsertPackage): Promise<Package> {
-    console.log('=== STORAGE: CREATE/UPDATE PACKAGE ===');
-    console.log('Input package data:', JSON.stringify(pkg, null, 2));
     
     const result = await this.upsertPackage(pkg);
-    console.log('Storage result:', JSON.stringify(result, null, 2));
     
     return result;
   }
@@ -279,7 +276,6 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updatePackagePerkValue(id: number, updates: Partial<InsertPackagePerkValue>): Promise<PackagePerkValue | null> {
-    console.log('Storage: updatePackagePerkValue called with:', { id, updates });
     
     // Clean up the updates object
     const cleanUpdates = {
@@ -290,14 +286,12 @@ export class DatabaseStorage implements IStorage {
       updatedAt: new Date()
     };
     
-    console.log('Storage: cleanUpdates:', cleanUpdates);
     
     const [updated] = await db.update(packagePerkValues)
       .set(cleanUpdates)
       .where(eq(packagePerkValues.id, id))
       .returning();
     
-    console.log('Storage: update result:', updated);
     return updated || null;
   }
 

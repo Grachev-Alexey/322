@@ -190,12 +190,12 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
           });
         }
         
-        toast({ title: "Перк создан", description: "Новый перк добавлен успешно" });
+        toast({ title: "Преимущество создано", description: "Новое преимущество добавлено успешно" });
         await loadData();
       }
     } catch (error) {
       console.error('Error creating perk:', error);
-      toast({ title: "Ошибка", description: "Не удалось создать перк", variant: "destructive" });
+      toast({ title: "Ошибка", description: "Не удалось создать преимущество", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -241,7 +241,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
         setTimeout(async () => {
           await loadData();
         }, 100);
-        toast({ title: "Обновлено", description: "Значение перка обновлено" });
+        toast({ title: "Обновлено", description: "Значение преимущества обновлено" });
       } else {
         const error = await response.text();
         console.error('Update failed:', error);
@@ -268,18 +268,18 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
       if (response.ok) {
         await loadData();
         setEditingPerk(null);
-        toast({ title: "Обновлено", description: "Перк обновлен" });
+        toast({ title: "Обновлено", description: "Преимущество обновлено" });
       }
     } catch (error) {
       console.error('Error updating perk:', error);
-      toast({ title: "Ошибка", description: "Не удалось обновить перк", variant: "destructive" });
+      toast({ title: "Ошибка", description: "Не удалось обновить преимущество", variant: "destructive" });
     } finally {
       setLoading(false);
     }
   };
 
   const deletePerk = async (perkId: number) => {
-    if (!confirm('Удалить этот перк? Это действие нельзя отменить.')) return;
+    if (!confirm('Удалить это преимущество? Это действие нельзя отменить.')) return;
     
     setLoading(true);
     try {
@@ -290,10 +290,10 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
 
       if (response.ok) {
         await loadData();
-        toast({ title: "Успешно", description: "Перк удален" });
+        toast({ title: "Успешно", description: "Преимущесто удалено" });
       }
     } catch (error) {
-      toast({ title: "Ошибка", description: "Не удалось удалить перк", variant: "destructive" });
+      toast({ title: "Ошибка", description: "Не удалось удалить преимущество", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -646,7 +646,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
         {/* Add New Perk */}
         <Card>
           <CardHeader>
-            <CardTitle>Создать новый перк</CardTitle>
+            <CardTitle>Создать новое преимущество</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
@@ -655,7 +655,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
                 <Input
                   value={newPerk.name}
                   onChange={(e) => setNewPerk({ ...newPerk, name: e.target.value })}
-                  placeholder="Название перка"
+                  placeholder="Название преимущества"
                 />
               </div>
               <div>
@@ -663,7 +663,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
                 <Input
                   value={newPerk.description}
                   onChange={(e) => setNewPerk({ ...newPerk, description: e.target.value })}
-                  placeholder="Описание перка"
+                  placeholder="Описание преимущества"
                 />
               </div>
               <div>
@@ -718,7 +718,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
         {/* Perks Management */}
         <Card>
           <CardHeader>
-            <CardTitle>Управление перками и их значениями</CardTitle>
+            <CardTitle>Управление преимуществами и их значениями</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-6">
