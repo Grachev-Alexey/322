@@ -90,7 +90,7 @@ export default function PaymentConfig({
     : 0;
 
   return (
-    <Card className="floating-card bg-white/90 backdrop-blur-sm rounded-2xl border-0 p-8 mb-8">
+    <Card className="payment-card rounded-xl p-8 mb-8">
       <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--graphite)' }}>Условия оплаты</h3>
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -99,7 +99,7 @@ export default function PaymentConfig({
           <Label htmlFor="downPayment" className="block text-sm font-medium text-gray-700 mb-3">
             Первый взнос
           </Label>
-          <div className="bg-gray-50 rounded-xl p-6">
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100/30 rounded-xl p-6 border border-gray-200/40">
             <div className="text-center mb-4">
               <div className="text-2xl font-bold text-purple-600">
                 {formatPrice(downPayment)}

@@ -5,14 +5,14 @@
 :root {
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(210, 20%, 8%);
-  --muted: hsl(220, 14.3%, 95.9%);
+  --muted: hsl(220, 14.3%, 96.5%);
   --muted-foreground: hsl(220, 8.9%, 46.1%);
   --popover: hsl(0, 0%, 100%);
   --popover-foreground: hsl(210, 20%, 8%);
-  --card: hsl(0, 0%, 100%);
+  --card: hsl(0, 0%, 99.5%);
   --card-foreground: hsl(210, 20%, 8%);
-  --border: hsl(220, 13%, 91%);
-  --input: hsl(220, 13%, 91%);
+  --border: hsl(220, 13%, 93%);
+  --input: hsl(220, 13%, 93%);
   --primary: hsl(338, 55%, 68%);
   --primary-foreground: hsl(0, 0%, 100%);
   --secondary: hsl(220, 14.3%, 95.9%);
@@ -196,33 +196,48 @@
   background: rgba(156, 163, 175, 0.6);
 }
 
-/* Clean card styles without shadows */
+/* Modern card styles with subtle separation */
 .floating-card {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   position: relative !important;
+  background: hsl(0, 0%, 99.5%) !important;
+  border: 1px solid hsl(220, 13%, 94%) !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03), 0 1px 2px 0 rgba(0, 0, 0, 0.02) !important;
 }
 
 .floating-card:hover {
   transform: translateY(-1px) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
+  border-color: hsl(220, 13%, 90%) !important;
 }
 
-/* Enhanced card for promo calculator - clean style */
+/* Enhanced card for promo calculator - premium feel */
 .floating-card-enhanced {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   position: relative !important;
+  background: linear-gradient(145deg, hsl(0, 0%, 99.8%) 0%, hsl(0, 0%, 99.2%) 100%) !important;
+  border: 1px solid hsl(220, 13%, 92%) !important;
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.02), 0 1px 2px 0 rgba(0, 0, 0, 0.01) !important;
 }
 
 .floating-card-enhanced:hover {
-  transform: translateY(-1px) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.06), 0 4px 6px -2px rgba(0, 0, 0, 0.03) !important;
+  border-color: hsl(338, 55%, 85%) !important;
 }
 
-/* Package card clean styles */
+/* Package card modern styles */
 .package-card {
   position: relative !important;
+  background: hsl(0, 0%, 99.8%) !important;
+  border: 1px solid hsl(220, 13%, 93%) !important;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 1px 2px 0 rgba(0, 0, 0, 0.02) !important;
 }
 
 .package-card:hover {
   transform: translateY(-1px) !important;
+  box-shadow: 0 6px 12px -2px rgba(0, 0, 0, 0.08), 0 3px 6px -1px rgba(0, 0, 0, 0.04) !important;
+  border-color: hsl(220, 13%, 88%) !important;
 }
 
 /* Container to prevent shadow overflow */
@@ -245,6 +260,21 @@
 
 .package-card.selected {
   outline: 2px solid hsl(338, 55%, 68%) !important;
+  box-shadow: 0 8px 25px -5px rgba(216, 119, 157, 0.15), 0 5px 10px -3px rgba(216, 119, 157, 0.1) !important;
+}
+
+/* Section headers and containers */
+.section-container {
+  background: linear-gradient(145deg, hsl(0, 0%, 99.8%) 0%, hsl(0, 0%, 99%) 100%);
+  border: 1px solid hsl(220, 13%, 94%);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.02);
+}
+
+/* Payment configuration styling */
+.payment-card {
+  background: linear-gradient(135deg, hsl(0, 0%, 99.5%) 0%, hsl(220, 14%, 98.5%) 100%);
+  border: 1px solid hsl(220, 13%, 93%);
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.03), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
 }
 
 .dark {
@@ -293,7 +323,7 @@
   }
   
   body {
-    background: white;
+    background: linear-gradient(135deg, hsl(0, 0%, 100%) 0%, hsl(220, 14%, 99%) 100%);
     font-family: 'Montserrat', 'Nunito', system-ui, sans-serif;
     @apply antialiased;
   }

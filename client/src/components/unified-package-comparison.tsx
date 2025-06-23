@@ -205,7 +205,7 @@ export default function UnifiedPackageComparison({
             return (
               <div
                 key={perk.id}
-                className="grid grid-cols-5 gap-0 py-1 px-2 border-b border-gray-50 dark:border-gray-800"
+                className="grid grid-cols-5 gap-0 py-2 px-3 border-b border-gray-100/60 dark:border-gray-800 hover:bg-gray-50/30 transition-colors"
               >
                 {/* Perk Name */}
                 <div className="flex items-center space-x-2">
