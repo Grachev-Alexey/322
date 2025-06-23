@@ -14,6 +14,8 @@ export interface CalculationParams {
   freeZones: any[];
   serviceMap: Map<number, any>;
   packageConfig: any;
+  procedureCount?: number;
+  freeZonesValue?: number;
 }
 
 export interface PackageData {
@@ -114,11 +116,14 @@ export function calculatePackagePricing(
       giftSessionValue = baseCost / totalProcedures * 1; // 1 full session for Standard
     }
 
+    // Calculate free zones value from params
+    const freeZonesValue = params.freeZonesValue || 0;
+    
     // Total savings - gift sessions only for display, not actual cost reduction
     const packageDiscount = baseCost * discount;
     const actualDiscounts = packageDiscount + certificateDiscount + additionalDiscount;
-    const totalSavings = actualDiscounts + giftSessionValue; // Total for display
-    const finalCost = baseCost - actualDiscounts; // Actual cost without gift sessions
+    const totalSavings = actualDiscounts + giftSessionValue + freeZonesValue; // Include free zones in display
+    const finalCost = baseCost - actualDiscounts; // Actual cost without gift sessions (free zones already subtracted from baseCost)
 
     // All packages are available for selection - payment constraints will be applied when selected
     const minDownPayment = Math.max(
@@ -144,6 +149,7 @@ export function calculatePackagePricing(
         { type: 'package', amount: packageDiscount },
         ...(qualifiesForBulkDiscount && additionalDiscount > 0 ? [{ type: 'bulk', amount: additionalDiscount }] : []),
         ...(certificateDiscount > 0 ? [{ type: 'certificate', amount: certificateDiscount }] : []),
+        ...(freeZonesValue > 0 ? [{ type: 'free_zones', amount: freeZonesValue }] : []),
         ...(giftSessionValue > 0 ? [{ type: 'gift_sessions', amount: giftSessionValue }] : [])
       ]
     };
