@@ -337,7 +337,7 @@ export default function UnifiedPackageComparison({
                             {discount.type === 'package' && `Скидка пакета ${discountPercent}%`}
                             {discount.type === 'bulk' && `За ${actualThreshold}+ процедур`}
                             {discount.type === 'certificate' && 'Сертификат'}
-                            {discount.type === 'free_zones' && 'Бесплатные процедуры'}
+                            {discount.type === 'free_zones' && 'Бесплатная зона'}
                             {discount.type === 'gift_sessions' && `Подарочные процедуры`}
                           </span>
                           <span>-{formatPrice(discount.amount)}</span>

@@ -291,9 +291,6 @@ export default function ServiceSelector({
                     ПОДАРОК
                   </Badge>
                   <span className="text-xs lg:text-sm font-medium truncate">{zone.title}</span>
-                  <span className="ml-2 text-xs text-green-600 flex-shrink-0">
-                    Экономия: {formatPrice(zone.pricePerProcedure * zone.quantity)}
-                  </span>
                 </div>
                 <Button
                   variant="ghost"
