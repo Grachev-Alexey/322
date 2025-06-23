@@ -43,7 +43,8 @@ export default function UnifiedPackageComparison({
   onPackageSelect, 
   packages,
   downPayment,
-  installmentMonths
+  installmentMonths,
+  procedureCount
 }: UnifiedPackageComparisonProps) {
   
   const packageTypes = ['vip', 'standard', 'economy'];
@@ -274,7 +275,7 @@ export default function UnifiedPackageComparison({
                     Экономия: {formatPrice(data.totalSavings)}
                     {hasAdditionalDiscount && (
                       <span className="block text-purple-600 font-medium">
-                        +2.5% за 15+ процедур
+                        +2,5% за 15+ посещений
                       </span>
                     )}
                   </div>
