@@ -115,16 +115,22 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
       }
 
       // Reload packages from server to refresh the UI
+      console.log('Reloading packages from server...');
       const packagesResponse = await fetch("/api/packages", { credentials: "include" });
       if (packagesResponse.ok) {
         const updatedPackages = await packagesResponse.json();
+        console.log('Loaded packages from server:', updatedPackages);
         setPackages(updatedPackages);
+        console.log('Updated frontend state with:', updatedPackages);
+        
+        toast({
+          title: "Успешно",
+          description: "Настройки пакетов сохранены"
+        });
+      } else {
+        console.error('Failed to reload packages:', packagesResponse.status);
+        throw new Error("Failed to reload packages");
       }
-
-      toast({
-        title: "Успешно",
-        description: "Настройки пакетов сохранены"
-      });
 
     } catch (error: any) {
       console.error('Package save error:', error);

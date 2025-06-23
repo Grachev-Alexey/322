@@ -191,9 +191,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get packages configuration
   app.get("/api/packages", requireAuth, async (req, res) => {
     try {
+      console.log('=== PACKAGES GET REQUEST ===');
       const packages = await storage.getPackages();
+      console.log('Retrieved packages from DB:', JSON.stringify(packages, null, 2));
       res.json(packages);
     } catch (error) {
+      console.error('Error getting packages:', error);
       res.status(500).json({ message: "Ошибка получения пакетов" });
     }
   });
@@ -401,10 +404,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/packages", requireAdmin, async (req, res) => {
     try {
       const packageData = req.body;
-      const result = await storage.upsertPackage(packageData);
+      console.log('=== PACKAGE SAVE REQUEST ===');
+      console.log('Received package data:', JSON.stringify(packageData, null, 2));
+      
+      const result = await storage.createOrUpdatePackage(packageData);
+      console.log('Package saved to DB:', JSON.stringify(result, null, 2));
+      
       res.json(result);
     } catch (error) {
-      res.status(500).json({ message: "Ошибка сохранения пакета" });
+      console.error('Error saving package:', error);
+      res.status(500).json({ message: "Ошибка сохранения пакета", error: error.message });
     }
   });
 

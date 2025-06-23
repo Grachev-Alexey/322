@@ -203,7 +203,13 @@ export class DatabaseStorage implements IStorage {
   }
 
   async createOrUpdatePackage(pkg: InsertPackage): Promise<Package> {
-    return this.upsertPackage(pkg);
+    console.log('=== STORAGE: CREATE/UPDATE PACKAGE ===');
+    console.log('Input package data:', JSON.stringify(pkg, null, 2));
+    
+    const result = await this.upsertPackage(pkg);
+    console.log('Storage result:', JSON.stringify(result, null, 2));
+    
+    return result;
   }
 
   // Universal Perks
