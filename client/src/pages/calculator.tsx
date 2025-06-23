@@ -131,7 +131,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
             
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">Количество процедур</label>
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-xl p-6 border border-gray-200/50">
+              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-2xl font-bold text-purple-600">{procedureCount}</span>
                   <span className="text-sm text-gray-600">процедур</span>

@@ -250,7 +250,7 @@ export default function ServiceSelector({
         {selectedServices.map((service) => (
           <div
             key={service.yclientsId}
-            className={`flex items-center justify-between bg-gray-50 dark:bg-gray-800 rounded-lg p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${freeZones.length > 0 ? 'opacity-50' : ''}`}
+            className={`flex items-center justify-between bg-gray-50 dark:bg-gray-800 rounded-lg p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border border-gray-200 ${freeZones.length > 0 ? 'opacity-50' : ''}`}
             onDoubleClick={() => handleDoubleClick(service)}
             title={freeZones.length > 0 ? "Можно добавить только одну бесплатную зону" : "Двойной клик для добавления бесплатной зоны"}
           >
@@ -284,7 +284,7 @@ export default function ServiceSelector({
             {freeZones.map((zone) => (
               <div
                 key={zone.serviceId}
-                className="flex items-center justify-between bg-green-50 border-0 shadow-none rounded-lg p-2"
+                className="flex items-center justify-between bg-green-50 rounded-lg p-2 border border-green-200"
               >
                 <div className="flex items-center min-w-0 flex-1">
                   <Badge variant="secondary" className="bg-green-100 text-green-800 mr-2 text-xs flex-shrink-0 border-0 shadow-none">

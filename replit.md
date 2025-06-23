@@ -29,6 +29,7 @@ ViVi-Calc is a comprehensive sales calculation tool designed for beauty salons. 
 - Prefers test data without icons in names or descriptions
 - Wants 5 perks without highlighting features
 - Prefers clean white background on calculator page (no gray backgrounds)
+- Wants simple visual separation with borders, no complex hover effects or gradients
 
 ## Development Notes
 - Uses TSX for TypeScript execution
