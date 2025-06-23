@@ -237,10 +237,8 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
       if (response.ok) {
         const result = await response.json();
         console.log('Update result:', result);
-        // Force reload the data
-        setTimeout(async () => {
-          await loadData();
-        }, 100);
+        // Reload data without affecting editor state
+        await loadData();
         toast({ title: "Обновлено", description: "Значение преимущества обновлено" });
       } else {
         const error = await response.text();
@@ -267,7 +265,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
 
       if (response.ok) {
         await loadData();
-        setEditingPerk(null);
+        // Don't close the editor automatically - let user close it manually
         toast({ title: "Обновлено", description: "Преимущество обновлено" });
       }
     } catch (error) {
@@ -410,7 +408,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
         <div className="grid grid-cols-2 gap-2">
           <div>
             <Label className="text-xs">Тип значения</Label>
-            <Select value={valueType} onValueChange={setValueType}>
+            <Select value={valueType} onValueChange={(value) => setValueType(value as 'boolean' | 'text' | 'number')}>
               <SelectTrigger className="h-8">
                 <SelectValue />
               </SelectTrigger>
