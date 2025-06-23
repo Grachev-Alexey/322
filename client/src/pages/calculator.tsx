@@ -195,7 +195,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
           <Button
             onClick={handleProceedToOrder}
             disabled={!selectedPackage || selectedServices.length === 0}
-            className="floating-card text-lg py-4 px-8 rounded-2xl font-semibold text-white transition-all duration-300 hover:scale-105"
+            className="text-lg py-4 px-8 font-semibold text-white"
             style={{ 
               background: 'var(--gradient-premium)',
               opacity: (!selectedPackage || selectedServices.length === 0) ? 0.5 : 1
@@ -207,7 +207,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
           
           <Button
             variant="outline"
-            className="floating-card border-2 text-gray-700 font-semibold py-4 px-8 rounded-2xl transition-all duration-300 hover:scale-105"
+            className="border-2 text-gray-700 font-semibold py-4 px-8"
             style={{ 
               borderColor: 'hsl(338, 55%, 68%)',
               color: 'hsl(338, 55%, 68%)'
