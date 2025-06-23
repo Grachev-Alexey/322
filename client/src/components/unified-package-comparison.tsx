@@ -288,7 +288,7 @@ export default function UnifiedPackageComparison({
                         <div key={idx} className="flex justify-between">
                           <span>
                             {discount.type === 'package' && `Скидка пакета ${discountPercent}%`}
-                            {discount.type === 'bulk' && `За ${safeProcedureCount}+ процедур`}
+                            {discount.type === 'bulk' && `За ${actualThreshold}+ процедур`}
                             {discount.type === 'certificate' && 'Сертификат'}
                             {discount.type === 'gift_sessions' && `Подарочные процедуры`}
                           </span>

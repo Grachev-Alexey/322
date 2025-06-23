@@ -99,7 +99,8 @@ export function calculatePackagePricing(
     const serviceCount = params.services.reduce((sum, s) => sum + s.quantity, 0);
     // Use procedureCount from params instead of serviceCount for bulk discount
     const actualProcedureCount = params.procedureCount || serviceCount;
-    const additionalDiscount = actualProcedureCount >= bulkThreshold ? baseCost * bulkDiscountPercent : 0;
+    const qualifiesForBulkDiscount = actualProcedureCount >= bulkThreshold;
+    const additionalDiscount = qualifiesForBulkDiscount ? baseCost * bulkDiscountPercent : 0;
     
 
 
@@ -140,7 +141,7 @@ export function calculatePackagePricing(
       monthlyPayment: isAvailable ? monthlyPayment : 0,
       appliedDiscounts: [
         { type: 'package', amount: packageDiscount },
-        ...(additionalDiscount > 0 ? [{ type: 'bulk', amount: additionalDiscount }] : []),
+        ...(qualifiesForBulkDiscount && additionalDiscount > 0 ? [{ type: 'bulk', amount: additionalDiscount }] : []),
         ...(certificateDiscount > 0 ? [{ type: 'certificate', amount: certificateDiscount }] : []),
         ...(giftSessionValue > 0 ? [{ type: 'gift_sessions', amount: giftSessionValue }] : [])
       ]
