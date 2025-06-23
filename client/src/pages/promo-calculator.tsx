@@ -157,7 +157,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 className="dark:bg-gray-700"
               />
               
-              {procedureCount >= 15 && (
+              {procedureCount >= (calculatorSettings?.bulkDiscountThreshold || 15) && (
                 <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-950 rounded-lg shadow-inner">
                   <div className="flex items-center text-xs text-blue-600 dark:text-blue-400">
                     <Star className="w-3 h-3 mr-1" />
@@ -267,22 +267,24 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-white text-sm">Сертификат</h4>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">Скидка 3 000₽</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Скидка {calculatorSettings?.certificateDiscountAmount?.toLocaleString() || '3 000'}₽
+                  </p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
                     checked={usedCertificate}
                     onChange={(e) => setUsedCertificate(e.target.checked)}
-                    disabled={!calculation || calculation.baseCost < 25000}
+                    disabled={!calculation || calculation.baseCost < (calculatorSettings?.certificateMinCourseAmount || 25000)}
                     className="sr-only peer"
                   />
                   <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-purple-600 peer-disabled:opacity-50"></div>
                 </label>
               </div>
-              {!calculation || calculation.baseCost < 25000 ? (
+              {!calculation || calculation.baseCost < (calculatorSettings?.certificateMinCourseAmount || 25000) ? (
                 <p className="text-xs text-red-500 dark:text-red-400 mt-2">
-                  Доступно при курсе от 25 000₽
+                  Доступно при курсе от {calculatorSettings?.certificateMinCourseAmount?.toLocaleString() || '25 000'}₽
                 </p>
               ) : null}
             </div>

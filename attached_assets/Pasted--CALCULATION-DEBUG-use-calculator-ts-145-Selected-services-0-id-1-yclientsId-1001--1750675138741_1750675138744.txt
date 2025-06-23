@@ -1,0 +1,86 @@
+=== CALCULATION DEBUG ===
+use-calculator.ts:145 Selected services: [{…}]0: {id: 1, yclientsId: 1001, title: 'Маникюр классический', priceMin: '1500.00', categoryId: 1, …}length: 1[[Prototype]]: Array(0)
+use-calculator.ts:146 Base cost: 15000
+use-calculator.ts:147 Procedures count (slider): 10
+use-calculator.ts:148 Total service instances: 1
+use-calculator.ts:161 Package config: {vip: {…}, standard: {…}, economy: {…}}economy: discount: 0.1minCost: 15000minDownPaymentPercent: 0.01requiresFullPayment: false[[Prototype]]: Objectstandard: discount: 0.15minCost: 30000minDownPaymentPercent: 0.5requiresFullPayment: false[[Prototype]]: Objectvip: discount: 0.25minCost: 50000minDownPaymentPercent: 1requiresFullPayment: true[[Prototype]]: Object[[Prototype]]: Object
+calculator.ts:44 === PACKAGE PRICING CALCULATION START ===
+calculator.ts:45 Base cost: 15000
+calculator.ts:46 Calculator settings: {minimumDownPayment: 3000, bulkDiscountThreshold: 10, bulkDiscountPercentage: 0.03, installmentMonthsOptions: Array(2), certificateDiscountAmount: 6000, …}bulkDiscountPercentage: 0.03bulkDiscountThreshold: 10certificateDiscountAmount: 6000certificateMinCourseAmount: 25000installmentMonthsOptions: Array(2)0: 21: 3length: 2[[Prototype]]: Array(0)minimumDownPayment: 3000[[Prototype]]: Object
+calculator.ts:47 Params: {services: Array(1), packageType: 'economy', downPayment: 0, installmentMonths: 2, usedCertificate: false, …}
+calculator.ts:110 === CERTIFICATE DISCOUNT CALCULATION ===
+calculator.ts:111 Used certificate: false
+calculator.ts:112 Base cost: 15000
+calculator.ts:113 Certificate min amount: 25000
+calculator.ts:114 Certificate discount amount: 6000
+calculator.ts:115 Certificate discount: 0
+calculator.ts:125 === BULK DISCOUNT CALCULATION ===
+calculator.ts:126 Procedure count: 10
+calculator.ts:127 Bulk threshold: 10
+calculator.ts:128 Bulk discount percent: 0.03
+calculator.ts:129 Additional discount: 450
+calculator.ts:130 Qualifies for bulk discount: true
+use-calculator.ts:181 === FINAL CALCULATION RESULT ===
+use-calculator.ts:182 Calculator settings: {minimumDownPayment: 3000, bulkDiscountThreshold: 10, bulkDiscountPercentage: 0.03, installmentMonthsOptions: Array(2), certificateDiscountAmount: 6000, …}bulkDiscountPercentage: 0.03bulkDiscountThreshold: 10certificateDiscountAmount: 6000certificateMinCourseAmount: 25000installmentMonthsOptions: Array(2)0: 21: 3length: 2[[Prototype]]: Array(0)minimumDownPayment: 3000[[Prototype]]: Object
+use-calculator.ts:183 Base cost: 15000
+use-calculator.ts:184 Procedure count (slider): 10
+use-calculator.ts:185 Used certificate: false
+use-calculator.ts:186 Down payment: 0
+use-calculator.ts:187 Installment months: 2
+use-calculator.ts:188 Final calculation result: {baseCost: 15000, packages: {…}, totalProcedures: 10, freeZonesValue: 0}
+unified-package-comparison.tsx:58 UnifiedPackageComparison - procedureCount: 10 hasAdditionalDiscount: false
+queryClient.ts:32 Загрузка Fetch завершена: GET (https://98061662-adbc-4ec6-9380-4192a7e8fd9f-00-3l088x1mnr2o4.worf.replit.dev/api/perks).
+(анонимная) @ queryClient.ts:32
+fetchFn @ @tanstack_react-query.js?v=ce2a7cb8:840
+run @ @tanstack_react-query.js?v=ce2a7cb8:494
+start @ @tanstack_react-query.js?v=ce2a7cb8:536
+fetch @ @tanstack_react-query.js?v=ce2a7cb8:926
+executeFetch_fn @ @tanstack_react-query.js?v=ce2a7cb8:2211
+onSubscribe @ @tanstack_react-query.js?v=ce2a7cb8:1898
+subscribe @ @tanstack_react-query.js?v=ce2a7cb8:24
+(анонимная) @ @tanstack_react-query.js?v=ce2a7cb8:3022
+subscribeToStore @ chunk-WERSD76P.js?v=ce2a7cb8:11984
+commitHookEffectListMount @ chunk-WERSD76P.js?v=ce2a7cb8:16915
+commitPassiveMountOnFiber @ chunk-WERSD76P.js?v=ce2a7cb8:18156
+commitPassiveMountEffects_complete @ chunk-WERSD76P.js?v=ce2a7cb8:18129
+commitPassiveMountEffects_begin @ chunk-WERSD76P.js?v=ce2a7cb8:18119
+commitPassiveMountEffects @ chunk-WERSD76P.js?v=ce2a7cb8:18109
+flushPassiveEffectsImpl @ chunk-WERSD76P.js?v=ce2a7cb8:19490
+flushPassiveEffects @ chunk-WERSD76P.js?v=ce2a7cb8:19447
+(анонимная) @ chunk-WERSD76P.js?v=ce2a7cb8:19328
+workLoop @ chunk-WERSD76P.js?v=ce2a7cb8:197
+flushWork @ chunk-WERSD76P.js?v=ce2a7cb8:176
+performWorkUntilDeadline @ chunk-WERSD76P.js?v=ce2a7cb8:384
+unified-package-comparison.tsx:58 UnifiedPackageComparison - procedureCount: 10 hasAdditionalDiscount: false
+unified-package-comparison.tsx:58 UnifiedPackageComparison - procedureCount: 11 hasAdditionalDiscount: false
+use-calculator.ts:144 === CALCULATION DEBUG ===
+use-calculator.ts:145 Selected services: [{…}]
+use-calculator.ts:146 Base cost: 16500
+use-calculator.ts:147 Procedures count (slider): 11
+use-calculator.ts:148 Total service instances: 1
+use-calculator.ts:161 Package config: {vip: {…}, standard: {…}, economy: {…}}
+calculator.ts:44 === PACKAGE PRICING CALCULATION START ===
+calculator.ts:45 Base cost: 16500
+calculator.ts:46 Calculator settings: {minimumDownPayment: 3000, bulkDiscountThreshold: 10, bulkDiscountPercentage: 0.03, installmentMonthsOptions: Array(2), certificateDiscountAmount: 6000, …}
+calculator.ts:47 Params: {services: Array(1), packageType: 'economy', downPayment: 0, installmentMonths: 2, usedCertificate: false, …}
+calculator.ts:110 === CERTIFICATE DISCOUNT CALCULATION ===
+calculator.ts:111 Used certificate: false
+calculator.ts:112 Base cost: 16500
+calculator.ts:113 Certificate min amount: 25000
+calculator.ts:114 Certificate discount amount: 6000
+calculator.ts:115 Certificate discount: 0
+calculator.ts:125 === BULK DISCOUNT CALCULATION ===
+calculator.ts:126 Procedure count: 11
+calculator.ts:127 Bulk threshold: 10
+calculator.ts:128 Bulk discount percent: 0.03
+calculator.ts:129 Additional discount: 495
+calculator.ts:130 Qualifies for bulk discount: true
+use-calculator.ts:181 === FINAL CALCULATION RESULT ===
+use-calculator.ts:182 Calculator settings: {minimumDownPayment: 3000, bulkDiscountThreshold: 10, bulkDiscountPercentage: 0.03, installmentMonthsOptions: Array(2), certificateDiscountAmount: 6000, …}bulkDiscountPercentage: 0.03bulkDiscountThreshold: 10certificateDiscountAmount: 6000certificateMinCourseAmount: 25000installmentMonthsOptions: (2) [2, 3]minimumDownPayment: 3000[[Prototype]]: Object
+use-calculator.ts:183 Base cost: 16500
+use-calculator.ts:184 Procedure count (slider): 11
+use-calculator.ts:185 Used certificate: false
+use-calculator.ts:186 Down payment: 0
+use-calculator.ts:187 Installment months: 2
+use-calculator.ts:188 Final calculation result: {baseCost: 16500, packages: {…}, totalProcedures: 11, freeZonesValue: 0}
+unified-package-comparison.tsx:58 UnifiedPackageComparison - procedureCount: 11 hasAdditionalDiscount: false

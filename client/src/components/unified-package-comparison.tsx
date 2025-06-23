@@ -49,13 +49,19 @@ export default function UnifiedPackageComparison({
   
   const packageTypes = ['vip', 'standard', 'economy'];
   
-  // Calculate 15+ procedures discount display - based on procedure count slider
-  const totalProcedures = calculation?.totalProcedures || 0;
-  // Add fallback for procedureCount if undefined
-  const safeProcedureCount = procedureCount || 1;
-  const hasAdditionalDiscount = safeProcedureCount >= 15;
+  // Get bulk discount threshold from calculator settings via API
+  const { data: bulkThreshold } = useQuery({
+    queryKey: ['/api/config/bulk_discount_threshold'],
+    enabled: true
+  });
   
-  console.log('UnifiedPackageComparison - procedureCount:', procedureCount, 'hasAdditionalDiscount:', hasAdditionalDiscount);
+  // Calculate bulk procedures discount display - based on procedure count slider
+  const totalProcedures = calculation?.totalProcedures || 0;
+  const safeProcedureCount = procedureCount || 1;
+  const actualThreshold = bulkThreshold || 15;
+  const hasAdditionalDiscount = safeProcedureCount >= actualThreshold;
+  
+  console.log('UnifiedPackageComparison - procedureCount:', procedureCount, 'threshold:', actualThreshold, 'hasAdditionalDiscount:', hasAdditionalDiscount);
   
   // Package visual configurations
   const packageInfo = {
@@ -279,7 +285,8 @@ export default function UnifiedPackageComparison({
                     Экономия: {formatPrice(data.totalSavings)}
                     {hasAdditionalDiscount && (
                       <span className="block text-purple-600 font-medium">
-                        +2,5% за 15+ посещений
+                        +{((bulkThreshold && calculation?.packages[packageType]?.appliedDiscounts?.find(d => d.type === 'bulk')?.amount) ? 
+                          Math.round((calculation.packages[packageType].appliedDiscounts.find(d => d.type === 'bulk').amount / calculation.baseCost) * 100) : 3)}% за {actualThreshold}+ процедур
                       </span>
                     )}
                   </div>
