@@ -54,7 +54,7 @@ interface Package {
 export function useCalculator() {
   const [selectedServices, setSelectedServices] = useState<SelectedService[]>([]);
   const [procedureCount, setProcedureCount] = useState(10);
-  const [downPayment, setDownPayment] = useState(15000);
+  const [downPayment, setDownPayment] = useState(0);
   const [installmentMonths, setInstallmentMonths] = useState(4);
   const [usedCertificate, setUsedCertificate] = useState(false);
   const [freeZones, setFreeZones] = useState<FreeZone[]>([]);
@@ -151,13 +151,16 @@ export function useCalculator() {
     );
   }, [selectedServices, procedureCount, downPayment, installmentMonths, usedCertificate, freeZones, calculateInstantly]);
 
-  // Auto-select package based on down payment amount
+  // Auto-select package based on down payment amount and set default VIP down payment
   useEffect(() => {
     if (calculation && calculation.packages) {
       const { vip, standard, economy } = calculation.packages;
       
-      // Set max slider value to VIP package cost
-      const maxSliderValue = vip?.finalCost || 50000;
+      // Set default down payment to VIP cost on first calculation
+      if (downPayment === 0 && vip?.finalCost) {
+        setDownPayment(vip.finalCost);
+        return;
+      }
       
       // Auto-select package based on down payment amount
       let newSelectedPackage = null;

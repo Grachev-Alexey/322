@@ -109,9 +109,9 @@ export default function UnifiedPackageComparison({
   };
 
   return (
-    <div className="flex flex-col space-y-2 lg:space-y-3 h-full">
+    <div className="flex flex-col space-y-2 lg:space-y-3 h-full shadow-safe">
       {/* Package Headers - компактные */}
-      <div className="grid grid-cols-4 gap-1 lg:gap-2 flex-shrink-0">
+      <div className="grid grid-cols-4 gap-1 lg:gap-2 flex-shrink-0 shadow-container">
         <div></div>
         {packageTypes.map((packageType) => {
           const info = packageInfo[packageType];
@@ -148,11 +148,10 @@ export default function UnifiedPackageComparison({
         })}
       </div>
 
-      {/* Perks Comparison Table - адаптивная высота и компактные строки */}
-      {uniquePerks.length > 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 overflow-hidden flex-1 min-h-0">         
+      {/* Perks Comparison Table - with smart scrolling */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow border border-gray-200 dark:border-gray-700 overflow-hidden flex-1 min-h-0">         
           {/* Контент таблицы - скроллируемый */}
-          <div className="flex-1 overflow-y-auto beautiful-scroll" style={{ maxHeight: 'calc(100vh - 300px)', minHeight: '150px' }}>
+          <div className="overflow-y-auto table-scroll" style={{ maxHeight: 'min(400px, calc(100vh - 350px))', minHeight: uniquePerks.length > 6 ? '300px' : 'auto' }}>
             <div className="divide-y divide-gray-100 dark:divide-gray-700">
               {uniquePerks.map((perk, index) => {
               const IconComponent = (Icons as any)[perk.icon] || Check;
@@ -231,11 +230,10 @@ export default function UnifiedPackageComparison({
               })}
             </div>
           </div>
-        </div>
-      )}
+      </div>
 
       {/* Package Pricing and Selection - компактные */}
-      <div className="grid grid-cols-4 gap-1 lg:gap-2 flex-shrink-0">
+      <div className="grid grid-cols-4 gap-1 lg:gap-2 flex-shrink-0 shadow-container">
         <div></div>
         {packageTypes.map((packageType) => {
           const info = packageInfo[packageType];
@@ -273,12 +271,12 @@ export default function UnifiedPackageComparison({
                   </div>
                   <div className="text-xs lg:text-sm text-green-600 font-semibold">
                     Экономия: {formatPrice(data.totalSavings)}
+                    {hasAdditionalDiscount && (
+                      <span className="block text-purple-600 font-medium">
+                        +2.5% за 15+ процедур
+                      </span>
+                    )}
                   </div>
-                  {hasAdditionalDiscount && (
-                    <div className="text-xs text-purple-600 font-medium">
-                      +2.5% за 15+ процедур
-                    </div>
-                  )}
                 </div>
                 
                 {/* Additional Info */}

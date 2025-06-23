@@ -197,8 +197,19 @@
 
 /* Container to prevent shadow overflow */
 .shadow-container {
-  padding: 12px !important;
-  margin: -12px !important;
+  padding: 16px !important;
+  margin: -8px !important;
+  overflow: visible !important;
+  position: relative !important;
+}
+
+/* Fix for shadow clipping in parent containers */
+.shadow-safe {
+  overflow: visible !important;
+  contain: layout !important;
+}
+
+.shadow-safe > * {
   overflow: visible !important;
 }
 
