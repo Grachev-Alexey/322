@@ -21,6 +21,7 @@ interface AdminPerksProps {
 
 // Available icons for perks
 const availableIcons = [
+  { name: 'none', component: undefined, label: 'Без иконки' },
   { name: 'Check', component: Check, label: 'Галочка' },
   { name: 'X', component: X, label: 'Крестик' },
   { name: 'Plus', component: Plus, label: 'Плюс' },
@@ -480,11 +481,10 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
                 <SelectValue placeholder="Выберите иконку" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="none">Без иконки</SelectItem>
                 {availableIcons.map(icon => (
                   <SelectItem key={icon.name} value={icon.name}>
                     <div className="flex items-center space-x-2">
-                      {React.createElement(icon.component, { className: "h-3 w-3" })}
+                      {icon.component ? React.createElement(icon.component, { className: "h-3 w-3" }) : <span className="w-3 h-3"></span>}
                       <span>{icon.label}</span>
                     </div>
                   </SelectItem>
@@ -593,7 +593,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
                 {availableIcons.map(iconOption => (
                   <SelectItem key={iconOption.name} value={iconOption.name}>
                     <div className="flex items-center space-x-2">
-                      {React.createElement(iconOption.component, { className: "h-3 w-3" })}
+                      {iconOption.component ? React.createElement(iconOption.component, { className: "h-3 w-3" }) : <span className="w-3 h-3"></span>}
                       <span>{iconOption.label}</span>
                     </div>
                   </SelectItem>
@@ -674,7 +674,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
                     {availableIcons.map(icon => (
                       <SelectItem key={icon.name} value={icon.name}>
                         <div className="flex items-center space-x-2">
-                          {React.createElement(icon.component, { className: "h-4 w-4" })}
+                          {icon.component ? React.createElement(icon.component, { className: "h-4 w-4" }) : <span className="w-4 h-4"></span>}
                           <span>{icon.label}</span>
                         </div>
                       </SelectItem>

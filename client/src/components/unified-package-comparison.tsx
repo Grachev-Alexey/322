@@ -176,12 +176,14 @@ export default function UnifiedPackageComparison({
                 <div key={perk.id} className={`grid grid-cols-4 gap-1 lg:gap-2 py-1.5 lg:py-2 px-2 lg:px-3 ${index % 2 === 0 ? 'bg-gray-50 dark:bg-gray-750' : 'bg-white dark:bg-gray-800'}`}>
                   {/* Perk Name */}
                   <div className="flex items-center space-x-1 lg:space-x-2">
-                    <div className="p-1 rounded-lg bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 flex-shrink-0">
-                      <IconComponent 
-                        className="h-3 w-3 lg:h-4 lg:w-4" 
-                        style={{ color: perk.iconColor || '#2563eb' }}
-                      />
-                    </div>
+                    {perk.icon && perk.icon !== 'none' && (
+                      <div className="p-1 rounded-lg bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 flex-shrink-0">
+                        <IconComponent 
+                          className="h-3 w-3 lg:h-4 lg:w-4" 
+                          style={{ color: perk.iconColor || '#2563eb' }}
+                        />
+                      </div>
+                    )}
                     <div className="min-w-0">
                       <div className="font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
                         {perk.name}
