@@ -137,11 +137,11 @@ export default function UnifiedPackageComparison({
 
   return (
     <TooltipProvider>
-      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+      <div className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col h-full">
         {/* Package Headers */}
-        <div className="bg-gradient-to-r from-green-100 to-green-200 dark:from-green-900 dark:to-green-800 px-4 py-3">
+        <div className="bg-gray-50 dark:bg-gray-800 px-4 py-3">
           <div className="grid grid-cols-4 gap-1">
-            <div className="text-sm font-medium text-gray-800 dark:text-gray-200"></div>
+            <div className="text-sm font-medium text-gray-700 dark:text-gray-300"></div>
             {packageTypes.map((packageType) => {
               const Icon = getPackageIcon(packageType);
               const isSelected = selectedPackage === packageType;
@@ -169,7 +169,7 @@ export default function UnifiedPackageComparison({
         </div>
 
         {/* Table Content */}
-        <div className="overflow-y-auto">
+        <div className="flex-1 overflow-y-auto min-h-0">
           
           {/* Database Perks Rows */}
           {uniquePerks.map((perk, index) => {
@@ -202,14 +202,14 @@ export default function UnifiedPackageComparison({
                   
                   if (!perkValue) {
                     return (
-                      <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20 rounded-lg' : ''}`}>
+                      <div key={packageType} className="text-center py-1">
                         <span className="text-red-500 font-semibold">-</span>
                       </div>
                     );
                   }
 
                   const content = (
-                    <div className={`text-center py-1 ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20 rounded-lg' : ''}`}>
+                    <div className="text-center py-1">
                       {perkValue.valueType === 'boolean' ? (
                         perkValue.booleanValue ? (
                           <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-500">
@@ -260,7 +260,7 @@ export default function UnifiedPackageComparison({
               const giftSessions = packageData?.giftSessions || 0;
               
               return (
-                <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20 rounded-lg' : ''}`}>
+                <div key={packageType} className="text-center py-1">
                   <span className="text-sm font-bold text-gray-900 dark:text-white">
                     {giftSessions > 0 ? giftSessions : '-'}
                   </span>
@@ -280,7 +280,7 @@ export default function UnifiedPackageComparison({
               const discountPercent = packageData ? Math.round(parseFloat(packageData.discount) * 100) : 0;
               
               return (
-                <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20 rounded-lg' : ''}`}>
+                <div key={packageType} className="text-center py-1">
                   <span className="text-sm font-bold text-gray-900 dark:text-white">
                     {discountPercent}%
                   </span>
@@ -300,10 +300,9 @@ export default function UnifiedPackageComparison({
               const bonusPercent = packageData ? Math.round(parseFloat(packageData.bonusAccountPercent) * 100) : 0;
               
               return (
-                <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20 rounded-lg' : ''}`}>
+                <div key={packageType} className="text-center py-1">
                   <div className="text-xs font-bold text-gray-900 dark:text-white">
                     <div>{bonusPercent}%</div>
-                    <div>+{bonusPercent}%</div>
                     <div>от стоимости</div>
                   </div>
                 </div>
@@ -324,7 +323,7 @@ export default function UnifiedPackageComparison({
                 const isSelected = selectedPackage === packageType;
                 
                 return (
-                  <div key={packageType} className={`text-center ${isSelected ? 'bg-white dark:bg-gray-700 rounded-lg py-1' : ''}`}>
+                  <div key={packageType} className="text-center">
                     <span className="text-sm text-red-500 line-through">
                       {calculation.baseCost.toLocaleString()} ₽
                     </span>
@@ -343,7 +342,7 @@ export default function UnifiedPackageComparison({
                 const isSelected = selectedPackage === packageType;
                 
                 return (
-                  <div key={packageType} className={`text-center ${isSelected ? 'bg-white dark:bg-gray-700 rounded-lg py-1' : ''}`}>
+                  <div key={packageType} className="text-center">
                     <span className="text-sm text-green-600 dark:text-green-400">
                       {data && data.totalSavings > 0 ? `-${data.totalSavings.toLocaleString()} ₽` : '0 ₽'}
                     </span>
@@ -364,7 +363,7 @@ export default function UnifiedPackageComparison({
                   const isSelected = selectedPackage === packageType;
                   
                   return (
-                    <div key={packageType} className={`text-center ${isSelected ? 'bg-gray-100 dark:bg-gray-700 rounded-lg py-1' : ''}`}>
+                    <div key={packageType} className="text-center">
                       <span className="text-sm font-semibold text-green-600 dark:text-green-400">
                         -3 000 ₽
                       </span>
@@ -385,7 +384,7 @@ export default function UnifiedPackageComparison({
               const isSelected = selectedPackage === packageType;
               
               return (
-                <div key={packageType} className={`text-center ${isSelected ? 'bg-blue-50 dark:bg-blue-900/20 rounded-lg py-1' : ''}`}>
+                <div key={packageType} className="text-center py-1">
                   <div className="text-sm">
                     <div className="font-bold text-blue-700 dark:text-blue-300">
                       {data && data.finalCost ? `${data.finalCost.toLocaleString()} ₽` : 'Выберите услуги'}
@@ -410,7 +409,7 @@ export default function UnifiedPackageComparison({
                 const isSelected = selectedPackage === packageType;
                 
                 return (
-                  <div key={packageType} className={`text-center ${isSelected ? 'bg-white dark:bg-gray-700 rounded-lg py-1' : ''}`}>
+                  <div key={packageType} className="text-center py-1">
                     <span className="text-sm text-gray-900 dark:text-white">
                       {downPayment.toLocaleString()} ₽
                     </span>
@@ -429,7 +428,7 @@ export default function UnifiedPackageComparison({
                 const isSelected = selectedPackage === packageType;
                 
                 return (
-                  <div key={packageType} className={`text-center ${isSelected ? 'bg-white dark:bg-gray-700 rounded-lg py-1' : ''}`}>
+                  <div key={packageType} className="text-center py-1">
                     <span className="text-sm text-gray-900 dark:text-white">
                       {data && data.monthlyPayment ? `${data.monthlyPayment.toLocaleString()} ₽` : '0 ₽'}
                     </span>
