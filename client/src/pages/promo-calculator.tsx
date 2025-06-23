@@ -161,9 +161,9 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
               />
               
               {procedureCount >= (calculatorSettings?.bulkDiscountThreshold || 15) && (
-                <div className="mt-2 p-2 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 rounded-lg shadow-inner border border-blue-200 dark:border-blue-800">
+                <div className="mt-2 p-2 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
                   <div className="flex items-center justify-center text-xs font-medium">
-                    <div className="flex items-center space-x-1 text-blue-600 dark:text-blue-400">
+                    <div className="flex items-center space-x-1 text-green-600 dark:text-green-400">
                       <Star className="w-3 h-3" />
                       <span>🎉 Скидка +{Math.round((calculatorSettings?.bulkDiscountPercentage || 0.025) * 100)}%</span>
                     </div>
@@ -172,21 +172,21 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
               )}
             </div>
 
-            {/* Payment settings - VIP адаптивный */}
+            {/* Payment settings - минималистичный дизайн */}
             <div className={`floating-card-enhanced backdrop-blur-xl rounded-lg p-3 border transition-all duration-300 ${
               selectedPackage === 'vip' 
-                ? 'bg-gradient-to-br from-purple-50/95 via-pink-50/95 to-amber-50/95 dark:from-purple-950/95 dark:via-pink-950/95 dark:to-amber-950/95 border-purple-300/50 dark:border-purple-600/50' 
+                ? 'bg-pink-50/95 dark:bg-pink-950/95 border-pink-200/50 dark:border-pink-700/50' 
                 : 'bg-white/95 dark:bg-gray-900/95 border-white/20 dark:border-gray-700/20'
             }`}>
               <div className="flex items-center justify-center mb-2">
                 {selectedPackage === 'vip' && (
-                  <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center mr-2">
+                  <div className="w-6 h-6 bg-pink-400 dark:bg-pink-500 rounded-full flex items-center justify-center mr-2">
                     <Crown className="w-3 h-3 text-white" />
                   </div>
                 )}
                 <h4 className={`font-semibold mb-0 text-sm ${
                   selectedPackage === 'vip' 
-                    ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600' 
+                    ? 'text-pink-600 dark:text-pink-400' 
                     : 'text-gray-900 dark:text-white'
                 }`}>
                   {selectedPackage === 'vip' ? 'VIP Полная Предоплата' : 'Первый взнос'}
@@ -195,9 +195,9 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
               
               <div className="text-center mb-2">
                 {selectedPackage === 'vip' ? (
-                  // VIP - показываем полную стоимость с градиентом
-                  <div className="text-xl lg:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 via-pink-600 to-amber-500">
-                    {calculation?.packages?.vip ? formatPrice(calculation.packages.vip.finalCost) : formatPrice(baseCost)}
+                  // VIP - показываем полную стоимость в розовом цвете
+                  <div className="text-xl lg:text-2xl font-bold text-pink-600 dark:text-pink-400">
+                    {calculation?.packages?.vip ? formatPrice(calculation.packages.vip.finalCost) : formatPrice(calculation?.baseCost || 0)}
                   </div>
                 ) : (
                   // Обычные пакеты - редактируемое поле
@@ -225,7 +225,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                         }
                       }}
                       autoFocus
-                      className="text-lg font-bold text-premium bg-transparent border-none text-center w-full focus:outline-none focus:ring-2 focus:ring-purple-500 rounded px-2 py-1"
+                      className="text-lg font-bold text-premium bg-transparent border-none text-center w-full focus:outline-none focus:ring-2 focus:ring-pink-500 rounded px-2 py-1"
                       style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' }}
                     />
                   ) : (
@@ -234,7 +234,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                         setTempPaymentValue(downPayment.toString());
                         setIsEditingPayment(true);
                       }}
-                      className="text-lg font-bold text-premium cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded px-2 py-1 transition-colors"
+                      className="text-lg font-bold text-premium cursor-pointer hover:bg-pink-50 dark:hover:bg-pink-900/20 rounded px-2 py-1 transition-colors"
                     >
                       {formatPrice(downPayment)}
                     </div>
@@ -243,11 +243,11 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
               </div>
               
               {selectedPackage === 'vip' ? (
-                // VIP - декоративный "слайдер" заблокирован на 100%
+                // VIP - минималистичный декоративный слайдер заблокирован на 100%
                 <div className="mb-2">
-                  <div className="relative h-2 bg-gradient-to-r from-purple-200 to-pink-200 dark:from-purple-800 dark:to-pink-800 rounded-full overflow-hidden">
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
-                    <div className="absolute right-1 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full shadow-lg flex items-center justify-center">
+                  <div className="relative h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                    <div className="absolute inset-0 bg-pink-300 dark:bg-pink-600 rounded-full"></div>
+                    <div className="absolute right-1 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-pink-400 dark:bg-pink-500 rounded-full flex items-center justify-center">
                       <div className="w-2 h-2 bg-white rounded-full"></div>
                     </div>
                   </div>
@@ -268,7 +268,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
               
               <div className={`text-xs mt-1 text-center ${
                 selectedPackage === 'vip' 
-                  ? 'text-purple-600 dark:text-purple-400 font-medium' 
+                  ? 'text-pink-600 dark:text-pink-400 font-medium' 
                   : 'text-gray-500'
               }`}>
                 {selectedPackage === 'vip' ? (
