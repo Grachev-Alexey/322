@@ -437,8 +437,8 @@ export default function UnifiedPackageComparison({
           </div>
 
           {/* Gifts Section */}
-          <div className="bg-blue-100 dark:bg-blue-900/30 py-4 px-4">
-            <div className="flex items-center font-bold text-gray-900 dark:text-white text-sm mb-3">
+          <div className="py-2 px-2 border-t border-gray-50 dark:border-gray-800">
+            <div className="font-bold text-gray-900 dark:text-white text-lg mb-2">
               🎁 Подарки
             </div>
             
