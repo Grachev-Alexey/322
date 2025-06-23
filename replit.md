@@ -76,12 +76,14 @@ The development environment uses Vite's HMR (Hot Module Replacement) for rapid d
 
 ## Recent Changes
 
-- **Database Migration (Latest)**: Successfully migrated project to Replit environment
-  - Created PostgreSQL database with all required tables
-  - Added comprehensive test data including 15 beauty services, 4 subscription types, 3 package tiers
-  - Configured 8 different perks with package-specific values
-  - Added test user (PIN: 123456) for immediate login access
-  - All dependencies installed and application running on port 5000
+- **Calculator Settings Configuration (Latest)**: Completed full configuration system implementation
+  - All calculator parameters now configurable from admin panel (discounts, thresholds, installment options)
+  - Fixed certificate discount logic to use fixed amount instead of percentage
+  - Implemented dynamic text and values based on admin settings
+  - Resolved bulk discount calculation using procedure count slider
+  - Added proper Russian grammar for installment months display
+  - Cleaned up debug logging and improved UI aesthetics with gradients and emojis
+  - Fixed calculation display for unavailable packages to show potential savings
 
 
 ## User Preferences

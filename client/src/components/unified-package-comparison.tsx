@@ -61,7 +61,7 @@ export default function UnifiedPackageComparison({
   const actualThreshold = bulkThreshold || 15;
   const hasAdditionalDiscount = safeProcedureCount >= actualThreshold;
   
-  console.log('UnifiedPackageComparison - procedureCount:', procedureCount, 'threshold:', actualThreshold, 'hasAdditionalDiscount:', hasAdditionalDiscount);
+
   
   // Package visual configurations
   const packageInfo = {

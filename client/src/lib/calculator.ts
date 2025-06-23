@@ -41,10 +41,7 @@ export function calculatePackagePricing(
   params: CalculationParams,
   calculatorSettings?: any
 ): CalculationResult {
-  console.log(`=== PACKAGE PRICING CALCULATION START ===`);
-  console.log('Base cost:', baseCost);
-  console.log('Calculator settings:', calculatorSettings);
-  console.log('Params:', params);
+
   
   const { packageConfig, freeZones } = params;
   
@@ -81,20 +78,7 @@ export function calculatePackagePricing(
   for (const [packageType, config] of Object.entries(packages)) {
     const packageData = config as any;
     
-    // Check if package meets minimum cost requirement
-    if (baseCost < packageData.minCost) {
-      results[packageType] = {
-        isAvailable: false,
-        unavailableReason: `Минимальная стоимость курса: ${packageData.minCost.toLocaleString()} ₽`,
-        finalCost: baseCost,
-        totalSavings: 0,
-        monthlyPayment: 0,
-        appliedDiscounts: []
-      };
-      continue;
-    }
-
-    // Calculate discount
+    // Calculate all discounts even for unavailable packages for display purposes
     let discount = packageData.discount;
     
     // Apply dynamic discount for economy package
@@ -107,12 +91,7 @@ export function calculatePackagePricing(
     const certificateMinAmount = calculatorSettings?.certificateMinCourseAmount || 25000;
     const certificateDiscount = params.usedCertificate && baseCost >= certificateMinAmount ? certificateDiscountAmount : 0;
     
-    console.log(`=== CERTIFICATE DISCOUNT CALCULATION ===`);
-    console.log(`Used certificate: ${params.usedCertificate}`);
-    console.log(`Base cost: ${baseCost}`);
-    console.log(`Certificate min amount: ${certificateMinAmount}`);
-    console.log(`Certificate discount amount: ${certificateDiscountAmount}`);
-    console.log(`Certificate discount: ${certificateDiscount}`);
+
     
     // Calculate bulk discount using configurable threshold and percentage
     const bulkThreshold = calculatorSettings?.bulkDiscountThreshold || 15;
@@ -122,12 +101,7 @@ export function calculatePackagePricing(
     const actualProcedureCount = params.procedureCount || serviceCount;
     const additionalDiscount = actualProcedureCount >= bulkThreshold ? baseCost * bulkDiscountPercent : 0;
     
-    console.log(`=== BULK DISCOUNT CALCULATION ===`);
-    console.log(`Procedure count: ${actualProcedureCount}`);
-    console.log(`Bulk threshold: ${bulkThreshold}`);
-    console.log(`Bulk discount percent: ${bulkDiscountPercent}`);
-    console.log(`Additional discount: ${additionalDiscount}`);
-    console.log(`Qualifies for bulk discount: ${actualProcedureCount >= bulkThreshold}`);
+
 
     // Calculate gift session value based on package type
     // Gift sessions are full procedure sessions, not individual visits
@@ -153,12 +127,16 @@ export function calculatePackagePricing(
     const remainingAmount = finalCost - params.downPayment;
     const monthlyPayment = params.installmentMonths > 0 && !packageData.requiresFullPayment ? remainingAmount / params.installmentMonths : 0;
 
+    // Check if package meets minimum cost requirement
+    const isAvailable = baseCost >= packageData.minCost;
+    const unavailableReason = !isAvailable ? `Минимальная стоимость курса: ${packageData.minCost.toLocaleString()} ₽` : '';
+
     results[packageType] = {
-      isAvailable: true, // All packages are available for selection
-      unavailableReason: '',
+      isAvailable,
+      unavailableReason,
       finalCost,
       totalSavings,
-      monthlyPayment,
+      monthlyPayment: isAvailable ? monthlyPayment : 0,
       appliedDiscounts: [
         { type: 'package', amount: packageDiscount },
         ...(additionalDiscount > 0 ? [{ type: 'bulk', amount: additionalDiscount }] : []),

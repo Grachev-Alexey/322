@@ -178,14 +178,7 @@ export function useCalculator() {
       // Use the centralized calculation function with calculator settings
       const result = calculatePackagePricing(baseCost, calculationParams, calculatorSettings);
       
-      console.log(`=== FINAL CALCULATION RESULT ===`);
-      console.log('Calculator settings:', calculatorSettings);
-      console.log('Base cost:', baseCost);
-      console.log('Procedure count (slider):', procedures);
-      console.log('Used certificate:', usedCertificate);
-      console.log('Down payment:', downPayment);
-      console.log('Installment months:', installmentMonths);
-      console.log('Final calculation result:', result);
+
       setCalculation(result);
     },
     [services, packages, calculatorSettings]
@@ -213,7 +206,7 @@ export function useCalculator() {
   useEffect(() => {
     if (calculatorSettings?.installmentMonthsOptions?.length > 0) {
       const minMonths = Math.min(...calculatorSettings.installmentMonthsOptions);
-      console.log(`Setting default installment months to: ${minMonths}`, calculatorSettings.installmentMonthsOptions);
+
       setInstallmentMonths(minMonths);
     }
   }, [calculatorSettings]);

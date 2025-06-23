@@ -158,10 +158,12 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
               />
               
               {procedureCount >= (calculatorSettings?.bulkDiscountThreshold || 15) && (
-                <div className="mt-2 p-2 bg-blue-50 dark:bg-blue-950 rounded-lg shadow-inner">
-                  <div className="flex items-center text-xs text-blue-600 dark:text-blue-400">
-                    <Star className="w-3 h-3 mr-1" />
-                    Дополнительная скидка +2,5%
+                <div className="mt-2 p-2 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 rounded-lg shadow-inner border border-blue-200 dark:border-blue-800">
+                  <div className="flex items-center justify-center text-xs font-medium">
+                    <div className="flex items-center space-x-1 text-blue-600 dark:text-blue-400">
+                      <Star className="w-3 h-3" />
+                      <span>🎉 Скидка +{Math.round((calculatorSettings?.bulkDiscountPercentage || 0.025) * 100)}%</span>
+                    </div>
                   </div>
                 </div>
               )}
