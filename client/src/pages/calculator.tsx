@@ -156,24 +156,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
             </div>
           </div>
           
-          {/* Course Cost */}
-          {calculation && (
-            <div className="mt-8 p-6 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="text-lg font-semibold text-gray-900">Базовая стоимость курса</h4>
-                  <p className="text-sm text-gray-600">
-                    {selectedServices.map(s => s.title).join(' + ')} × {procedureCount} процедур
-                  </p>
-                </div>
-                <div className="text-right">
-                  <div className="text-3xl font-bold text-gray-900">
-                    {formatPrice(calculation.baseCost)}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+
         </Card>
 
         {/* Package Comparison */}

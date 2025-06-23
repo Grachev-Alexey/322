@@ -361,20 +361,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
 
         {/* Right panel - Package comparison с адаптивной высотой */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden order-1 lg:order-2">
-          {/* Base cost display - компактный адаптивный */}
-          {calculation && (
-            <div className="floating-card-enhanced bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-lg p-2 lg:p-3 mb-2 lg:mb-3 border border-white/20 dark:border-gray-700/20 flex-shrink-0">
-              <div className="text-center">
-                <div className="text-xs lg:text-sm text-gray-500 dark:text-gray-400">Базовая стоимость</div>
-                <div className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">
-                  {formatPrice(calculation.baseCost)}
-                </div>
-                <div className="text-xs text-gray-500 dark:text-gray-400 hidden lg:block">
-                  {selectedServices.map(s => s.title).join(' + ')} × {procedureCount}
-                </div>
-              </div>
-            </div>
-          )}
+
 
           {/* Unified Package Comparison - теперь занимает оставшееся место */}
           {calculation && (

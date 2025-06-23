@@ -316,7 +316,7 @@ export default function UnifiedPackageComparison({
 
           {/* Subscription Cost Section */}
           <div className="py-2 px-2">
-            <div className="font-bold text-gray-900 dark:text-white text-lg mb-2">Итого стоимость абонемента</div>
+            <div className="font-bold text-gray-900 dark:text-white text-base mb-2">Итого стоимость абонемента</div>
             
             {/* Original Cost Row */}
             <div className="grid grid-cols-4 gap-0 py-1 border-b border-gray-50 dark:border-gray-800">
@@ -380,7 +380,7 @@ export default function UnifiedPackageComparison({
 
           {/* Final Cost Row */}
           <div className="grid grid-cols-4 gap-0 py-1 px-2 border-b border-gray-50 dark:border-gray-800">
-            <div className="text-lg font-bold text-gray-900 dark:text-white">
+            <div className="text-base font-bold text-gray-900 dark:text-white">
               Итого стоимость курса:
             </div>
             {packageTypes.map((packageType) => {
@@ -388,7 +388,7 @@ export default function UnifiedPackageComparison({
               
               return (
                 <div key={packageType} className="text-center py-1">
-                  <div className="font-bold text-blue-700 dark:text-blue-300 text-base">
+                  <div className="font-bold text-gray-900 dark:text-white text-lg">
                     {data && data.finalCost ? `${data.finalCost.toLocaleString()} ₽` : 'Выберите услуги'}
                   </div>
                 </div>
@@ -438,7 +438,7 @@ export default function UnifiedPackageComparison({
 
           {/* Gifts Section */}
           <div className="py-2 px-2 border-t border-gray-50 dark:border-gray-800">
-            <div className="font-bold text-gray-900 dark:text-white text-lg mb-2">
+            <div className="font-bold text-gray-900 dark:text-white text-base mb-2">
               🎁 Подарки
             </div>
             
