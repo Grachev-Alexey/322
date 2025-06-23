@@ -96,10 +96,9 @@ export function calculatePackagePricing(
     // Calculate bulk discount using configurable threshold and percentage
     const bulkThreshold = calculatorSettings?.bulkDiscountThreshold || 15;
     const bulkDiscountPercent = calculatorSettings?.bulkDiscountPercentage || 0.025;
-    const serviceCount = params.services.reduce((sum, s) => sum + s.quantity, 0);
-    // Use procedureCount from params instead of serviceCount for bulk discount
-    const actualProcedureCount = params.procedureCount || serviceCount;
-    const qualifiesForBulkDiscount = actualProcedureCount >= bulkThreshold;
+    // ONLY use procedureCount from slider, not services or zones count
+    const sliderProcedureCount = params.procedureCount || 1;
+    const qualifiesForBulkDiscount = sliderProcedureCount >= bulkThreshold;
     const additionalDiscount = qualifiesForBulkDiscount ? baseCost * bulkDiscountPercent : 0;
     
 
