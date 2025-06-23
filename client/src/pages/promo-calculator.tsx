@@ -230,11 +230,11 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
               </div>
               
               {selectedPackage === 'vip' ? (
-                // VIP - минималистичный декоративный слайдер заблокирован на 100%
+                // VIP - нейтральный декоративный слайдер заблокирован на 100%
                 <div className="mb-2">
                   <div className="relative h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                    <div className="absolute inset-0 bg-pink-300 dark:bg-pink-600 rounded-full"></div>
-                    <div className="absolute right-1 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-pink-400 dark:bg-pink-500 rounded-full flex items-center justify-center">
+                    <div className="absolute inset-0 bg-gray-200 dark:bg-gray-600 rounded-full"></div>
+                    <div className="absolute right-1 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-gray-400 dark:bg-gray-500 rounded-full flex items-center justify-center">
                       <div className="w-2 h-2 bg-white rounded-full"></div>
                     </div>
                   </div>
