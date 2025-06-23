@@ -242,6 +242,22 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
     const [customIconColor, setCustomIconColor] = useState(currentValue?.customIconColor || '#000000');
     const [isHighlighted, setIsHighlighted] = useState(currentValue?.isHighlighted || false);
     const [isBest, setIsBest] = useState(currentValue?.isBest || false);
+    
+    // Update state when currentValue changes
+    useEffect(() => {
+      if (currentValue) {
+        setValueType(currentValue.valueType || 'boolean');
+        setDisplayValue(currentValue.displayValue || 'Не включено');
+        setBooleanValue(currentValue.booleanValue || false);
+        setTextValue(currentValue.textValue || '');
+        setNumberValue(currentValue.numberValue?.toString() || '');
+        setTooltip(currentValue.tooltip || '');
+        setCustomIcon(currentValue.customIcon || 'none');
+        setCustomIconColor(currentValue.customIconColor || '#000000');
+        setIsHighlighted(currentValue.isHighlighted || false);
+        setIsBest(currentValue.isBest || false);
+      }
+    }, [currentValue]);
 
     const saveValue = async () => {
       const updates = {
@@ -269,17 +285,28 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
       return (
         <div className="flex items-center justify-between p-2 border rounded">
           <div className="flex items-center space-x-2">
-            {currentValue?.customIcon && (
-              <span style={{ color: currentValue.customIconColor || '#000000' }}>
-                {React.createElement((Icons as any)[currentValue.customIcon] || Check, { className: "h-4 w-4" })}
-              </span>
+            {currentValue?.customIcon && currentValue.customIcon !== 'none' && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span style={{ color: currentValue.customIconColor || '#000000' }} className="cursor-help">
+                    {React.createElement((Icons as any)[currentValue.customIcon] || Check, { className: "h-4 w-4" })}
+                  </span>
+                </TooltipTrigger>
+                {currentValue.tooltip && (
+                  <TooltipContent>
+                    <p>{currentValue.tooltip}</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
             )}
-            <span className="text-sm">{currentValue?.displayValue || 'Не задано'}</span>
+            <span className={`text-sm ${currentValue?.isHighlighted ? 'font-bold text-purple-600 bg-purple-100 px-2 py-1 rounded' : ''}`}>
+              {currentValue?.displayValue || 'Не задано'}
+            </span>
             {currentValue?.isBest && (
-              <Badge variant="secondary" className="text-xs">Лучшее</Badge>
+              <Badge className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs">Лучшее</Badge>
             )}
             {currentValue?.isHighlighted && (
-              <Badge variant="outline" className="text-xs">Выделено</Badge>
+              <Badge variant="outline" className="text-xs border-purple-500 text-purple-600">Выделено</Badge>
             )}
           </div>
           <Button variant="ghost" size="sm" onClick={() => setEditing(true)}>

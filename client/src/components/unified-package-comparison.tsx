@@ -215,7 +215,7 @@ export default function UnifiedPackageComparison({
                             {perkValue.valueType === 'boolean' ? (
                               perkValue.booleanValue ? (
                                 <>
-                                  {perkValue.customIcon ? (
+                                  {perkValue.customIcon && perkValue.customIcon !== 'none' ? (
                                     <Tooltip>
                                       <TooltipTrigger asChild>
                                         <div className={`p-1 rounded-lg bg-gradient-to-r ${info.gradient} mx-auto w-fit shadow cursor-help`}>
@@ -251,8 +251,8 @@ export default function UnifiedPackageComparison({
                                 {perkValue.tooltip ? (
                                   <Tooltip>
                                     <TooltipTrigger asChild>
-                                      <div className={`text-xs lg:text-sm font-semibold cursor-help ${perkValue.isHighlighted ? `text-transparent bg-clip-text bg-gradient-to-r ${info.gradient}` : 'text-gray-700 dark:text-gray-300'}`}>
-                                        {perkValue.customIcon && (
+                                      <div className={`text-xs lg:text-sm font-semibold cursor-help ${perkValue.isHighlighted ? `font-bold text-white bg-gradient-to-r ${info.gradient} px-2 py-1 rounded shadow` : 'text-gray-700 dark:text-gray-300'}`}>
+                                        {perkValue.customIcon && perkValue.customIcon !== 'none' && (
                                           <span className="inline-block mr-1" style={{ color: perkValue.customIconColor || '#000000' }}>
                                             {React.createElement((Icons as any)[perkValue.customIcon] || Check, { className: "h-3 w-3 inline" })}
                                           </span>
@@ -265,8 +265,8 @@ export default function UnifiedPackageComparison({
                                     </TooltipContent>
                                   </Tooltip>
                                 ) : (
-                                  <div className={`text-xs lg:text-sm font-semibold ${perkValue.isHighlighted ? `text-transparent bg-clip-text bg-gradient-to-r ${info.gradient}` : 'text-gray-700 dark:text-gray-300'}`}>
-                                    {perkValue.customIcon && (
+                                  <div className={`text-xs lg:text-sm font-semibold ${perkValue.isHighlighted ? `font-bold text-white bg-gradient-to-r ${info.gradient} px-2 py-1 rounded shadow` : 'text-gray-700 dark:text-gray-300'}`}>
+                                    {perkValue.customIcon && perkValue.customIcon !== 'none' && (
                                       <span className="inline-block mr-1" style={{ color: perkValue.customIconColor || '#000000' }}>
                                         {React.createElement((Icons as any)[perkValue.customIcon] || Check, { className: "h-3 w-3 inline" })}
                                       </span>
