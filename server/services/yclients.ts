@@ -61,19 +61,40 @@ export class YclientsAPI {
   }
 
   async getSubscriptionTypes(): Promise<YclientsSubscriptionType[]> {
-    const url = `https://yclients.com/api/v1/chain/${this.config.chainId}/loyalty/abonement_types?page=1&limit=250&include[0]=balance_container&include[1]=abonements_count&include[2]=attached_salon_ids&is_archived=0&filter[category_id]=0`;
-    
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: this.getHeaders()
-    });
+    let allSubscriptionTypes: YclientsSubscriptionType[] = [];
+    let page = 1;
+    const limit = 250;
+    let hasMore = true;
 
-    if (!response.ok) {
-      throw new Error(`Yclients API error: ${response.status} ${response.statusText}`);
+    while (hasMore) {
+      const url = `https://yclients.com/api/v1/chain/${this.config.chainId}/loyalty/abonement_types?page=${page}&limit=${limit}&include[0]=balance_container&include[1]=abonements_count&include[2]=attached_salon_ids&is_archived=0&filter[category_id]=0`;
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: this.getHeaders()
+      });
+
+      if (!response.ok) {
+        throw new Error(`Yclients API error: ${response.status} ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const subscriptionTypes = data.data || [];
+      
+      allSubscriptionTypes = allSubscriptionTypes.concat(subscriptionTypes);
+      
+      // Если получили меньше чем лимит, значит это последняя страница
+      hasMore = subscriptionTypes.length === limit;
+      page++;
+      
+      // Защита от бесконечного цикла (максимум 50 страниц = 12500 записей)
+      if (page > 50) {
+        console.warn('Reached maximum page limit for subscription types sync');
+        break;
+      }
     }
 
-    const data = await response.json();
-    return data.data || [];
+    return allSubscriptionTypes;
   }
 
   async createSubscriptionType(subscriptionData: {
