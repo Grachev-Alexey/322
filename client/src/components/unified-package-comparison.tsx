@@ -72,6 +72,12 @@ interface UnifiedPackageComparisonProps {
   procedureCount: number;
   packagePerkValues?: PackagePerkValue[];
   usedCertificate: boolean;
+  freeZones?: Array<{
+    serviceId: number;
+    title: string;
+    pricePerProcedure: number;
+    quantity: number;
+  }>;
 }
 
 export default function UnifiedPackageComparison({ 
@@ -83,7 +89,8 @@ export default function UnifiedPackageComparison({
   installmentMonths,
   procedureCount,
   packagePerkValues = [],
-  usedCertificate = false
+  usedCertificate = false,
+  freeZones = []
 }: UnifiedPackageComparisonProps) {
   const packageTypes = ['vip', 'standard', 'economy'];
   const hasValidCalculation = calculation && calculation.baseCost > 0;

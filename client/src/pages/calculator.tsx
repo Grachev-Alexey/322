@@ -188,6 +188,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
             procedureCount={procedureCount}
             packagePerkValues={packagePerkValues}
             usedCertificate={usedCertificate}
+            freeZones={freeZones}
           />
         )}
 
