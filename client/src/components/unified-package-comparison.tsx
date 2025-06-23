@@ -1,8 +1,13 @@
-import React from 'react';
-import { Check, X, Crown, Star, Zap } from 'lucide-react';
-import * as Icons from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import React from "react";
+import { Check, X, Crown, Star, Zap } from "lucide-react";
+import * as Icons from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface Package {
   id: number;
@@ -40,7 +45,7 @@ interface PackagePerkValue {
   id: number;
   packageType: string;
   perkId: number;
-  valueType: 'boolean' | 'text' | 'number';
+  valueType: "boolean" | "text" | "number";
   booleanValue?: boolean;
   textValue?: string;
   numberValue?: number;
@@ -80,19 +85,19 @@ interface UnifiedPackageComparisonProps {
   }>;
 }
 
-export default function UnifiedPackageComparison({ 
-  calculation, 
-  selectedPackage, 
-  onPackageSelect, 
+export default function UnifiedPackageComparison({
+  calculation,
+  selectedPackage,
+  onPackageSelect,
   packages,
   downPayment,
   installmentMonths,
   procedureCount,
   packagePerkValues = [],
   usedCertificate = false,
-  freeZones = []
+  freeZones = [],
 }: UnifiedPackageComparisonProps) {
-  const packageTypes = ['vip', 'standard', 'economy'];
+  const packageTypes = ["vip", "standard", "economy"];
   const hasValidCalculation = calculation && calculation.baseCost > 0;
 
   const getPackageData = (packageType: string): PackageData | null => {
@@ -106,41 +111,54 @@ export default function UnifiedPackageComparison({
 
   // Get unique perks for display
   const uniquePerks = Array.from(
-    new Map(packagePerkValues.map(pv => [pv.perk.id, pv.perk])).values()
+    new Map(packagePerkValues.map((pv) => [pv.perk.id, pv.perk])).values(),
   ).sort((a, b) => (a.displayOrder || 0) - (b.displayOrder || 0));
 
   // Helper function to get perk value for a specific package
   const getPerkValue = (perkId: number, packageType: string) => {
-    return packagePerkValues.find(pv => pv.perkId === perkId && pv.packageType === packageType);
+    return packagePerkValues.find(
+      (pv) => pv.perkId === perkId && pv.packageType === packageType,
+    );
   };
 
   const getPackageIcon = (packageType: string) => {
     switch (packageType) {
-      case 'vip': return Crown;
-      case 'standard': return Star;
-      case 'economy': return Zap;
-      default: return Star;
+      case "vip":
+        return Crown;
+      case "standard":
+        return Star;
+      case "economy":
+        return Zap;
+      default:
+        return Star;
     }
   };
 
   const getPackageColor = (packageType: string) => {
     switch (packageType) {
-      case 'vip': return 'from-yellow-400 to-orange-500';
-      case 'standard': return 'from-blue-400 to-purple-500';
-      case 'economy': return 'from-green-400 to-teal-500';
-      default: return 'from-gray-400 to-gray-500';
+      case "vip":
+        return "from-yellow-400 to-orange-500";
+      case "standard":
+        return "from-blue-400 to-purple-500";
+      case "economy":
+        return "from-green-400 to-teal-500";
+      default:
+        return "from-gray-400 to-gray-500";
     }
   };
 
   const getPackageName = (packageType: string) => {
     switch (packageType) {
-      case 'vip': return 'VIP';
-      case 'standard': return 'Стандарт';
-      case 'economy': return 'Эконом';
-      default: return packageType;
+      case "vip":
+        return "VIP";
+      case "standard":
+        return "Стандарт";
+      case "economy":
+        return "Эконом";
+      default:
+        return packageType;
     }
   };
-
 
   return (
     <TooltipProvider>
@@ -152,18 +170,20 @@ export default function UnifiedPackageComparison({
             {packageTypes.map((packageType) => {
               const Icon = getPackageIcon(packageType);
               const isSelected = selectedPackage === packageType;
-              
+
               return (
-                <div 
+                <div
                   key={packageType}
                   className={`text-center cursor-pointer transition-all duration-200 rounded-lg p-2 ${
-                    isSelected 
-                      ? 'bg-white dark:bg-gray-800 shadow-md transform scale-105' 
-                      : 'hover:bg-white/50 dark:hover:bg-gray-800/50'
+                    isSelected
+                      ? "bg-white dark:bg-gray-800 shadow-md transform scale-105"
+                      : "hover:bg-white/50 dark:hover:bg-gray-800/50"
                   }`}
                   onClick={() => onPackageSelect(packageType)}
                 >
-                  <div className={`inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r ${getPackageColor(packageType)} mb-1`}>
+                  <div
+                    className={`inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r ${getPackageColor(packageType)} mb-1`}
+                  >
                     <Icon className="h-4 w-4 text-white" />
                   </div>
                   <div className="font-bold text-gray-900 dark:text-white text-sm">
@@ -178,20 +198,22 @@ export default function UnifiedPackageComparison({
 
         {/* Table Content */}
         <div className="flex-1 overflow-y-auto min-h-0">
-          
           {/* Database Perks Rows */}
           {uniquePerks.map((perk, index) => {
             const IconComponent = (Icons as any)[perk.icon] || Check;
-            
+
             return (
-              <div key={perk.id} className="grid grid-cols-5 gap-0 py-1 px-2 border-b border-gray-50 dark:border-gray-800">
+              <div
+                key={perk.id}
+                className="grid grid-cols-5 gap-0 py-1 px-2 border-b border-gray-50 dark:border-gray-800"
+              >
                 {/* Perk Name */}
                 <div className="flex items-center space-x-2">
-                  {perk.icon && perk.icon !== 'none' && (
+                  {perk.icon && perk.icon !== "none" && (
                     <div className="p-1 rounded-lg bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 flex-shrink-0">
-                      <IconComponent 
+                      <IconComponent
                         className="h-3 w-3"
-                        style={{ color: perk.iconColor || '#3B82F6' }} 
+                        style={{ color: perk.iconColor || "#3B82F6" }}
                       />
                     </div>
                   )}
@@ -199,15 +221,16 @@ export default function UnifiedPackageComparison({
                     {perk.name}
                   </span>
                   {perk.description && (
-                    <div className="text-xs text-gray-500 mt-1">{perk.description}</div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      {perk.description}
+                    </div>
                   )}
                 </div>
-
                 {/* Perk Values for each package */}
                 {packageTypes.map((packageType) => {
                   const perkValue = getPerkValue(perk.id, packageType);
                   const isSelected = selectedPackage === packageType;
-                  
+
                   if (!perkValue) {
                     return (
                       <div key={packageType} className="text-center py-1">
@@ -218,7 +241,7 @@ export default function UnifiedPackageComparison({
 
                   const content = (
                     <div className="text-center py-1">
-                      {perkValue.valueType === 'boolean' ? (
+                      {perkValue.valueType === "boolean" ? (
                         perkValue.booleanValue ? (
                           <div className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-green-500">
                             <Check className="h-3 w-3 text-white" />
@@ -227,11 +250,13 @@ export default function UnifiedPackageComparison({
                           <span className="text-red-500 font-semibold">-</span>
                         )
                       ) : (
-                        <span className={`text-sm font-semibold ${
-                          perkValue.isHighlighted 
-                            ? 'text-blue-600 dark:text-blue-400' 
-                            : 'text-gray-700 dark:text-gray-300'
-                        }`}>
+                        <span
+                          className={`text-sm font-semibold ${
+                            perkValue.isHighlighted
+                              ? "text-blue-600 dark:text-blue-400"
+                              : "text-gray-700 dark:text-gray-300"
+                          }`}
+                        >
                           {perkValue.displayValue}
                         </span>
                       )}
@@ -240,17 +265,13 @@ export default function UnifiedPackageComparison({
 
                   return perkValue.tooltip ? (
                     <Tooltip key={packageType}>
-                      <TooltipTrigger asChild>
-                        {content}
-                      </TooltipTrigger>
+                      <TooltipTrigger asChild>{content}</TooltipTrigger>
                       <TooltipContent>
                         <p>{perkValue.tooltip}</p>
                       </TooltipContent>
                     </Tooltip>
                   ) : (
-                    <div key={packageType}>
-                      {content}
-                    </div>
+                    <div key={packageType}>{content}</div>
                   );
                 })}
                 <div></div> {/* Empty column */}
@@ -260,17 +281,19 @@ export default function UnifiedPackageComparison({
 
           {/* Free Sessions Row */}
           <div className="grid grid-cols-5 gap-0 py-1 px-2 border-b border-gray-50 dark:border-gray-800">
-            <div className="text-base font-medium text-gray-900 dark:text-white">
+            <div className="text-sm font-medium text-gray-900 dark:text-white">
               Сеансы в подарок
             </div>
             {packageTypes.map((packageType) => {
-              const packageData = packages.find((p: Package) => p.type === packageType);
+              const packageData = packages.find(
+                (p: Package) => p.type === packageType,
+              );
               const giftSessions = packageData?.giftSessions || 0;
-              
+
               return (
                 <div key={packageType} className="text-center py-1">
                   <span className="text-base font-bold text-gray-900 dark:text-white">
-                    {giftSessions > 0 ? giftSessions : '-'}
+                    {giftSessions > 0 ? giftSessions : "-"}
                   </span>
                 </div>
               );
@@ -284,9 +307,13 @@ export default function UnifiedPackageComparison({
               Скидка
             </div>
             {packageTypes.map((packageType) => {
-              const packageData = packages.find((p: Package) => p.type === packageType);
-              const discountPercent = packageData ? Math.round(parseFloat(packageData.discount) * 100) : 0;
-              
+              const packageData = packages.find(
+                (p: Package) => p.type === packageType,
+              );
+              const discountPercent = packageData
+                ? Math.round(parseFloat(packageData.discount) * 100)
+                : 0;
+
               return (
                 <div key={packageType} className="text-center py-1">
                   <span className="text-lg font-bold text-gray-900 dark:text-white">
@@ -304,9 +331,13 @@ export default function UnifiedPackageComparison({
               Бонусный счет
             </div>
             {packageTypes.map((packageType) => {
-              const packageData = packages.find((p: Package) => p.type === packageType);
-              const bonusPercent = packageData ? Math.round(parseFloat(packageData.bonusAccountPercent) * 100) : 0;
-              
+              const packageData = packages.find(
+                (p: Package) => p.type === packageType,
+              );
+              const bonusPercent = packageData
+                ? Math.round(parseFloat(packageData.bonusAccountPercent) * 100)
+                : 0;
+
               return (
                 <div key={packageType} className="text-center py-1">
                   <div className="text-xs font-bold text-gray-900 dark:text-white">
@@ -321,8 +352,10 @@ export default function UnifiedPackageComparison({
 
           {/* Subscription Cost Section */}
           <div className="py-2 px-2">
-            <div className="font-bold text-gray-900 dark:text-white text-base mb-2">Итого стоимость абонемента</div>
-            
+            <div className="font-bold text-gray-900 dark:text-white text-base mb-2">
+              Итого стоимость абонемента
+            </div>
+
             {/* Original Cost Row */}
             <div className="grid grid-cols-5 gap-0 py-1 border-b border-gray-50 dark:border-gray-800">
               <div className="text-sm text-gray-700 dark:text-gray-300">
@@ -330,7 +363,7 @@ export default function UnifiedPackageComparison({
               </div>
               {packageTypes.map((packageType) => {
                 const isSelected = selectedPackage === packageType;
-                
+
                 return (
                   <div key={packageType} className="text-center">
                     <span className="text-sm text-red-500 line-through">
@@ -350,11 +383,13 @@ export default function UnifiedPackageComparison({
               {packageTypes.map((packageType) => {
                 const data = getPackageData(packageType);
                 const isSelected = selectedPackage === packageType;
-                
+
                 return (
                   <div key={packageType} className="text-center">
                     <span className="text-sm text-green-600 dark:text-green-400">
-                      {data && data.totalSavings > 0 ? `-${data.totalSavings.toLocaleString()} ₽` : '0 ₽'}
+                      {data && data.totalSavings > 0
+                        ? `-${data.totalSavings.toLocaleString()} ₽`
+                        : "0 ₽"}
                     </span>
                   </div>
                 );
@@ -371,7 +406,7 @@ export default function UnifiedPackageComparison({
                 </div>
                 {packageTypes.map((packageType) => {
                   const isSelected = selectedPackage === packageType;
-                  
+
                   return (
                     <div key={packageType} className="text-center">
                       <span className="text-sm font-semibold text-green-600 dark:text-green-400">
@@ -392,11 +427,13 @@ export default function UnifiedPackageComparison({
             </div>
             {packageTypes.map((packageType) => {
               const data = getPackageData(packageType);
-              
+
               return (
                 <div key={packageType} className="text-center py-1">
                   <div className="font-bold text-gray-900 dark:text-white text-lg">
-                    {data && data.finalCost ? `${data.finalCost.toLocaleString()} ₽` : 'Выберите услуги'}
+                    {data && data.finalCost
+                      ? `${data.finalCost.toLocaleString()} ₽`
+                      : "Выберите услуги"}
                   </div>
                 </div>
               );
@@ -430,11 +467,13 @@ export default function UnifiedPackageComparison({
               </div>
               {packageTypes.map((packageType) => {
                 const data = getPackageData(packageType);
-                
+
                 return (
                   <div key={packageType} className="text-center py-1">
                     <span className="text-sm text-gray-900 dark:text-white">
-                      {data && data.monthlyPayment ? `${data.monthlyPayment.toLocaleString()} ₽` : '0 ₽'}
+                      {data && data.monthlyPayment
+                        ? `${data.monthlyPayment.toLocaleString()} ₽`
+                        : "0 ₽"}
                     </span>
                   </div>
                 );
@@ -448,7 +487,7 @@ export default function UnifiedPackageComparison({
             <div className="font-bold text-gray-900 dark:text-white text-base mb-2">
               🎁 Подарки
             </div>
-            
+
             {/* Gift Procedures Cost Row */}
             <div className="grid grid-cols-5 gap-0 py-1 border-b border-gray-50 dark:border-gray-800">
               <div className="text-sm text-gray-900 dark:text-white">
@@ -456,17 +495,26 @@ export default function UnifiedPackageComparison({
               </div>
               {packageTypes.map((packageType) => {
                 const data = getPackageData(packageType);
-                const packageData = packages.find((p: Package) => p.type === packageType);
-                
+                const packageData = packages.find(
+                  (p: Package) => p.type === packageType,
+                );
+
                 // Calculate gift procedures value
-                const giftValue = data && packageData && (packageData.giftSessions || 0) > 0 && calculation.totalProcedures > 0
-                  ? (data.finalCost / calculation.totalProcedures) * (packageData.giftSessions || 0)
-                  : 0;
-                
+                const giftValue =
+                  data &&
+                  packageData &&
+                  (packageData.giftSessions || 0) > 0 &&
+                  calculation.totalProcedures > 0
+                    ? (data.finalCost / calculation.totalProcedures) *
+                      (packageData.giftSessions || 0)
+                    : 0;
+
                 return (
                   <div key={packageType} className="text-center py-1">
                     <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                      {giftValue > 0 ? `${Math.round(giftValue).toLocaleString()} ₽` : '-'}
+                      {giftValue > 0
+                        ? `${Math.round(giftValue).toLocaleString()} ₽`
+                        : "-"}
                     </span>
                   </div>
                 );
@@ -483,13 +531,15 @@ export default function UnifiedPackageComparison({
                 {packageTypes.map((packageType) => {
                   // Calculate free zones value properly: price per procedure * quantity
                   const freeZoneValue = freeZones.reduce((total, zone) => {
-                    return total + (zone.pricePerProcedure * zone.quantity);
+                    return total + zone.pricePerProcedure * zone.quantity;
                   }, 0);
-                  
+
                   return (
                     <div key={packageType} className="text-center py-1">
                       <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                        {freeZoneValue > 0 ? `${Math.round(freeZoneValue).toLocaleString()} ₽` : '-'}
+                        {freeZoneValue > 0
+                          ? `${Math.round(freeZoneValue).toLocaleString()} ₽`
+                          : "-"}
                       </span>
                     </div>
                   );
@@ -505,15 +555,22 @@ export default function UnifiedPackageComparison({
               </div>
               {packageTypes.map((packageType) => {
                 const data = getPackageData(packageType);
-                const packageData = packages.find((p: Package) => p.type === packageType);
-                
-                const bonusPercent = packageData ? parseFloat(packageData.bonusAccountPercent) : 0;
-                const bonusAmount = data && bonusPercent > 0 ? (data.finalCost * bonusPercent) : 0;
-                
+                const packageData = packages.find(
+                  (p: Package) => p.type === packageType,
+                );
+
+                const bonusPercent = packageData
+                  ? parseFloat(packageData.bonusAccountPercent)
+                  : 0;
+                const bonusAmount =
+                  data && bonusPercent > 0 ? data.finalCost * bonusPercent : 0;
+
                 return (
                   <div key={packageType} className="text-center py-1">
                     <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                      {bonusAmount > 0 ? `${Math.round(bonusAmount).toLocaleString()} ₽` : '-'}
+                      {bonusAmount > 0
+                        ? `${Math.round(bonusAmount).toLocaleString()} ₽`
+                        : "-"}
                     </span>
                   </div>
                 );
@@ -528,26 +585,43 @@ export default function UnifiedPackageComparison({
               </div>
               {packageTypes.map((packageType) => {
                 const data = getPackageData(packageType);
-                const packageData = packages.find((p: Package) => p.type === packageType);
-                
+                const packageData = packages.find(
+                  (p: Package) => p.type === packageType,
+                );
+
                 // Calculate total gifts value
-                const giftValue = data && packageData && (packageData.giftSessions || 0) > 0 && calculation.totalProcedures > 0
-                  ? (data.finalCost / calculation.totalProcedures) * (packageData.giftSessions || 0)
+                const giftValue =
+                  data &&
+                  packageData &&
+                  (packageData.giftSessions || 0) > 0 &&
+                  calculation.totalProcedures > 0
+                    ? (data.finalCost / calculation.totalProcedures) *
+                      (packageData.giftSessions || 0)
+                    : 0;
+
+                const bonusPercent = packageData
+                  ? parseFloat(packageData.bonusAccountPercent)
                   : 0;
-                
-                const bonusPercent = packageData ? parseFloat(packageData.bonusAccountPercent) : 0;
-                const bonusAmount = data && bonusPercent > 0 ? (data.finalCost * bonusPercent) : 0;
-                
-                const freeZoneValue = freeZones && freeZones.length > 0 
-                  ? freeZones.reduce((total, zone) => total + (zone.pricePerProcedure * zone.quantity), 0)
-                  : 0;
-                
+                const bonusAmount =
+                  data && bonusPercent > 0 ? data.finalCost * bonusPercent : 0;
+
+                const freeZoneValue =
+                  freeZones && freeZones.length > 0
+                    ? freeZones.reduce(
+                        (total, zone) =>
+                          total + zone.pricePerProcedure * zone.quantity,
+                        0,
+                      )
+                    : 0;
+
                 const totalGifts = giftValue + bonusAmount + freeZoneValue;
-                
+
                 return (
                   <div key={packageType} className="text-center py-1">
                     <span className="text-lg font-bold text-gray-900 dark:text-white">
-                      {totalGifts > 0 ? `${Math.round(totalGifts).toLocaleString()} ₽` : '-'}
+                      {totalGifts > 0
+                        ? `${Math.round(totalGifts).toLocaleString()} ₽`
+                        : "-"}
                     </span>
                   </div>
                 );
