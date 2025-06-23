@@ -140,78 +140,9 @@ export function useCalculator() {
         packageConfig
       };
 
-      // Calculate pricing for all packages
-      const result = {
-        baseCost,
-        packages: {} as any,
-        totalProcedures: servicesData.reduce((sum, s) => sum + s.quantity, 0) * procedures, // For display only
-        freeZonesValue: zones.reduce((sum: number, zone: any) => sum + (zone.quantity * zone.pricePerProcedure), 0)
-      };
+      // Use the centralized calculation function
+      const result = calculatePackagePricing(baseCost, calculationParams);
       
-      console.log('Procedure count for discount calculation:', procedures);
-
-      ['vip', 'standard', 'economy'].forEach(packageType => {
-        const packageData = packages.find((p: Package) => p.type === packageType);
-        if (!packageData) {
-          result.packages[packageType] = {
-            isAvailable: false,
-            unavailableReason: "Пакет не найден",
-            finalCost: 0,
-            totalSavings: 0,
-            monthlyPayment: 0,
-            appliedDiscounts: []
-          };
-          return;
-        }
-
-        const minCost = parseFloat(packageData.minCost.toString());
-        const discount = parseFloat(packageData.discount.toString());
-        
-        // Check availability
-        const isAvailable = baseCost >= minCost;
-        if (!isAvailable) {
-          result.packages[packageType] = {
-            isAvailable: false,
-            unavailableReason: `Минимальная стоимость ${minCost}₽`,
-            finalCost: 0,
-            totalSavings: 0,
-            monthlyPayment: 0,
-            appliedDiscounts: []
-          };
-          return;
-        }
-
-        // Calculate discounts
-        const packageDiscount = baseCost * discount;
-        // 15+ procedures discount applies only based on procedure COUNT slider, not services count
-        const procedureCountForDiscount = procedures; // This is the slider value
-        const fifteenPlusProceduresDiscount = procedureCountForDiscount >= 15 ? baseCost * 0.025 : 0;
-        const totalDiscount = packageDiscount + fifteenPlusProceduresDiscount;
-        
-        console.log(`Package ${packageType}: procedures=${procedureCountForDiscount}, 15+ discount=${fifteenPlusProceduresDiscount > 0 ? 'YES' : 'NO'}`);
-        
-        // Final cost
-        const finalCost = Math.max(baseCost - totalDiscount, minCost);
-        const monthlyPayment = (finalCost - payment) / months;
-        
-        const appliedDiscounts = [
-          { type: "Скидка пакета", amount: packageDiscount }
-        ];
-        
-        if (fifteenPlusProceduresDiscount > 0) {
-          appliedDiscounts.push({ type: "15+ посещений", amount: fifteenPlusProceduresDiscount });
-        }
-
-        result.packages[packageType] = {
-          isAvailable: true,
-          unavailableReason: "",
-          finalCost,
-          totalSavings: totalDiscount,
-          monthlyPayment: Math.max(monthlyPayment, 0),
-          appliedDiscounts
-        };
-      });
-
       console.log('Final calculation result:', result);
       console.log(`15+ discount applied based on slider value: ${procedures}`);
       setCalculation(result);
