@@ -458,7 +458,7 @@ export default function UnifiedPackageComparison({
                 
                 return (
                   <div key={packageType} className="text-center py-1">
-                    <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">
+                    <span className="text-sm font-semibold text-gray-900 dark:text-white">
                       {giftValue > 0 ? `${Math.round(giftValue).toLocaleString()} ₽` : '-'}
                     </span>
                   </div>
@@ -480,7 +480,7 @@ export default function UnifiedPackageComparison({
                   
                   return (
                     <div key={packageType} className="text-center py-1">
-                      <span className="text-sm font-semibold text-green-600 dark:text-green-400">
+                      <span className="text-sm font-semibold text-gray-900 dark:text-white">
                         {freeZoneValue > 0 ? `${Math.round(freeZoneValue).toLocaleString()} ₽` : '-'}
                       </span>
                     </div>
@@ -503,7 +503,7 @@ export default function UnifiedPackageComparison({
                 
                 return (
                   <div key={packageType} className="text-center py-1">
-                    <span className="text-sm font-semibold text-orange-600 dark:text-orange-400">
+                    <span className="text-sm font-semibold text-gray-900 dark:text-white">
                       {bonusAmount > 0 ? `${Math.round(bonusAmount).toLocaleString()} ₽` : '-'}
                     </span>
                   </div>
@@ -537,7 +537,7 @@ export default function UnifiedPackageComparison({
                 
                 return (
                   <div key={packageType} className="text-center py-1">
-                    <span className="text-lg font-bold text-green-700 dark:text-green-300">
+                    <span className="text-lg font-bold text-gray-900 dark:text-white">
                       {totalGifts > 0 ? `${Math.round(totalGifts).toLocaleString()} ₽` : '-'}
                     </span>
                   </div>
