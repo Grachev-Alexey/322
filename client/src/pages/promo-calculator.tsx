@@ -107,19 +107,19 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
     return Math.min(...minPayments);
   };
 
-  // Auto-adjust down payment when calculation changes
+  // Auto-adjust down payment when calculation changes (but not when downPayment itself changes)
   useEffect(() => {
     if (calculation && calculation.packages) {
       const minPayment = getMinDownPayment();
       const maxPayment = getMaxFinalCost();
       
-      // If current down payment is outside valid range, adjust it
+      // Only adjust if current down payment is outside valid range
       if (downPayment < minPayment || downPayment > maxPayment) {
         // Set to maximum available package cost for best user experience
         setDownPayment(maxPayment);
       }
     }
-  }, [calculation, packages, downPayment]);
+  }, [calculation, packages]); // Removed downPayment from dependency array to prevent loops
 
   return (
     <div className={`min-h-screen overflow-hidden promo-background glass-pattern ${darkMode ? 'dark' : ''}`}>
@@ -214,14 +214,18 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                     onChange={(e) => setTempPaymentValue(e.target.value)}
                     onBlur={() => {
                       const numericValue = parseInt(tempPaymentValue) || 0;
-                      const constrainedValue = Math.max(getMinDownPayment(), Math.min(getMaxFinalCost(), numericValue));
+                      const minPayment = getMinDownPayment();
+                      const maxPayment = getMaxFinalCost();
+                      const constrainedValue = Math.max(minPayment, Math.min(maxPayment, numericValue));
                       setDownPayment(constrainedValue);
                       setIsEditingPayment(false);
                     }}
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
                         const numericValue = parseInt(tempPaymentValue) || 0;
-                        const constrainedValue = Math.max(getMinDownPayment(), Math.min(getMaxFinalCost(), numericValue));
+                        const minPayment = getMinDownPayment();
+                        const maxPayment = getMaxFinalCost();
+                        const constrainedValue = Math.max(minPayment, Math.min(maxPayment, numericValue));
                         setDownPayment(constrainedValue);
                         setIsEditingPayment(false);
                       }

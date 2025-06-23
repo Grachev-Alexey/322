@@ -168,6 +168,7 @@ export function useCalculator() {
       const { vip, standard, economy } = calculation.packages;
       
       // Set default down payment to VIP cost when available, otherwise highest available package
+      // Only set once when downPayment is 0 to avoid continuous updates
       if (downPayment === 0) {
         if (vip?.isAvailable) {
           setDownPayment(vip.finalCost);
