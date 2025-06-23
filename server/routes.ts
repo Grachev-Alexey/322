@@ -280,7 +280,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { id } = req.params;
       const updates = req.body;
+      console.log('API: Updating perk value', { id, updates });
       const result = await storage.updatePackagePerkValue(parseInt(id), updates);
+      console.log('API: Update result', result);
       res.json(result);
     } catch (error) {
       console.error('Error updating perk value:', error);

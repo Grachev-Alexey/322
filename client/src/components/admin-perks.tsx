@@ -86,6 +86,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
       if (perksRes.ok && valuesRes.ok) {
         const perksData = await perksRes.json();
         const valuesData = await valuesRes.json();
+        console.log('Loaded perks data:', { perksData, valuesData });
         setPerks(perksData);
         setPerkValues(valuesData);
       }
@@ -156,6 +157,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
   const updatePerkValue = async (valueId: number, updates: any) => {
     setLoading(true);
     try {
+      console.log('Updating perk value:', { valueId, updates });
       const response = await fetch(`/api/admin/perk-values/${valueId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -164,8 +166,14 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
       });
 
       if (response.ok) {
+        const result = await response.json();
+        console.log('Update result:', result);
         await loadData();
         toast({ title: "Обновлено", description: "Значение перка обновлено" });
+      } else {
+        const error = await response.text();
+        console.error('Update failed:', error);
+        toast({ title: "Ошибка", description: "Не удалось обновить значение", variant: "destructive" });
       }
     } catch (error) {
       console.error('Error updating perk value:', error);
@@ -222,6 +230,7 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
   const getPerkValuesForPerk = (perkId: number) => {
     return packageTypes.map(packageType => {
       const value = perkValues.find(pv => pv.perkId === perkId && pv.packageType === packageType);
+      console.log(`Getting perk value for perk ${perkId}, package ${packageType}:`, value);
       return { packageType, value };
     });
   };
@@ -272,6 +281,13 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
         isHighlighted,
         isBest
       };
+
+      console.log('Saving perk value:', {
+        perkId,
+        packageType,
+        currentValue: currentValue?.id,
+        updates
+      });
 
       if (currentValue) {
         await updatePerkValue(currentValue.id, updates);
