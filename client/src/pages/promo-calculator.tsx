@@ -173,30 +173,17 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             </div>
 
             {/* Payment settings - минималистичный дизайн */}
-            <div className={`floating-card-enhanced backdrop-blur-xl rounded-lg p-3 border transition-all duration-300 ${
-              selectedPackage === 'vip' 
-                ? 'bg-pink-50/95 dark:bg-pink-950/95 border-pink-200/50 dark:border-pink-700/50' 
-                : 'bg-white/95 dark:bg-gray-900/95 border-white/20 dark:border-gray-700/20'
-            }`}>
+            <div className="floating-card-enhanced backdrop-blur-xl rounded-lg p-3 border transition-all duration-300 bg-white/95 dark:bg-gray-900/95 border-white/20 dark:border-gray-700/20">
               <div className="flex items-center justify-center mb-2">
-                {selectedPackage === 'vip' && (
-                  <div className="w-6 h-6 bg-pink-400 dark:bg-pink-500 rounded-full flex items-center justify-center mr-2">
-                    <Crown className="w-3 h-3 text-white" />
-                  </div>
-                )}
-                <h4 className={`font-semibold mb-0 text-sm ${
-                  selectedPackage === 'vip' 
-                    ? 'text-pink-600 dark:text-pink-400' 
-                    : 'text-gray-900 dark:text-white'
-                }`}>
-                  {selectedPackage === 'vip' ? 'VIP Полная Предоплата' : 'Первый взнос'}
+                <h4 className="font-semibold mb-0 text-sm text-gray-900 dark:text-white">
+                  {selectedPackage === 'vip' ? 'Полная предоплата' : 'Первый взнос'}
                 </h4>
               </div>
               
               <div className="text-center mb-2">
                 {selectedPackage === 'vip' ? (
-                  // VIP - показываем полную стоимость в розовом цвете
-                  <div className="text-xl lg:text-2xl font-bold text-pink-600 dark:text-pink-400">
+                  // VIP - показываем полную стоимость стандартным цветом
+                  <div className="text-xl lg:text-2xl font-bold text-premium">
                     {calculation?.packages?.vip ? formatPrice(calculation.packages.vip.finalCost) : formatPrice(calculation?.baseCost || 0)}
                   </div>
                 ) : (
@@ -266,21 +253,12 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 />
               )}
               
-              <div className={`text-xs mt-1 text-center ${
-                selectedPackage === 'vip' 
-                  ? 'text-pink-600 dark:text-pink-400 font-medium' 
-                  : 'text-gray-500'
-              }`}>
-                {selectedPackage === 'vip' ? (
-                  <div className="flex items-center justify-center space-x-1">
-                    <Sparkles className="w-3 h-3" />
-                    <span>100% предоплата</span>
-                  </div>
-                ) : selectedPackage ? (
+              <div className="text-xs mt-1 text-center text-gray-500">
+                {selectedPackage && selectedPackage !== 'vip' ? (
                   `${formatPrice(getMinDownPayment())} - ${formatPrice(getMaxDownPayment())}`
-                ) : (
+                ) : !selectedPackage ? (
                   'Выберите пакет'
-                )}
+                ) : null}
               </div>
             </div>
 
