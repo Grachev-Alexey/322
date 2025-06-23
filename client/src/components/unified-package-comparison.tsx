@@ -162,9 +162,9 @@ export default function UnifiedPackageComparison({
 
   return (
     <TooltipProvider>
-      <div className="bg-white dark:bg-gray-900 rounded-xl overflow-hidden flex flex-col h-full">
+      <div className="floating-card-enhanced rounded-xl overflow-hidden flex flex-col h-full">
         {/* Package Headers */}
-        <div className="bg-gray-50 dark:bg-gray-800 px-2 py-2">
+        <div className="bg-gradient-to-r from-gray-50 to-gray-100/50 dark:bg-gray-800 px-3 py-3 border-b border-gray-100">
           <div className="grid grid-cols-5 gap-0">
             <div className="text-sm font-medium text-gray-700 dark:text-gray-300"></div>
             {packageTypes.map((packageType) => {
@@ -205,7 +205,7 @@ export default function UnifiedPackageComparison({
             return (
               <div
                 key={perk.id}
-                className="grid grid-cols-5 gap-0 py-2 px-3 border-b border-gray-100/60 dark:border-gray-800 hover:bg-gray-50/30 transition-colors"
+                className="table-row-enhanced grid grid-cols-5 gap-0 py-3 px-4"
               >
                 {/* Perk Name */}
                 <div className="flex items-center space-x-2">

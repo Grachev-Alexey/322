@@ -174,7 +174,7 @@ export default function ServiceSelector({
         {isOpen && dropdownPosition && createPortal(
           <div 
             data-dropdown-portal
-            className="fixed z-[99999] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-xl backdrop-blur-sm max-h-[280px] overflow-hidden animate-in slide-in-from-top-2 duration-200"
+            className="fixed z-[99999] floating-card-enhanced border border-gray-200/60 dark:border-gray-700 rounded-xl shadow-xl backdrop-blur-sm max-h-[280px] overflow-hidden animate-in slide-in-from-top-2 duration-200"
             style={{
               top: `${dropdownPosition.top}px`,
               left: `${dropdownPosition.left}px`,
@@ -250,7 +250,7 @@ export default function ServiceSelector({
         {selectedServices.map((service) => (
           <div
             key={service.yclientsId}
-            className={`flex items-center justify-between bg-gray-50 dark:bg-gray-800 rounded-lg p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${freeZones.length > 0 ? 'opacity-50' : ''}`}
+            className={`floating-card flex items-center justify-between rounded-lg p-3 cursor-pointer transition-all duration-200 ${freeZones.length > 0 ? 'opacity-50' : ''}`}
             onDoubleClick={() => handleDoubleClick(service)}
             title={freeZones.length > 0 ? "Можно добавить только одну бесплатную зону" : "Двойной клик для добавления бесплатной зоны"}
           >
@@ -284,7 +284,7 @@ export default function ServiceSelector({
             {freeZones.map((zone) => (
               <div
                 key={zone.serviceId}
-                className="flex items-center justify-between bg-green-50 border-0 shadow-none rounded-lg p-2"
+                className="floating-card bg-gradient-to-r from-green-50/50 to-emerald-50/50 flex items-center justify-between rounded-lg p-3 border-green-200/50"
               >
                 <div className="flex items-center min-w-0 flex-1">
                   <Badge variant="secondary" className="bg-green-100 text-green-800 mr-2 text-xs flex-shrink-0 border-0 shadow-none">

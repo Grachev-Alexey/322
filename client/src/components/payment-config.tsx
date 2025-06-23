@@ -134,7 +134,7 @@ export default function PaymentConfig({
           <Label htmlFor="installmentMonths" className="block text-sm font-medium text-gray-700 mb-3">
             Срок рассрочки
           </Label>
-          <div className="bg-gray-50 rounded-xl p-6">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100/30 rounded-xl p-6 border border-blue-200/40">
             <div className="flex items-center justify-between mb-4">
               <span className="text-2xl font-bold text-purple-600">{installmentMonths}</span>
               <span className="text-sm text-gray-600">
