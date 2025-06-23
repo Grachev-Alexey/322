@@ -421,6 +421,34 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
     }
   };
 
+  const syncSubscriptionTypes = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch("/api/subscription-types/sync", {
+        method: "POST",
+        credentials: "include"
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        toast({
+          title: "Успешно",
+          description: `Синхронизировано ${result.count} типов абонементов`
+        });
+      } else {
+        throw new Error("Failed to sync subscription types");
+      }
+    } catch (error) {
+      toast({
+        title: "Ошибка",
+        description: "Не удалось синхронизировать типы абонементов",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <header className="bg-white shadow-sm border-b">

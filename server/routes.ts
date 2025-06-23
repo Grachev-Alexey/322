@@ -168,6 +168,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Subscription Types sync
+  app.post("/api/subscription-types/sync", requireAdmin, async (req, res) => {
+    try {
+      const yclientsConfig = await storage.getConfig('yclients');
+      if (!yclientsConfig) {
+        return res.status(400).json({ message: "Настройки Yclients не найдены" });
+      }
+
+      const yclientsService = createYclientsService(yclientsConfig.value as YclientsConfig);
+      const subscriptionTypes = await yclientsService.getSubscriptionTypes();
+      
+      for (const subscriptionType of subscriptionTypes) {
+        await storage.upsertSubscriptionType({
+          yclientsId: subscriptionType.id,
+          title: subscriptionType.title,
+          cost: subscriptionType.cost.toString(),
+          allowFreeze: subscriptionType.allow_freeze,
+          freezeLimit: subscriptionType.freeze_limit,
+          balanceContainer: subscriptionType.balance_container
+        });
+      }
+
+      res.json({ message: "Типы абонементов синхронизированы", count: subscriptionTypes.length });
+    } catch (error) {
+      console.error("Error syncing subscription types:", error);
+      res.status(500).json({ message: "Ошибка синхронизации типов абонементов" });
+    }
+  });
+
+  // Admin routes - Subscription Types Management  
+  app.get("/api/admin/subscription-types", requireAdmin, async (req, res) => {
+    try {
+      const subscriptionTypes = await storage.getSubscriptionTypes();
+      res.json(subscriptionTypes);
+    } catch (error) {
+      res.status(500).json({ message: "Ошибка получения типов абонементов" });
+    }
+  });
+
   // Configuration
   app.get("/api/config/:key", requireAdmin, async (req, res) => {
     try {
