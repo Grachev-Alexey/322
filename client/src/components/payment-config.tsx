@@ -61,7 +61,7 @@ export default function PaymentConfig({
               onChange={handleDownPaymentChange}
               className="input-premium text-lg font-semibold pr-12"
               min="0"
-              step="1000"
+              step="1"
             />
             <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500">₽</span>
           </div>
