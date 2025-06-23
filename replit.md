@@ -92,6 +92,14 @@ The development environment uses Vite's HMR (Hot Module Replacement) for rapid d
   - Added separate "Абонементы" tab in admin interface
   - Enhanced error handling and validation for external API calls
 
+- **Bonus Account System (Latest)**: Implemented comprehensive bonus account feature for packages
+  - Added bonusAccountPercent field to packages database schema with test values (VIP: 20%, Standard: 15%, Economy: 10%)
+  - Created separate display rows in comparison table showing percentage ("+20% от стоимости") and calculated amount
+  - Built admin interface for editing bonus account percentages with real-time validation
+  - Added backend API endpoint for updating package bonus account settings
+  - Fixed TypeScript interfaces across all components for consistency
+  - Enhanced gift procedure cost calculations and display in comparison table
+
 - **Calculator Settings Configuration**: Completed full configuration system implementation
   - All calculator parameters now configurable from admin panel (discounts, thresholds, installment options)
   - Fixed certificate discount logic to use fixed amount instead of percentage

@@ -442,6 +442,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.put("/api/admin/packages/:id", requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { bonusAccountPercent } = req.body;
+      
+      if (bonusAccountPercent === undefined || bonusAccountPercent < 0 || bonusAccountPercent > 1) {
+        return res.status(400).json({ message: "Неверное значение бонусного счета" });
+      }
+      
+      const result = await storage.updatePackage(parseInt(id), { bonusAccountPercent: bonusAccountPercent.toString() });
+      if (!result) {
+        return res.status(404).json({ message: "Пакет не найден" });
+      }
+      
+      res.json(result);
+    } catch (error) {
+      console.error('Error updating package:', error);
+      res.status(500).json({ message: "Ошибка обновления пакета" });
+    }
+  });
+
   app.post("/api/admin/packages", requireAdmin, async (req, res) => {
     try {
       const packageData = req.body;

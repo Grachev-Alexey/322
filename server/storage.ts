@@ -37,6 +37,7 @@ export interface IStorage {
   // Packages
   getPackages(): Promise<Package[]>;
   upsertPackage(pkg: InsertPackage): Promise<Package>;
+  updatePackage(id: number, updates: Partial<InsertPackage>): Promise<Package | null>;
   getPackageCount(): Promise<number>;
   
   // Perks
@@ -222,6 +223,14 @@ export class DatabaseStorage implements IStorage {
       const [created] = await db.insert(packages).values(pkg).returning();
       return created;
     }
+  }
+
+  async updatePackage(id: number, updates: Partial<InsertPackage>): Promise<Package | null> {
+    const [updated] = await db.update(packages)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(packages.id, id))
+      .returning();
+    return updated || null;
   }
 
   async createOrUpdatePackage(pkg: InsertPackage): Promise<Package> {

@@ -319,10 +319,31 @@ export default function UnifiedPackageComparison({
                   })}
                 </div>
 
-                {/* Bonus Account Row */}
+                {/* Bonus Account Percentage Row */}
                 <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-50 dark:border-gray-700/50">
                   <div className="flex items-center font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
                     Бонусный счет
+                  </div>
+                  {packageTypes.map((packageType) => {
+                    const packageData = packages.find((p: Package) => p.type === packageType);
+                    const isSelected = selectedPackage === packageType;
+                    
+                    const bonusPercent = packageData ? Math.round(parseFloat(packageData.bonusAccountPercent) * 100) : 0;
+                    
+                    return (
+                      <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-orange-100 dark:bg-orange-800 rounded-lg' : ''}`}>
+                        <span className="text-xs lg:text-sm font-semibold text-orange-600 dark:text-orange-400">
+                          {bonusPercent > 0 ? `+${bonusPercent}% от стоимости` : '0%'}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Bonus Account Amount Row */}
+                <div className="grid grid-cols-4 gap-1 lg:gap-2 py-2 lg:py-3 px-2 lg:px-3 border-b border-gray-50 dark:border-gray-700/50">
+                  <div className="flex items-center font-medium text-gray-900 dark:text-white text-xs lg:text-sm">
+                    Сумма на бонусный счет
                   </div>
                   {packageTypes.map((packageType) => {
                     const data = getPackageData(packageType);
@@ -334,16 +355,9 @@ export default function UnifiedPackageComparison({
                     
                     return (
                       <div key={packageType} className={`text-center py-1 ${isSelected ? 'bg-orange-100 dark:bg-orange-800 rounded-lg' : ''}`}>
-                        <div className="space-y-1">
-                          <span className="text-xs lg:text-sm font-semibold text-orange-600 dark:text-orange-400">
-                            {bonusPercent > 0 ? `${bonusPercent}%` : '0%'}
-                          </span>
-                          {bonusAmount > 0 && (
-                            <div className="text-xs text-orange-500 dark:text-orange-300">
-                              {formatPrice(bonusAmount)}
-                            </div>
-                          )}
-                        </div>
+                        <span className="text-xs lg:text-sm font-semibold text-orange-600 dark:text-orange-400">
+                          {bonusAmount > 0 ? formatPrice(bonusAmount) : '0₽'}
+                        </span>
                       </div>
                     );
                   })}
