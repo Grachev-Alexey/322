@@ -30,6 +30,13 @@ export interface PackagePerkValue {
 
 export function usePackagePerks() {
   return useQuery<PackagePerkValue[]>({
-    queryKey: ['/api/perks']
+    queryKey: ['/api/perks'],
+    queryFn: async () => {
+      const response = await fetch('/api/perks');
+      if (!response.ok) {
+        throw new Error('Failed to fetch package perks');
+      }
+      return response.json();
+    }
   });
 }

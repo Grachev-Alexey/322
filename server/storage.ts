@@ -282,6 +282,7 @@ export class DatabaseStorage implements IStorage {
         name: perks.name,
         description: perks.description,
         icon: perks.icon,
+        iconColor: perks.iconColor,
         displayOrder: perks.displayOrder,
         isActive: perks.isActive,
         updatedAt: perks.updatedAt,
