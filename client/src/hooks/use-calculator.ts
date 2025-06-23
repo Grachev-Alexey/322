@@ -219,10 +219,13 @@ export function useCalculator() {
             // Package requires full payment (like VIP)
             newDownPayment = packageData.finalCost;
           } else {
-            // Use minimum down payment percentage from DB
+            // Calculate minimum down payment as percentage of package cost
             const minPaymentPercent = parseFloat(packageConfig.minDownPaymentPercent.toString());
+            const percentageBasedMin = packageData.finalCost * minPaymentPercent;
             const minCostFromDB = parseFloat(packageConfig.minCost.toString());
-            const minPayment = Math.max(minCostFromDB, packageData.finalCost * minPaymentPercent);
+            
+            // Use percentage-based calculation, with absolute minimum as fallback
+            const minPayment = Math.max(percentageBasedMin, Math.min(minCostFromDB, percentageBasedMin));
             const maxPayment = packageData.finalCost; // Can't exceed package cost
             
             // Constrain to valid range
@@ -269,11 +272,16 @@ export function useCalculator() {
         return packageData.finalCost;
       }
       
-      // Use minimum from DB: max of minCost or percentage of final cost
+      // Calculate minimum down payment as percentage of package cost
       const minPaymentPercent = parseFloat(packageConfig.minDownPaymentPercent.toString());
+      const percentageBasedMin = Math.round(packageData.finalCost * minPaymentPercent);
+      
+      // Use absolute minimum from DB only as fallback for very small packages
       const minCostFromDB = parseFloat(packageConfig.minCost.toString());
       
-      return Math.max(minCostFromDB, Math.round(packageData.finalCost * minPaymentPercent));
+      // For most cases, use percentage-based calculation
+      // Only use absolute minimum if percentage results in a smaller amount
+      return Math.max(percentageBasedMin, Math.min(minCostFromDB, percentageBasedMin));
     }
   };
 }
