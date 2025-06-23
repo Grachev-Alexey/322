@@ -37,7 +37,11 @@ interface Package {
   type: string;
   name: string;
   discount: string;
+  minCost: string;
+  minDownPaymentPercent: string;
+  requiresFullPayment: boolean;
   giftSessions: number;
+  bonusAccountPercent: string;
 }
 
 export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorPageProps) {
@@ -346,7 +350,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             <div className="flex-1 overflow-hidden">
               <UnifiedPackageComparison 
                 calculation={calculation}
-                packages={packages as Package[]}
+                packages={packages}
                 selectedPackage={selectedPackage}
                 onPackageSelect={setSelectedPackage}
                 downPayment={downPayment}

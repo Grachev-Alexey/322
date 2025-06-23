@@ -186,7 +186,7 @@ export default function UnifiedPackageComparison({
                   >
                     <Icon className="h-4 w-4 text-white" />
                   </div>
-                  <div className="font-bold text-gray-900 dark:text-white text-sm">
+                  <div className="font-bold text-gray-700 dark:text-gray-300 text-sm">
                     {getPackageName(packageType)}
                   </div>
                 </div>
@@ -217,7 +217,7 @@ export default function UnifiedPackageComparison({
                       />
                     </div>
                   )}
-                  <span className="font-medium text-gray-900 dark:text-white text-sm">
+                  <span className="font-medium text-gray-700 dark:text-gray-300 text-sm">
                     {perk.name}
                   </span>
                   {perk.description && (
@@ -281,7 +281,7 @@ export default function UnifiedPackageComparison({
 
           {/* Free Sessions Row */}
           <div className="grid grid-cols-5 gap-0 py-1 px-2 border-b border-gray-50 dark:border-gray-800">
-            <div className="text-sm font-medium text-gray-900 dark:text-white">
+            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Сеансы в подарок
             </div>
             {packageTypes.map((packageType) => {
@@ -292,7 +292,7 @@ export default function UnifiedPackageComparison({
 
               return (
                 <div key={packageType} className="text-center py-1">
-                  <span className="text-base font-bold text-gray-900 dark:text-white">
+                  <span className="text-base font-bold text-gray-700 dark:text-gray-300">
                     {giftSessions > 0 ? giftSessions : "-"}
                   </span>
                 </div>
@@ -303,7 +303,7 @@ export default function UnifiedPackageComparison({
 
           {/* Discount Row */}
           <div className="grid grid-cols-5 gap-0 py-1 px-2 border-b border-gray-50 dark:border-gray-800">
-            <div className="text-sm font-medium text-gray-900 dark:text-white">
+            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Скидка
             </div>
             {packageTypes.map((packageType) => {
@@ -316,7 +316,7 @@ export default function UnifiedPackageComparison({
 
               return (
                 <div key={packageType} className="text-center py-1">
-                  <span className="text-lg font-bold text-gray-900 dark:text-white">
+                  <span className="text-lg font-bold text-gray-700 dark:text-gray-300">
                     {discountPercent}%
                   </span>
                 </div>
@@ -327,7 +327,7 @@ export default function UnifiedPackageComparison({
 
           {/* Bonus Account Row */}
           <div className="grid grid-cols-5 gap-0 py-1 px-2 border-b border-gray-50 dark:border-gray-800">
-            <div className="text-sm font-medium text-gray-900 dark:text-white">
+            <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Бонусный счет
             </div>
             {packageTypes.map((packageType) => {
@@ -340,7 +340,7 @@ export default function UnifiedPackageComparison({
 
               return (
                 <div key={packageType} className="text-center py-1">
-                  <div className="text-xs font-bold text-gray-900 dark:text-white">
+                  <div className="text-xs font-bold text-gray-700 dark:text-gray-300">
                     <div>{bonusPercent}%</div>
                     <div>от стоимости</div>
                   </div>
@@ -352,7 +352,7 @@ export default function UnifiedPackageComparison({
 
           {/* Subscription Cost Section */}
           <div className="py-2 px-2">
-            <div className="font-bold text-gray-900 dark:text-white text-base mb-2">
+            <div className="font-bold text-gray-700 dark:text-gray-300 text-base mb-2">
               Итого стоимость абонемента
             </div>
 
@@ -422,7 +422,7 @@ export default function UnifiedPackageComparison({
 
           {/* Final Cost Row */}
           <div className="grid grid-cols-5 gap-0 py-1 px-2 border-b border-gray-50 dark:border-gray-800">
-            <div className="text-base font-bold text-gray-900 dark:text-white">
+            <div className="text-base font-bold text-gray-700 dark:text-gray-300">
               Итого стоимость курса:
             </div>
             {packageTypes.map((packageType) => {
@@ -430,7 +430,7 @@ export default function UnifiedPackageComparison({
 
               return (
                 <div key={packageType} className="text-center py-1">
-                  <div className="font-bold text-gray-900 dark:text-white text-lg">
+                  <div className="font-bold text-premium text-lg">
                     {data && data.finalCost
                       ? `${data.finalCost.toLocaleString()} ₽`
                       : "Выберите услуги"}
@@ -451,7 +451,7 @@ export default function UnifiedPackageComparison({
               {packageTypes.map((packageType) => {
                 return (
                   <div key={packageType} className="text-center py-1">
-                    <span className="text-sm text-gray-900 dark:text-white">
+                    <span className="text-sm text-gray-700 dark:text-gray-300">
                       {downPayment.toLocaleString()} ₽
                     </span>
                   </div>
@@ -467,13 +467,18 @@ export default function UnifiedPackageComparison({
               </div>
               {packageTypes.map((packageType) => {
                 const data = getPackageData(packageType);
+                const packageData = packages.find((p) => p.type === packageType);
+                
+                // For VIP package with full payment, show "-"
+                const isVipFullPayment = packageType === 'vip' && packageData?.requiresFullPayment;
 
                 return (
                   <div key={packageType} className="text-center py-1">
-                    <span className="text-sm text-gray-900 dark:text-white">
-                      {data && data.monthlyPayment
+                    <span className="text-sm text-gray-700 dark:text-gray-300">
+                      {isVipFullPayment ? "-" : 
+                       data && data.monthlyPayment > 0
                         ? `${data.monthlyPayment.toLocaleString()} ₽`
-                        : "0 ₽"}
+                        : "-"}
                     </span>
                   </div>
                 );
