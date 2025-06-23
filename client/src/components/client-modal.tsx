@@ -14,6 +14,7 @@ interface ClientModalProps {
   calculation: any;
   selectedPackage: string | null;
   selectedServices: any[];
+  procedureCount: number;
   downPayment: number;
   installmentMonths: number;
   usedCertificate: boolean;
@@ -26,6 +27,7 @@ export default function ClientModal({
   calculation,
   selectedPackage,
   selectedServices,
+  procedureCount,
   downPayment,
   installmentMonths,
   usedCertificate,
@@ -71,7 +73,7 @@ export default function ClientModal({
           services: selectedServices.map(service => ({
             id: service.yclientsId,
             name: service.title,
-            quantity: service.quantity || 1
+            quantity: (service.quantity || 1) * procedureCount
           })),
           packageType: selectedPackage,
           baseCost: calculation.baseCost,

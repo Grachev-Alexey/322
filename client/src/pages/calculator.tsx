@@ -234,6 +234,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
           calculation={calculation}
           selectedPackage={selectedPackage}
           selectedServices={selectedServices}
+          procedureCount={procedureCount}
           downPayment={downPayment}
           installmentMonths={installmentMonths}
           usedCertificate={usedCertificate}

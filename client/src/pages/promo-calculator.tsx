@@ -398,6 +398,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
           calculation={calculation}
           selectedPackage={selectedPackage}
           selectedServices={selectedServices}
+          procedureCount={procedureCount}
           downPayment={downPayment}
           installmentMonths={installmentMonths}
           usedCertificate={usedCertificate}
