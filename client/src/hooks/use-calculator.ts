@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { calculatePackagePricing } from "@/lib/calculator";
 
@@ -60,6 +60,11 @@ export function useCalculator() {
   const [freeZones, setFreeZones] = useState<FreeZone[]>([]);
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
   const [calculation, setCalculation] = useState<Calculation | null>(null);
+  
+  // Debounce refs
+  const downPaymentTimeoutRef = useRef<NodeJS.Timeout>();
+  const packageSelectionTimeoutRef = useRef<NodeJS.Timeout>();
+  const isUserDragging = useRef(false);
 
   // Get services and packages from backend
   const { data: services = [] } = useQuery<Service[]>({
@@ -150,71 +155,30 @@ export function useCalculator() {
     [services, packages]
   );
 
-  // Trigger calculation when dependencies change
-  useEffect(() => {
-    calculateInstantly(
-      selectedServices,
-      procedureCount,
-      downPayment,
-      installmentMonths,
-      usedCertificate,
-      freeZones
-    );
+  // Debounced calculation trigger
+  const debouncedCalculation = useCallback(() => {
+    if (downPaymentTimeoutRef.current) {
+      clearTimeout(downPaymentTimeoutRef.current);
+    }
+    
+    downPaymentTimeoutRef.current = setTimeout(() => {
+      calculateInstantly(
+        selectedServices,
+        procedureCount,
+        downPayment,
+        installmentMonths,
+        usedCertificate,
+        freeZones
+      );
+    }, isUserDragging.current ? 100 : 0); // Shorter debounce when dragging
   }, [selectedServices, procedureCount, downPayment, installmentMonths, usedCertificate, freeZones, calculateInstantly]);
 
-  // Auto-select package based on down payment amount and set default VIP down payment
+  // Trigger calculation when dependencies change
   useEffect(() => {
-    if (calculation && calculation.packages) {
-      const { vip, standard, economy } = calculation.packages;
-      
-      // Set default down payment to VIP cost when available, otherwise highest available package
-      // Only set once when downPayment is 0 to avoid continuous updates
-      if (downPayment === 0) {
-        if (vip?.isAvailable) {
-          setDownPayment(vip.finalCost);
-          return;
-        } else if (standard?.isAvailable) {
-          setDownPayment(standard.finalCost);
-          return;
-        } else if (economy?.isAvailable) {
-          setDownPayment(economy.finalCost);
-          return;
-        }
-      }
-      
-      // Auto-select package based on down payment amount
-      let newSelectedPackage = null;
-      
-      if (downPayment >= (vip?.finalCost || Infinity) * 0.9) {
-        // If down payment is 90%+ of VIP cost, select VIP
-        newSelectedPackage = vip?.isAvailable ? 'vip' : null;
-      } else if (downPayment >= (standard?.finalCost || Infinity) * 0.5) {
-        // If down payment is 50%+ of Standard cost, select Standard
-        newSelectedPackage = standard?.isAvailable ? 'standard' : null;
-      } else {
-        // Otherwise select Economy if available
-        newSelectedPackage = economy?.isAvailable ? 'economy' : null;
-      }
-      
-      // Fallback to first available package
-      if (!newSelectedPackage) {
-        const availablePackages = Object.entries(calculation.packages)
-          .filter(([_, data]) => data.isAvailable)
-          .sort((a, b) => {
-            const order = { vip: 0, standard: 1, economy: 2 };
-            return order[a[0] as keyof typeof order] - order[b[0] as keyof typeof order];
-          });
+    debouncedCalculation();
+  }, [debouncedCalculation]);
 
-        if (availablePackages.length > 0) {
-          newSelectedPackage = availablePackages[0][0];
-        }
-      }
-      
-      if (newSelectedPackage !== selectedPackage) {
-        setSelectedPackage(newSelectedPackage);
-      }
-    }
-  }, [calculation, downPayment]);
+
 
   return {
     selectedServices,
@@ -229,12 +193,87 @@ export function useCalculator() {
     totalProcedures,
     setSelectedServices,
     setProcedureCount,
-    setDownPayment,
+    setDownPayment: useCallback((value: number) => {
+      isUserDragging.current = true;
+      setDownPayment(value);
+      // Reset dragging flag after a delay
+      setTimeout(() => {
+        isUserDragging.current = false;
+      }, 500);
+    }, []),
     setInstallmentMonths,
     setUsedCertificate,
     setFreeZones,
-    setSelectedPackage,
+    setSelectedPackage: useCallback((packageType: string | null) => {
+      setSelectedPackage(packageType);
+      
+      // Adjust down payment based on selected package requirements from DB
+      if (packageType && calculation?.packages && packages.length > 0) {
+        const packageData = calculation.packages[packageType as keyof typeof calculation.packages];
+        const packageConfig = packages.find(p => p.type === packageType);
+        
+        if (packageData?.isAvailable && packageConfig) {
+          let newDownPayment = downPayment;
+          
+          if (packageConfig.requiresFullPayment) {
+            // Package requires full payment (like VIP)
+            newDownPayment = packageData.finalCost;
+          } else {
+            // Use minimum down payment percentage from DB
+            const minPaymentPercent = parseFloat(packageConfig.minDownPaymentPercent.toString());
+            const minCostFromDB = parseFloat(packageConfig.minCost.toString());
+            const minPayment = Math.max(minCostFromDB, packageData.finalCost * minPaymentPercent);
+            const maxPayment = packageData.finalCost; // Can't exceed package cost
+            
+            // Constrain to valid range
+            if (downPayment < minPayment) {
+              newDownPayment = Math.round(minPayment);
+            } else if (downPayment > maxPayment) {
+              newDownPayment = Math.round(maxPayment);
+            }
+          }
+          
+          if (newDownPayment !== downPayment) {
+            setDownPayment(newDownPayment);
+          }
+        }
+      }
+    }, [calculation, downPayment, packages]),
     isLoading: !calculation && selectedServices.length > 0,
-    getMaxDownPayment: () => calculation?.packages.vip?.finalCost || 50000
+    getMaxDownPayment: () => {
+      if (!selectedPackage || !calculation?.packages || packages.length === 0) return 50000;
+      
+      const packageData = calculation.packages[selectedPackage as keyof typeof calculation.packages];
+      const packageConfig = packages.find(p => p.type === selectedPackage);
+      
+      if (!packageData?.isAvailable || !packageConfig) return 50000;
+      
+      // If package requires full payment, max = full cost
+      if (packageConfig.requiresFullPayment) {
+        return packageData.finalCost;
+      }
+      
+      // Otherwise, max is full cost (user can pay up to 100%)
+      return packageData.finalCost;
+    },
+    getMinDownPayment: () => {
+      if (!selectedPackage || !calculation?.packages || packages.length === 0) return 5000;
+      
+      const packageData = calculation.packages[selectedPackage as keyof typeof calculation.packages];
+      const packageConfig = packages.find(p => p.type === selectedPackage);
+      
+      if (!packageData?.isAvailable || !packageConfig) return 5000;
+      
+      // If package requires full payment, min = max = full cost
+      if (packageConfig.requiresFullPayment) {
+        return packageData.finalCost;
+      }
+      
+      // Use minimum from DB: max of minCost or percentage of final cost
+      const minPaymentPercent = parseFloat(packageConfig.minDownPaymentPercent.toString());
+      const minCostFromDB = parseFloat(packageConfig.minCost.toString());
+      
+      return Math.max(minCostFromDB, Math.round(packageData.finalCost * minPaymentPercent));
+    }
   };
 }

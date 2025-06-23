@@ -63,6 +63,9 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
     setUsedCertificate,
     setFreeZones,
     setSelectedPackage,
+    isLoading,
+    getMinDownPayment,
+    getMaxDownPayment
   } = useCalculator();
 
   const toggleDarkMode = () => {
@@ -80,46 +83,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
     return (calculation.packages as Record<string, PackageData>)[packageType] || null;
   };
 
-  // Helper function to get max final cost - prioritize VIP > Standard > Economy
-  const getMaxFinalCost = (): number => {
-    if (!calculation || !calculation.packages) return 25000;
-    const packages = calculation.packages as Record<string, PackageData>;
-    
-    if (packages.vip?.isAvailable) return packages.vip.finalCost;
-    if (packages.standard?.isAvailable) return packages.standard.finalCost;
-    if (packages.economy?.isAvailable) return packages.economy.finalCost;
-    
-    return 25000;
-  };
 
-  const getMinDownPayment = (): number => {
-    if (!calculation || !calculation.packages) return 5000;
-    const availablePackages = Object.entries(calculation.packages as Record<string, PackageData>)
-      .filter(([_, data]) => data.isAvailable);
-    if (availablePackages.length === 0) return 5000;
-    
-    // Get minimum required down payment from available packages
-    const minPayments = availablePackages.map(([type, data]) => {
-      const pkg = packages.find(p => p.type === type);
-      if (!pkg) return 5000;
-      return Math.max(5000, data.finalCost * parseFloat(pkg.minDownPaymentPercent.toString()));
-    });
-    return Math.min(...minPayments);
-  };
-
-  // Auto-adjust down payment when calculation changes (but not when downPayment itself changes)
-  useEffect(() => {
-    if (calculation && calculation.packages) {
-      const minPayment = getMinDownPayment();
-      const maxPayment = getMaxFinalCost();
-      
-      // Only adjust if current down payment is outside valid range
-      if (downPayment < minPayment || downPayment > maxPayment) {
-        // Set to maximum available package cost for best user experience
-        setDownPayment(maxPayment);
-      }
-    }
-  }, [calculation, packages]); // Removed downPayment from dependency array to prevent loops
 
   return (
     <div className={`min-h-screen overflow-hidden promo-background glass-pattern ${darkMode ? 'dark' : ''}`}>
@@ -215,7 +179,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                     onBlur={() => {
                       const numericValue = parseInt(tempPaymentValue) || 0;
                       const minPayment = getMinDownPayment();
-                      const maxPayment = getMaxFinalCost();
+                      const maxPayment = getMaxDownPayment();
                       const constrainedValue = Math.max(minPayment, Math.min(maxPayment, numericValue));
                       setDownPayment(constrainedValue);
                       setIsEditingPayment(false);
@@ -224,7 +188,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                       if (e.key === 'Enter') {
                         const numericValue = parseInt(tempPaymentValue) || 0;
                         const minPayment = getMinDownPayment();
-                        const maxPayment = getMaxFinalCost();
+                        const maxPayment = getMaxDownPayment();
                         const constrainedValue = Math.max(minPayment, Math.min(maxPayment, numericValue));
                         setDownPayment(constrainedValue);
                         setIsEditingPayment(false);
@@ -249,13 +213,20 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
               
               <RangeSlider
                 min={getMinDownPayment()}
-                max={getMaxFinalCost()}
+                max={getMaxDownPayment()}
                 step={1}
                 value={downPayment}
                 onChange={setDownPayment}
                 className="dark:bg-gray-700 mb-2"
                 formatLabel={formatPrice}
+                disabled={!selectedPackage}
               />
+              
+              <div className="text-xs text-gray-500 mt-1 text-center">
+                {selectedPackage ? 
+                  `${formatPrice(getMinDownPayment())} - ${formatPrice(getMaxDownPayment())}` : 
+                  'Выберите пакет'}
+              </div>
             </div>
 
             {/* Installment configuration - компактный */}

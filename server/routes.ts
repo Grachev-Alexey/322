@@ -542,11 +542,22 @@ function calculatePackagePricing(baseCost: number, calculation: any, packages: a
   // Calculate procedure count
   const totalProcedures = services.reduce((sum: number, service: any) => sum + service.quantity, 0);
   
-  // Base package discounts
+  // Base package discounts - get from packages array
+  const packageMap = {};
+  packages.forEach((pkg: any) => {
+    packageMap[pkg.type] = {
+      discount: parseFloat(pkg.discount),
+      minCost: parseFloat(pkg.minCost),
+      minDownPaymentPercent: parseFloat(pkg.minDownPaymentPercent),
+      requiresFullPayment: pkg.requiresFullPayment,
+      name: pkg.name
+    };
+  });
+  
   const packageDiscounts = {
-    vip: packages.vip.discount,
-    standard: packages.standard.discount,
-    economy: packages.economy.discount
+    vip: packageMap['vip']?.discount || 0.30,
+    standard: packageMap['standard']?.discount || 0.20,
+    economy: packageMap['economy']?.discount || 0.10
   };
 
   // Additional discounts
@@ -588,26 +599,19 @@ function calculatePackagePricing(baseCost: number, calculation: any, packages: a
     let isAvailable = true;
     let unavailableReason = '';
     
-    if (pkg === 'vip') {
-      if (baseCost < packages.vip.minCost) {
+    const pkgConfig = packageMap[pkg];
+    if (!pkgConfig) {
+      isAvailable = false;
+      unavailableReason = 'Пакет не найден';
+    } else {
+      // Check minimum cost requirement
+      if (baseCost < pkgConfig.minCost) {
         isAvailable = false;
-        unavailableReason = `Минимальная стоимость курса ${packages.vip.minCost} ₽`;
-      } else if (downPayment < finalCost) {
-        isAvailable = false;
-        unavailableReason = 'Требуется 100% предоплата';
-      }
-    } else if (pkg === 'standard') {
-      if (downPayment < finalCost * 0.5 || downPayment < packages.standard.minDownPayment) {
-        isAvailable = false;
-        unavailableReason = `Минимальный взнос ${Math.max(finalCost * 0.5, packages.standard.minDownPayment)} ₽`;
-      }
-    } else if (pkg === 'economy') {
-      if (downPayment < packages.economy.minDownPayment) {
-        isAvailable = false;
-        unavailableReason = `Минимальный взнос ${packages.economy.minDownPayment} ₽`;
-      } else if (downPayment >= finalCost * 0.5) {
-        isAvailable = false;
-        unavailableReason = 'Первый взнос должен быть менее 50%';
+        unavailableReason = `Минимальная стоимость курса ${pkgConfig.minCost.toLocaleString()} ₽`;
+      } else {
+        // All packages are available for selection - payment constraints will be applied when selected
+        isAvailable = true;
+        unavailableReason = '';
       }
     }
     

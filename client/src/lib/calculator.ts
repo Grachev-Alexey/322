@@ -117,36 +117,18 @@ export function calculatePackagePricing(
     const totalSavings = packageDiscount + certificateDiscount + additionalDiscount + giftSessionValue;
     const finalCost = baseCost - totalSavings;
 
-    // Check down payment requirements
+    // All packages are available for selection - payment constraints will be applied when selected
     const minDownPayment = Math.max(
       packageData.minDownPayment || 0,
       finalCost * packageData.minDownPaymentPercent
     );
 
-    // For VIP package, full payment is required
-    const requiredDownPayment = packageData.requiresFullPayment ? finalCost : minDownPayment;
-
     // Calculate monthly payment
     const remainingAmount = finalCost - params.downPayment;
-    const monthlyPayment = params.installmentMonths > 0 ? remainingAmount / params.installmentMonths : 0;
-
-    // Check if down payment is sufficient
-    if (params.downPayment < requiredDownPayment) {
-      results[packageType] = {
-        isAvailable: false,
-        unavailableReason: packageData.requiresFullPayment 
-          ? 'Требуется полная оплата'
-          : `Минимальный первоначальный взнос: ${requiredDownPayment.toLocaleString()} ₽`,
-        finalCost,
-        totalSavings,
-        monthlyPayment: 0,
-        appliedDiscounts: []
-      };
-      continue;
-    }
+    const monthlyPayment = params.installmentMonths > 0 && !packageData.requiresFullPayment ? remainingAmount / params.installmentMonths : 0;
 
     results[packageType] = {
-      isAvailable: true,
+      isAvailable: true, // All packages are available for selection
       unavailableReason: '',
       finalCost,
       totalSavings,

@@ -6,6 +6,8 @@ interface RangeSliderProps {
   step?: number;
   value: number;
   onChange: (value: number) => void;
+  onDragStart?: () => void;
+  onDragEnd?: () => void;
   className?: string;
   showLabels?: boolean;
   formatLabel?: (value: number) => string;
@@ -18,6 +20,8 @@ export function RangeSlider({
   step = 1,
   value,
   onChange,
+  onDragStart,
+  onDragEnd,
   className,
   showLabels = true,
   formatLabel,
@@ -25,6 +29,14 @@ export function RangeSlider({
 }: RangeSliderProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(parseInt(e.target.value));
+  };
+
+  const handleMouseDown = () => {
+    onDragStart?.();
+  };
+
+  const handleMouseUp = () => {
+    onDragEnd?.();
   };
 
   const formatValue = (val: number) => {
@@ -41,6 +53,10 @@ export function RangeSlider({
         step={step}
         value={value}
         onChange={handleChange}
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onTouchStart={handleMouseDown}
+        onTouchEnd={handleMouseUp}
         disabled={disabled}
         className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer slider disabled:opacity-50 disabled:cursor-not-allowed"
       />

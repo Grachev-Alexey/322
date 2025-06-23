@@ -108,7 +108,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
           </div>
 
           {/* Service Selection */}
-          <Card className="floating-card bg-white/80 backdrop-blur-sm border-0 rounded-2xl p-8 mb-8">
+          <Card className="floating-card bg-white/80 backdrop-blur-sm border-0 rounded-2xl p-8 mb-8 relative z-10">
           <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--graphite)' }}>Выбор услуг</h3>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -190,6 +190,8 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
           baseCost={calculation?.baseCost || 0}
           selectedPackage={selectedPackage}
           calculation={calculation}
+          getMinDownPayment={getMinDownPayment}
+          getMaxDownPayment={getMaxDownPayment}
         />
 
         {/* Action Buttons */}

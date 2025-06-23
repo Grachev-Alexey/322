@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { RangeSlider } from "@/components/ui/range-slider";
 import { Gift, CreditCard, Calendar } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
 
 interface PaymentConfigProps {
   downPayment: number;
@@ -17,6 +18,19 @@ interface PaymentConfigProps {
   baseCost: number;
   selectedPackage: string | null;
   calculation: any;
+  getMinDownPayment: () => number;
+  getMaxDownPayment: () => number;
+}
+
+interface Package {
+  id: number;
+  type: string;
+  name: string;
+  discount: string;
+  minCost: string;
+  minDownPaymentPercent: string;
+  requiresFullPayment: boolean;
+  giftSessions: number;
 }
 
 export default function PaymentConfig({
@@ -28,8 +42,18 @@ export default function PaymentConfig({
   onCertificateChange,
   baseCost,
   selectedPackage,
-  calculation
+  calculation,
+  getMinDownPayment,
+  getMaxDownPayment
 }: PaymentConfigProps) {
+  // Get packages data from API
+  const { data: packages = [] } = useQuery<Package[]>({
+    queryKey: ['/api/packages'],
+    enabled: true
+  });
+
+  // Find current package config
+  const currentPackageConfig = selectedPackage ? packages.find(p => p.type === selectedPackage) : null;
   const handleDownPaymentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Math.max(0, parseInt(e.target.value) || 0);
     onDownPaymentChange(value);
@@ -51,21 +75,34 @@ export default function PaymentConfig({
           <Label htmlFor="downPayment" className="block text-sm font-medium text-gray-700 mb-3">
             Первый взнос
           </Label>
-          <div className="relative">
-            <Input
-              id="downPayment"
-              type="number"
-              value={downPayment}
-              onChange={handleDownPaymentChange}
-              className="input-premium text-lg font-semibold pr-12"
-              min="0"
-              step="1"
-            />
-            <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500">₽</span>
+          <div className="bg-gray-50 rounded-xl p-6">
+            <div className="text-center mb-4">
+              <div className="text-2xl font-bold text-purple-600">
+                {formatPrice(downPayment)}
+              </div>
+              <div className="text-sm text-gray-600">
+                {selectedPackage ? `Пакет: ${selectedPackage.toUpperCase()}` : 'Выберите пакет'}
+              </div>
+            </div>
+            
+            {selectedPackage && (
+              <RangeSlider
+                min={getMinDownPayment()}
+                max={getMaxDownPayment()}
+                step={100}
+                value={downPayment}
+                onChange={onDownPaymentChange}
+                formatLabel={formatPrice}
+                disabled={currentPackageConfig?.requiresFullPayment || false}
+              />
+            )}
+            
+            {selectedPackage && (
+              <div className="text-xs text-center text-gray-500 mt-2">
+                Диапазон: {formatPrice(getMinDownPayment())} - {formatPrice(getMaxDownPayment())}
+              </div>
+            )}
           </div>
-          <p className="text-sm text-gray-600 mt-2">
-            Влияет на доступность пакетов и размер скидки
-          </p>
         </div>
         
         {/* Installment Period */}
