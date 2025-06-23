@@ -516,10 +516,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         const title = generateSubscriptionTitle(template, calculation);
         
+        const servicesForYclients = calculation.services.map((service: any) => ({
+          serviceId: service.id || service.serviceId,
+          count: service.quantity || service.count || 1
+        }));
+
+        console.log('Creating subscription with data:', {
+          title,
+          cost: calculation.finalCost,
+          services: servicesForYclients,
+          packageType: calculation.packageType
+        });
+
         const yclientsSubscriptionType = await yclientsService.createSubscriptionType({
           title,
           cost: calculation.finalCost,
-          services: calculation.services,
+          services: servicesForYclients,
           allowFreeze: getFreezePolicyForPackage(calculation.packageType),
           freezeLimit: getFreezeLimitForPackage(calculation.packageType),
           packageType: calculation.packageType

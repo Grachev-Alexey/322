@@ -109,19 +109,25 @@ export class YclientsAPI {
     
     const payload = {
       title: subscriptionData.title,
+      salon_group_id: parseInt(this.config.chainId),
       cost: subscriptionData.cost,
+      salon_ids: this.config.branchIds.map(Number),
+      period: 2,
+      period_unit_id: 4, // год
       allow_freeze: subscriptionData.allowFreeze,
       freeze_limit: subscriptionData.freezeLimit,
-      freeze_limit_unit_id: subscriptionData.freezeLimit > 0 ? 1 : 0, // 1 for days
+      freeze_limit_unit_id: subscriptionData.freezeLimit > 0 ? 1 : 0, // дни
+      is_booking_when_frozen_allowed: false,
       balance_container: {
         links: subscriptionData.services.map(service => ({
           service: { id: service.serviceId },
           count: service.count
         }))
       },
-      attached_salon_ids: this.config.branchIds.map(Number),
-      category_id: parseInt(this.config.categoryId)
+      category_id: parseInt(this.config.categoryId) || null
     };
+
+    console.log('Creating subscription type with payload:', JSON.stringify(payload, null, 2));
 
     const response = await fetch(url, {
       method: 'POST',
@@ -130,7 +136,9 @@ export class YclientsAPI {
     });
 
     if (!response.ok) {
-      throw new Error(`Yclients API error: ${response.status} ${response.statusText}`);
+      const errorText = await response.text();
+      console.error('Yclients API error response:', errorText);
+      throw new Error(`Yclients API error: ${response.status} ${response.statusText} - ${errorText}`);
     }
 
     const data = await response.json();
