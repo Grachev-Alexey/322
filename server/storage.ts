@@ -243,7 +243,11 @@ export class DatabaseStorage implements IStorage {
       textValue: packagePerkValues.textValue,
       numberValue: packagePerkValues.numberValue,
       displayValue: packagePerkValues.displayValue,
+      tooltip: packagePerkValues.tooltip,
+      customIcon: packagePerkValues.customIcon,
+      customIconColor: packagePerkValues.customIconColor,
       isHighlighted: packagePerkValues.isHighlighted,
+      isBest: packagePerkValues.isBest,
       isActive: packagePerkValues.isActive,
       updatedAt: packagePerkValues.updatedAt,
       perk: {
@@ -275,10 +279,25 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updatePackagePerkValue(id: number, updates: Partial<InsertPackagePerkValue>): Promise<PackagePerkValue | null> {
+    console.log('Storage: updatePackagePerkValue called with:', { id, updates });
+    
+    // Clean up the updates object
+    const cleanUpdates = {
+      ...updates,
+      tooltip: updates.tooltip === '' ? null : updates.tooltip,
+      customIcon: updates.customIcon === 'none' ? null : updates.customIcon,
+      customIconColor: updates.customIconColor === '' ? null : updates.customIconColor,
+      updatedAt: new Date()
+    };
+    
+    console.log('Storage: cleanUpdates:', cleanUpdates);
+    
     const [updated] = await db.update(packagePerkValues)
-      .set({ ...updates, updatedAt: new Date() })
+      .set(cleanUpdates)
       .where(eq(packagePerkValues.id, id))
       .returning();
+    
+    console.log('Storage: update result:', updated);
     return updated || null;
   }
 

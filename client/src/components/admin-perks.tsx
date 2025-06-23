@@ -168,7 +168,10 @@ export default function AdminPerks({ loading, setLoading }: AdminPerksProps) {
       if (response.ok) {
         const result = await response.json();
         console.log('Update result:', result);
-        await loadData();
+        // Force reload the data
+        setTimeout(async () => {
+          await loadData();
+        }, 100);
         toast({ title: "Обновлено", description: "Значение перка обновлено" });
       } else {
         const error = await response.text();
