@@ -114,15 +114,23 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
         }
       }
 
+      // Reload packages from server to refresh the UI
+      const packagesResponse = await fetch("/api/packages", { credentials: "include" });
+      if (packagesResponse.ok) {
+        const updatedPackages = await packagesResponse.json();
+        setPackages(updatedPackages);
+      }
+
       toast({
         title: "Успешно",
         description: "Настройки пакетов сохранены"
       });
 
-    } catch (error) {
+    } catch (error: any) {
+      console.error('Package save error:', error);
       toast({
         title: "Ошибка",
-        description: "Не удалось сохранить настройки пакетов",
+        description: error.message || "Не удалось сохранить настройки пакетов",
         variant: "destructive"
       });
     } finally {

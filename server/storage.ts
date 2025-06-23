@@ -192,7 +192,7 @@ export class DatabaseStorage implements IStorage {
     const [existing] = await db.select().from(packages).where(eq(packages.type, pkg.type));
     if (existing) {
       const [updated] = await db.update(packages)
-        .set(pkg)
+        .set({ ...pkg, updatedAt: new Date() })
         .where(eq(packages.type, pkg.type))
         .returning();
       return updated;
@@ -200,6 +200,10 @@ export class DatabaseStorage implements IStorage {
       const [created] = await db.insert(packages).values(pkg).returning();
       return created;
     }
+  }
+
+  async createOrUpdatePackage(pkg: InsertPackage): Promise<Package> {
+    return this.upsertPackage(pkg);
   }
 
   // Universal Perks
