@@ -257,7 +257,7 @@ export default function ServiceSelector({
             <div className="flex items-center min-w-0 flex-1">
               <span className="text-xs lg:text-sm font-medium text-gray-900 dark:text-white truncate">{service.title}</span>
               <span className="ml-2 text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">
-                {formatPrice(parseFloat(service.priceMin))} за процедуру
+                {formatPrice(parseFloat(service.priceMin))}
               </span>
             </div>
             <Button
