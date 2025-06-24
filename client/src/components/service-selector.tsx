@@ -138,7 +138,7 @@ export default function ServiceSelector({
 
   return (
     <div>
-      <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Зоны для процедур</label>
+      <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Зоны для процедур</label>
       
       {/* Service Selection */}
       <div className="relative mb-2 z-50" ref={dropdownRef}>
