@@ -186,7 +186,7 @@ export default function ThreeBlockComparison({
       {/* Преимущества with curved border */}
       <div
         className="relative overflow-hidden"
-        style={{ borderRadius: "8px 8px 0 0" }}
+        style={{ borderRadius: "8px" }}
       >
         {/* Custom curved border using SVG */}
         <svg
@@ -197,7 +197,7 @@ export default function ThreeBlockComparison({
           <defs>
             <path
               id="curved-border-blue"
-              d="M 8,0 L 92,0 Q 100,0 100,8 L 100,100 L 0,100 L 0,8 Q 0,0 8,0 Z"
+              d="M 8,0 L 92,0 Q 100,0 100,8 L 100,92 Q 100,100 92,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
               fill="none"
               stroke="#ec4899"
               strokeOpacity="0.5"
@@ -404,7 +404,7 @@ export default function ThreeBlockComparison({
       {/* Стоимость with curved border */}
       <div
         className="relative overflow-hidden"
-        style={{ borderRadius: "8px 8px 0 0" }}
+        style={{ borderRadius: "8px" }}
       >
         {/* Custom curved border using SVG */}
         <svg
@@ -415,7 +415,7 @@ export default function ThreeBlockComparison({
           <defs>
             <path
               id="curved-border-green"
-              d="M 8,0 L 92,0 Q 100,0 100,8 L 100,100 L 0,100 L 0,8 Q 0,0 8,0 Z"
+              d="M 8,0 L 92,0 Q 100,0 100,8 L 100,92 Q 100,100 92,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
               fill="none"
               stroke="#ec4899"
               strokeOpacity="0.5"
@@ -555,7 +555,7 @@ export default function ThreeBlockComparison({
       {/* Подарки with curved border */}
       <div
         className="relative overflow-hidden"
-        style={{ borderRadius: "8px 8px 0 0" }}
+        style={{ borderRadius: "8px" }}
       >
         {/* Custom curved border using SVG */}
         <svg
@@ -566,7 +566,7 @@ export default function ThreeBlockComparison({
           <defs>
             <path
               id="curved-border"
-              d="M 8,0 L 92,0 Q 100,0 100,8 L 100,100 L 0,100 L 0,8 Q 0,0 8,0 Z"
+              d="M 8,0 L 92,0 Q 100,0 100,8 L 100,92 Q 100,100 92,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
               fill="none"
               stroke="#ec4899"
               strokeOpacity="0.5"
