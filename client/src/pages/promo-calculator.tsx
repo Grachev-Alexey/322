@@ -194,7 +194,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 {selectedPackage === 'vip' ? 'Полная предоплата' : 'Первый взнос'}
               </h4>
               
-              <div className="text-center mb-2">
+              <div className="text-center mb-1.5">
                 {selectedPackage === 'vip' ? (
                   // VIP - показываем полную стоимость стандартным цветом
                   <div className="text-lg lg:text-xl font-bold text-premium">
@@ -278,8 +278,8 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
 
             {/* Installment configuration - компактный */}
             {downPayment < (selectedPackage && calculation ? getPackageData(selectedPackage)?.finalCost || 25000 : 25000) && (
-              <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200">
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-2 text-sm">Рассрочка</h4>
+              <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-1.5 text-sm">Рассрочка</h4>
                 
                 <div className="text-center mb-1.5">
                   <div className="text-base font-bold text-premium">{installmentMonths}</div>
