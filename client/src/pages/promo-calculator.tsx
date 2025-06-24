@@ -155,7 +155,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 space-y-2">
                   <div className="flex justify-between items-center">
                     <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                      Средняя стоимость за процедуру:
+                      Стоимость за процедуру:
                     </span>
                     <span className="text-xs font-bold text-gray-800 dark:text-gray-200">
                       {formatPrice(Math.round(calculation.baseCost / procedureCount))}
