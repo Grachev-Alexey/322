@@ -185,7 +185,7 @@ export default function ThreeBlockComparison({
     <div className="space-y-5 w-full max-w-4xl p-1">
       {/* Преимущества with curved border */}
       <div
-        className="relative overflow-hidden"
+        className="relative overflow-hidden border border-pink-300/50"
         style={{ borderRadius: "6px" }}
       >
 
@@ -381,7 +381,7 @@ export default function ThreeBlockComparison({
 
       {/* Стоимость with curved border */}
       <div
-        className="relative overflow-hidden"
+        className="relative overflow-hidden border border-pink-300/50"
         style={{ borderRadius: "6px" }}
       >
 
@@ -469,7 +469,7 @@ export default function ThreeBlockComparison({
       </div>
 
       {/* Первый взнос и Платеж в месяц - вынесены за пределы блока */}
-      <div className="space-y-0.5 -mt-6">
+      <div className="space-y-0.5 -mt-8">
         {/* Первый взнос */}
         <div className="grid grid-cols-4 gap-2.5 py-1">
           <div className="text-xs text-gray-600">Первый взнос:</div>
@@ -510,7 +510,7 @@ export default function ThreeBlockComparison({
 
       {/* Подарки with curved border */}
       <div
-        className="relative overflow-hidden"
+        className="relative overflow-hidden border border-pink-300/50"
         style={{ borderRadius: "6px" }}
       >
 
