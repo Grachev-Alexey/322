@@ -307,7 +307,7 @@ export default function UnifiedPackageComparison({
 
               return (
                 <div key={packageType} className="text-center py-1">
-                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  <span className="text-lg font-bold text-gray-700 dark:text-gray-300">
                     {giftSessions > 0 ? giftSessions : "-"}
                   </span>
                 </div>
