@@ -158,7 +158,8 @@ export function useCalculator() {
           discount: parseFloat(pkg.discount.toString()),
           minCost: parseFloat(pkg.minCost.toString()),
           minDownPaymentPercent: parseFloat(pkg.minDownPaymentPercent.toString()),
-          requiresFullPayment: pkg.requiresFullPayment
+          requiresFullPayment: pkg.requiresFullPayment,
+          giftSessions: pkg.giftSessions || 0
         };
         return acc;
       }, {});
@@ -179,7 +180,8 @@ export function useCalculator() {
         serviceMap,
         packageConfig,
         procedureCount: procedures,
-        freeZonesValue: freeZonesValue
+        freeZonesValue,
+        totalProcedures: servicesData.reduce((sum, s) => sum + s.quantity, 0) * procedures
       };
 
       // Use the centralized calculation function with calculator settings

@@ -16,6 +16,7 @@ export interface CalculationParams {
   packageConfig: any;
   procedureCount?: number;
   freeZonesValue?: number;
+  totalProcedures?: number;
 }
 
 export interface PackageData {
@@ -72,7 +73,7 @@ export function calculatePackagePricing(
   };
 
   const packages = packageConfig || defaultPackages;
-  const totalProcedures = params.services.reduce((sum, s) => sum + s.quantity, 0);
+  const totalProcedures = params.totalProcedures || params.services.reduce((sum, s) => sum + s.quantity, 0);
   
   const results: any = {};
   
@@ -112,12 +113,9 @@ export function calculatePackagePricing(
     const packageDiscount = baseCost * discount;
     const originalCostPerProcedure = totalProcedures > 0 ? baseCost / totalProcedures : 0;
     
-    let giftSessionValue = 0;
-    if (packageType === 'vip') {
-      giftSessionValue = originalCostPerProcedure * 3; // 3 full sessions for VIP
-    } else if (packageType === 'standard') {
-      giftSessionValue = originalCostPerProcedure * 1; // 1 full session for Standard
-    }
+    // Get gift sessions from package configuration
+    const giftSessions = packageData.giftSessions || 0;
+    const giftSessionValue = originalCostPerProcedure * giftSessions;
 
     // Calculate free zones value from params
     const freeZonesValue = params.freeZonesValue || 0;
