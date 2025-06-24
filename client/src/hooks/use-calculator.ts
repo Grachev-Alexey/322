@@ -279,14 +279,10 @@ export function useCalculator() {
             // Calculate minimum down payment as percentage of package cost
             const minPaymentPercent = parseFloat(packageConfig.minDownPaymentPercent.toString());
             const minPayment = packageData.finalCost * minPaymentPercent;
-            const maxPayment = packageData.finalCost; // Can't exceed package cost
+            const globalMin = calculatorSettings?.minimumDownPayment || 5000;
             
-            // Constrain to valid range
-            if (downPayment < minPayment) {
-              newDownPayment = Math.round(minPayment);
-            } else if (downPayment > maxPayment) {
-              newDownPayment = Math.round(maxPayment);
-            }
+            // Always set to minimum down payment when package is selected
+            newDownPayment = Math.round(Math.max(minPayment, globalMin));
           }
           
           if (newDownPayment !== downPayment) {
@@ -294,7 +290,7 @@ export function useCalculator() {
           }
         }
       }
-    }, [calculation, downPayment, packages, calculatorSettings]),
+    }, [calculation, packages, calculatorSettings]),
     isLoading: !calculation && selectedServices.length > 0,
     getMaxDownPayment: () => {
       if (!selectedPackage || !calculation?.packages || packages.length === 0) return 50000;

@@ -110,23 +110,15 @@ export default function ThreeBlockComparison({
       baseDiscountPercent += bulkDiscountPercentage * 100;
     }
     
-    // Add correction percentage (master adjustment)
+    // Add correction percentage
     baseDiscountPercent += correctionPercent;
     
     return Math.round(baseDiscountPercent);
   };
 
   const getPackageName = (packageType: string) => {
-    switch (packageType) {
-      case "vip":
-        return "VIP";
-      case "standard":
-        return "Стандарт";
-      case "economy":
-        return "Эконом";
-      default:
-        return "Стандарт";
-    }
+    const packageData = packages.find((p) => p.type === packageType);
+    return packageData?.name || packageType;
   };
 
   const getPackageColor = (packageType: string) => {
@@ -326,7 +318,7 @@ export default function ThreeBlockComparison({
                 return (
                   <div key={packageType} className="flex items-center justify-center">
                     {giftSessions > 0 ? (
-                      <span className="text-sm font-bold text-gray-800">
+                      <span className="text-xs font-bold text-gray-800">
                         {giftSessions}
                       </span>
                     ) : (
@@ -345,7 +337,7 @@ export default function ThreeBlockComparison({
 
                 return (
                   <div key={packageType} className="flex items-center justify-center">
-                    <span className="text-sm font-bold text-gray-800">
+                    <span className="text-xs font-bold text-gray-800">
                       {finalDiscountPercent}%
                     </span>
                   </div>
@@ -447,7 +439,7 @@ export default function ThreeBlockComparison({
               {packageTypes.map((packageType) => (
                 <div key={packageType} className="text-center">
                   <span className="text-xs font-semibold text-green-600">
-                    -3 000 ₽
+                    -{calculatorSettings?.certificateDiscountAmount?.toLocaleString() || '3 000'} ₽
                   </span>
                 </div>
               ))}
@@ -465,7 +457,7 @@ export default function ThreeBlockComparison({
 
               return (
                 <div key={packageType} className="text-center">
-                  <span className="text-sm font-bold text-pink-400">
+                  <span className="text-xs font-bold text-pink-400">
                     {formatPrice(finalCost)}
                   </span>
                 </div>
@@ -510,12 +502,12 @@ export default function ThreeBlockComparison({
                 const absoluteMinimum = calculatorSettings?.minimumDownPayment || 25000;
                 displayAmount = Math.max(calculatedMinPayment, absoluteMinimum);
               }
-              // Если выбран любой пакет (стандарт или эконом), показываем значение слайдера во всех невип пакетах
-              else if (selectedPackage && (selectedPackage === 'standard' || selectedPackage === 'economy')) {
+              // Если этот пакет выбран, показываем значение слайдера
+              else if (selectedPackage === packageType) {
                 displayAmount = downPayment;
               }
-              // Если выбран VIP, показываем минимальный взнос для этого пакета
-              else if (selectedPackage === 'vip' && packageData && pkg) {
+              // Если выбран другой пакет, показываем минимальный взнос для этого пакета
+              else if (selectedPackage && packageData && pkg) {
                 const minDownPaymentPercent = parseFloat(pkg.minDownPaymentPercent);
                 const calculatedMinPayment = Math.round(packageData.finalCost * minDownPaymentPercent);
                 const absoluteMinimum = calculatorSettings?.minimumDownPayment || 25000;
@@ -764,7 +756,7 @@ export default function ThreeBlockComparison({
 
               return (
                 <div key={packageType} className="text-center">
-                  <span className="text-sm font-bold text-pink-400">
+                  <span className="text-xs font-bold text-pink-400">
                     {formatPrice(totalGifts)}
                   </span>
                 </div>

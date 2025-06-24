@@ -121,12 +121,15 @@
 .custom-left-scrollbar {
   scrollbar-width: thin;
   scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
-  scrollbar-gutter: stable;
+  direction: rtl;
+}
+
+.custom-left-scrollbar > * {
+  direction: ltr;
 }
 
 .custom-left-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  background: transparent;
+  width: 1px;
 }
 
 .custom-left-scrollbar::-webkit-scrollbar-track {
@@ -135,7 +138,7 @@
 
 .custom-left-scrollbar::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.3);
-  border-radius: 3px;
+  border-radius: 0px;
   transition: background-color 0.2s ease;
 }
 

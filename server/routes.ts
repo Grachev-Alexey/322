@@ -636,9 +636,9 @@ function calculatePackagePricing(baseCost: number, calculation: any, packages: a
   });
   
   const packageDiscounts = {
-    vip: packageMap['vip']?.discount || 0.30,
-    standard: packageMap['standard']?.discount || 0.20,
-    economy: packageMap['economy']?.discount || 0.10
+    vip: packageMap['vip']?.discount || 0,
+    standard: packageMap['standard']?.discount || 0,
+    economy: packageMap['economy']?.discount || 0
   };
 
   // Additional discounts

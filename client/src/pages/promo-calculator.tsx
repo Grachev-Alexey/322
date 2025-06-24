@@ -132,7 +132,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
         {/* Left panel - Controls */}
         <div className="w-full lg:w-72 xl:w-80 flex flex-col h-auto lg:h-full order-2 lg:order-1">
           {/* Scrollable content area with custom scrollbar */}
-          <div className="flex-1 overflow-y-auto space-y-1.5 lg:space-y-2 custom-left-scrollbar max-h-[40vh] lg:max-h-none" style={{ scrollbarGutter: 'stable' }}>
+          <div className="flex-1 overflow-y-auto space-y-1.5 lg:space-y-2 pr-1 custom-left-scrollbar max-h-[40vh] lg:max-h-none">
             {/* Service selection card with special offer badge */}
             <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
               {/* Special offer badge inside the card */}
@@ -345,7 +345,8 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             {/* Correction block - компактный */}
             <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
               {isEditingCorrection ? (
-                <div className="flex items-center justify-center space-x-2">
+                // Режим редактирования - только поле ввода по центру
+                <div className="flex items-center justify-center">
                   <input
                     type="number"
                     min="0"
@@ -369,9 +370,10 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                     onFocus={(e) => e.target.select()}
                     className="w-16 text-sm text-center border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
                   />
-                  <span className="text-sm text-gray-500 dark:text-gray-400">%</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">%</span>
                 </div>
               ) : (
+                // Обычный режим - заголовок и переключатель
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="font-bold text-gray-900 dark:text-white text-sm">Коррекция</h4>
