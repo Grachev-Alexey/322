@@ -518,9 +518,8 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Calculate from displayed cost: 155,000 ÷ 10 procedures = 15,500 per procedure
-                const costPerProcedure = 155000 / 10;
-                const selectedServicesCost = costPerProcedure;
+                // Use real calculation data: baseCost ÷ procedureCount
+                const costPerProcedure = procedureCount > 0 ? calculation.baseCost / procedureCount : 0;
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0
                   ? selectedServicesCost * (packageData.giftSessions || 0)
@@ -610,9 +609,8 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Use displayed cost per procedure
-                const costPerProcedure = 155000 / 10;
-                const selectedServicesCost = costPerProcedure;
+                // Use real calculation data
+                const costPerProcedure = procedureCount > 0 ? calculation.baseCost / procedureCount : 0;
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0
                   ? selectedServicesCost * (packageData.giftSessions || 0)
