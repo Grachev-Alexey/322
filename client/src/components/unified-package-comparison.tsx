@@ -519,22 +519,28 @@ export default function UnifiedPackageComparison({
                 );
 
                 // Calculate gift using actual selected services and current slider value
-                const servicesPriceSum = selectedServices.reduce((sum, service) => {
-                  return sum + (parseFloat(service.priceMin) * service.quantity);
-                }, 0);
+                // If selectedServices is empty, fall back to calculation data
+                const servicesPriceSum = selectedServices && selectedServices.length > 0 
+                  ? selectedServices.reduce((sum, service) => {
+                      return sum + (parseFloat(service.priceMin) * service.quantity);
+                    }, 0)
+                  : calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 
                   ? servicesPriceSum * (packageData.giftSessions || 0)
                   : 0;
 
-                // Debug the fixed calculation
+                // Debug the calculation issue
                 if (packageType === 'vip') {
-                  console.log('FIXED GIFT CALCULATION:', {
-                    selectedServices,
+                  console.log('GIFT CALCULATION DEBUG:', {
+                    hasSelectedServices: selectedServices && selectedServices.length > 0,
+                    selectedServicesCount: selectedServices ? selectedServices.length : 0,
                     servicesPriceSum,
                     giftSessions: packageData?.giftSessions,
                     giftValue,
-                    formula: 'servicesPriceSum * giftSessions'
+                    fallbackUsed: !selectedServices || selectedServices.length === 0,
+                    baseCost: calculation.baseCost,
+                    totalProcedures: calculation.totalProcedures
                   });
                 }
 
@@ -620,10 +626,12 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Calculate total gifts using actual selected services
-                const servicesPriceSum = selectedServices.reduce((sum, service) => {
-                  return sum + (parseFloat(service.priceMin) * service.quantity);
-                }, 0);
+                // Calculate total gifts using actual selected services or fallback
+                const servicesPriceSum = selectedServices && selectedServices.length > 0 
+                  ? selectedServices.reduce((sum, service) => {
+                      return sum + (parseFloat(service.priceMin) * service.quantity);
+                    }, 0)
+                  : calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 
                   ? servicesPriceSum * (packageData.giftSessions || 0)
