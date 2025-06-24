@@ -128,17 +128,17 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
         {/* Left panel - Controls */}
         <div className="w-full lg:w-72 xl:w-80 flex flex-col h-auto lg:h-full order-2 lg:order-1">
           {/* Scrollable content area with custom scrollbar */}
-          <div className="flex-1 overflow-y-auto space-y-2 lg:space-y-3 pr-1 custom-left-scrollbar max-h-[40vh] lg:max-h-none">
+          <div className="flex-1 overflow-y-auto space-y-1.5 lg:space-y-2 pr-1 custom-left-scrollbar max-h-[40vh] lg:max-h-none">
             {/* Service selection card with special offer badge */}
-            <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200">
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
               {/* Special offer badge inside the card */}
-              <div className="text-center mb-3">
+              <div className="text-center mb-2">
                 <Badge className="bg-gradient-to-r from-pink-400 to-orange-400 text-white px-3 lg:px-4 py-1 text-xs font-medium border-0 shadow-none">
                   <Sparkles className="w-3 h-3 mr-1" />
                   Спецпредложение гостевого дня
                 </Badge>
               </div>
-              <h3 className="text-sm lg:text-base font-bold text-gray-900 dark:text-white mb-2">Выбор услуг</h3>
+              <h3 className="text-sm lg:text-base font-bold text-gray-900 dark:text-white mb-1.5">Выбор услуг</h3>
               <ServiceSelector
                 selectedServices={selectedServices}
                 onServicesChange={setSelectedServices}
@@ -162,10 +162,10 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             </div>
 
             {/* Procedure count - компактный */}
-            <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200">
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-2 text-sm">Количество процедур</h4>
-              <div className="text-center mb-2">
-                <div className="text-xl lg:text-2xl font-bold text-premium">{procedureCount}</div>
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
+              <h4 className="font-semibold text-gray-900 dark:text-white mb-1.5 text-sm">Количество процедур</h4>
+              <div className="text-center mb-1.5">
+                <div className="text-lg lg:text-xl font-bold text-premium">{procedureCount}</div>
                 <div className="text-xs text-gray-500">процедур</div>
               </div>
               
@@ -178,7 +178,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
               />
               
               {procedureCount >= (calculatorSettings?.bulkDiscountThreshold || 15) && (
-                <div className="mt-2 p-2 bg-pink-50 dark:bg-pink-950 rounded-lg border border-pink-200 dark:border-pink-800">
+                <div className="mt-1.5 p-1.5 bg-pink-50 dark:bg-pink-950 rounded-lg border border-pink-200 dark:border-pink-800">
                   <div className="flex items-center justify-center text-xs font-medium">
                     <div className="text-pink-600 dark:text-pink-400">
                       <span>+Бонусная скидка {Math.round((calculatorSettings?.bulkDiscountPercentage || 0.025) * 100)}%</span>
@@ -189,15 +189,15 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             </div>
 
             {/* Payment settings - минималистичный дизайн */}
-            <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200">
-              <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-2">
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
+              <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-1.5">
                 {selectedPackage === 'vip' ? 'Полная предоплата' : 'Первый взнос'}
               </h4>
               
               <div className="text-center mb-2">
                 {selectedPackage === 'vip' ? (
                   // VIP - показываем полную стоимость стандартным цветом
-                  <div className="text-xl lg:text-2xl font-bold text-premium">
+                  <div className="text-lg lg:text-xl font-bold text-premium">
                     {calculation?.packages?.vip ? formatPrice(calculation.packages.vip.finalCost) : formatPrice(calculation?.baseCost || 0)}
                   </div>
                 ) : (
@@ -281,8 +281,8 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
               <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200">
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2 text-sm">Рассрочка</h4>
                 
-                <div className="text-center mb-2">
-                  <div className="text-lg font-bold text-premium">{installmentMonths}</div>
+                <div className="text-center mb-1.5">
+                  <div className="text-base font-bold text-premium">{installmentMonths}</div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
                     {installmentMonths === 1 ? 'месяц' : 
                      installmentMonths <= 4 ? 'месяца' : 'месяцев'}
@@ -298,7 +298,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 />
                 
                 {selectedPackage && calculation && (
-                  <div className="mt-2 text-center">
+                  <div className="mt-1.5 text-center">
                     <div className="text-xs text-gray-600 dark:text-gray-400">Ежемесячный платеж</div>
                     <div className="text-sm font-bold text-premium">
                       {formatPrice(((getPackageData(selectedPackage)?.finalCost || 0) - downPayment) / installmentMonths)}
@@ -309,7 +309,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             )}
 
             {/* Certificate option - компактный */}
-            <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200">
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
                   <h4 className="font-semibold text-gray-900 dark:text-white text-sm">Сертификат</h4>
