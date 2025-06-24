@@ -234,6 +234,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                         }
                       }}
                       autoFocus
+                      onFocus={(e) => e.target.select()}
                       className="text-xs font-bold text-premium bg-transparent border-none text-center w-full focus:outline-none focus:ring-2 focus:ring-pink-500 rounded px-2 py-1"
                       style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' }}
                     />
