@@ -188,7 +188,7 @@ export default function ThreeBlockComparison({
         className="relative overflow-hidden"
         style={{ borderRadius: "6px" }}
       >
-        {/* Custom curved border using SVG */}
+        {/* Custom curved border using SVG - continuous border */}
         <svg
           className="absolute inset-0 w-full h-full pointer-events-none"
           preserveAspectRatio="none"
@@ -201,17 +201,13 @@ export default function ThreeBlockComparison({
               fill="none"
               stroke="#ec4899"
               strokeOpacity="0.5"
-              strokeWidth="1.2"
+              strokeWidth="1.5"
               vectorEffect="non-scaling-stroke"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
-            <mask id="title-mask-blue">
-              <rect width="100%" height="100%" fill="white" />
-              <rect x="10%" y="-3%" width="32%" height="10%" fill="black" />
-            </mask>
           </defs>
-          <use href="#curved-border-blue" mask="url(#title-mask-blue)" />
+          <use href="#curved-border-blue" />
         </svg>
 
         {/* Title and Package Headers grid layout */}
@@ -408,7 +404,7 @@ export default function ThreeBlockComparison({
         className="relative overflow-hidden"
         style={{ borderRadius: "6px" }}
       >
-        {/* Custom curved border using SVG */}
+        {/* Custom curved border using SVG - continuous border */}
         <svg
           className="absolute inset-0 w-full h-full pointer-events-none"
           preserveAspectRatio="none"
@@ -421,21 +417,17 @@ export default function ThreeBlockComparison({
               fill="none"
               stroke="#ec4899"
               strokeOpacity="0.5"
-              strokeWidth="1.2"
+              strokeWidth="1.5"
               vectorEffect="non-scaling-stroke"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
-            <mask id="title-mask-green">
-              <rect width="100%" height="100%" fill="white" />
-              <rect x="10%" y="-3%" width="26%" height="10%" fill="black" />
-            </mask>
           </defs>
-          <use href="#curved-border-green" mask="url(#title-mask-green)" />
+          <use href="#curved-border-green" />
         </svg>
 
-        {/* Title with money icon - no background */}
-        <div className="absolute -top-1 left-6 px-2 py-1 z-10">
+        {/* Title with money icon - with white background */}
+        <div className="absolute -top-1 left-6 px-2 py-1 z-10 bg-white">
           <div className="flex items-center gap-1.5">
             <span className="text-sm">💰</span>
             <span className="font-bold text-gray-800 text-xs">Стоимость</span>
@@ -561,7 +553,7 @@ export default function ThreeBlockComparison({
         className="relative overflow-hidden"
         style={{ borderRadius: "6px" }}
       >
-        {/* Custom curved border using SVG */}
+        {/* Custom curved border using SVG - continuous border */}
         <svg
           className="absolute inset-0 w-full h-full pointer-events-none"
           preserveAspectRatio="none"
@@ -574,21 +566,17 @@ export default function ThreeBlockComparison({
               fill="none"
               stroke="#ec4899"
               strokeOpacity="0.5"
-              strokeWidth="1.2"
+              strokeWidth="1.5"
               vectorEffect="non-scaling-stroke"
               strokeLinecap="round"
               strokeLinejoin="round"
             />
-            <mask id="title-mask">
-              <rect width="100%" height="100%" fill="white" />
-              <rect x="10%" y="-3%" width="25%" height="10%" fill="black" />
-            </mask>
           </defs>
-          <use href="#curved-border" mask="url(#title-mask)" />
+          <use href="#curved-border" />
         </svg>
 
-        {/* Title with gift box icon - no background */}
-        <div className="absolute -top-1 left-6 px-2 py-1 z-10">
+        {/* Title with gift box icon - with white background */}
+        <div className="absolute -top-1 left-6 px-2 py-1 z-10 bg-white">
           <div className="flex items-center gap-1.5">
             <span className="text-sm">🎁</span>
             <span className="font-bold text-gray-800 text-xs">Подарки</span>
