@@ -186,7 +186,7 @@ export default function ThreeBlockComparison({
       {/* Преимущества with curved border */}
       <div
         className="relative overflow-hidden"
-        style={{ borderRadius: "4px" }}
+        style={{ borderRadius: "6px" }}
       >
         {/* Custom curved border using SVG */}
         <svg
@@ -197,12 +197,14 @@ export default function ThreeBlockComparison({
           <defs>
             <path
               id="curved-border-blue"
-              d="M 2,0 L 98,0 Q 100,0 100,2 L 100,98 Q 100,100 98,100 L 2,100 Q 0,100 0,98 L 0,2 Q 0,0 2,0 Z"
+              d="M 3,0 L 97,0 Q 100,0 100,3 L 100,97 Q 100,100 97,100 L 3,100 Q 0,100 0,97 L 0,3 Q 0,0 3,0 Z"
               fill="none"
               stroke="#ec4899"
               strokeOpacity="0.5"
-              strokeWidth="1"
+              strokeWidth="1.2"
               vectorEffect="non-scaling-stroke"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <mask id="title-mask-blue">
               <rect width="100%" height="100%" fill="white" />
@@ -404,7 +406,7 @@ export default function ThreeBlockComparison({
       {/* Стоимость with curved border */}
       <div
         className="relative overflow-hidden"
-        style={{ borderRadius: "4px" }}
+        style={{ borderRadius: "6px" }}
       >
         {/* Custom curved border using SVG */}
         <svg
@@ -415,12 +417,14 @@ export default function ThreeBlockComparison({
           <defs>
             <path
               id="curved-border-green"
-              d="M 2,0 L 98,0 Q 100,0 100,2 L 100,98 Q 100,100 98,100 L 2,100 Q 0,100 0,98 L 0,2 Q 0,0 2,0 Z"
+              d="M 3,0 L 97,0 Q 100,0 100,3 L 100,97 Q 100,100 97,100 L 3,100 Q 0,100 0,97 L 0,3 Q 0,0 3,0 Z"
               fill="none"
               stroke="#ec4899"
               strokeOpacity="0.5"
-              strokeWidth="1"
+              strokeWidth="1.2"
               vectorEffect="non-scaling-stroke"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <mask id="title-mask-green">
               <rect width="100%" height="100%" fill="white" />
@@ -438,7 +442,7 @@ export default function ThreeBlockComparison({
           </div>
         </div>
 
-        <div className="pt-4 p-3 space-y-0.5">
+        <div className="pt-8 p-3 space-y-0.5">
           {/* Первоначальная стоимость */}
           <div className="grid grid-cols-4 gap-2.5 py-1 border-b border-gray-100">
             <div className="text-xs font-medium text-gray-700">
@@ -513,7 +517,7 @@ export default function ThreeBlockComparison({
       </div>
 
       {/* Первый взнос и Платеж в месяц - вынесены за пределы блока */}
-      <div className="space-y-0.5 mt-1">
+      <div className="space-y-0.5 -mt-2">
         {/* Первый взнос */}
         <div className="grid grid-cols-4 gap-2.5 py-1">
           <div className="text-xs text-gray-600">Первый взнос:</div>
@@ -555,7 +559,7 @@ export default function ThreeBlockComparison({
       {/* Подарки with curved border */}
       <div
         className="relative overflow-hidden"
-        style={{ borderRadius: "4px" }}
+        style={{ borderRadius: "6px" }}
       >
         {/* Custom curved border using SVG */}
         <svg
@@ -566,12 +570,14 @@ export default function ThreeBlockComparison({
           <defs>
             <path
               id="curved-border"
-              d="M 2,0 L 98,0 Q 100,0 100,2 L 100,98 Q 100,100 98,100 L 2,100 Q 0,100 0,98 L 0,2 Q 0,0 2,0 Z"
+              d="M 3,0 L 97,0 Q 100,0 100,3 L 100,97 Q 100,100 97,100 L 3,100 Q 0,100 0,97 L 0,3 Q 0,0 3,0 Z"
               fill="none"
               stroke="#ec4899"
               strokeOpacity="0.5"
-              strokeWidth="1"
+              strokeWidth="1.2"
               vectorEffect="non-scaling-stroke"
+              strokeLinecap="round"
+              strokeLinejoin="round"
             />
             <mask id="title-mask">
               <rect width="100%" height="100%" fill="white" />
