@@ -508,12 +508,24 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Calculate gift procedures value using database settings and current procedure count
-                // Gift value = cost per procedure * gift sessions from database * procedure count from slider
+                // Calculate gift procedures value using database settings and current procedure count from slider
+                // The gift should be: (baseCost / totalProcedures) * giftSessions
                 const costPerProcedure = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 
                   ? costPerProcedure * (packageData.giftSessions || 0)
                   : 0;
+
+                // Debug for first load only
+                if (packageType === 'vip' && Math.random() < 0.1) {
+                  console.log('🎁 Gift calc:', {
+                    baseCost: calculation.baseCost,
+                    totalProcedures: calculation.totalProcedures,
+                    procedureCount,
+                    costPerProcedure,
+                    giftSessions: packageData?.giftSessions,
+                    giftValue
+                  });
+                }
 
 
 
@@ -597,7 +609,7 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Calculate total gifts value using database settings and current procedure count
+                // Calculate total gifts value using database settings and current procedure count from slider
                 const costPerProcedure = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 
                   ? costPerProcedure * (packageData.giftSessions || 0)
