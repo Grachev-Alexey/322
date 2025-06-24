@@ -634,18 +634,18 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Calculate services cost dynamically
-                let servicesCost = 0;
+                // Calculate gift value using cost of one visit (sum of selected services)
+                let costOfOneVisit = 0;
                 if (selectedServices && selectedServices.length > 0) {
-                  servicesCost = selectedServices.reduce((sum, service) => {
-                    return sum + (parseFloat(service.priceMin) * service.quantity);
+                  costOfOneVisit = selectedServices.reduce((sum, service) => {
+                    return sum + parseFloat(service.priceMin);
                   }, 0);
                 } else {
-                  servicesCost = procedureCount > 0 ? calculation.baseCost / procedureCount : 0;
+                  costOfOneVisit = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
                 }
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0
-                  ? servicesCost * (packageData.giftSessions || 0)
+                  ? costOfOneVisit * (packageData.giftSessions || 0)
                   : 0;
 
 
@@ -660,7 +660,7 @@ export default function UnifiedPackageComparison({
                   freeZones && freeZones.length > 0
                     ? freeZones.reduce(
                         (total, zone) =>
-                          total + zone.pricePerProcedure * zone.quantity,
+                          total + zone.pricePerProcedure * procedureCount,
                         0,
                       )
                     : 0;
