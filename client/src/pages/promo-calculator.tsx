@@ -390,6 +390,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 procedureCount={procedureCount}
                 packagePerkValues={packagePerkValues}
                 usedCertificate={usedCertificate}
+                calculatorSettings={calculatorSettings}
                 freeZones={freeZones}
                 selectedServices={selectedServices}
                 bulkDiscountThreshold={calculatorSettings?.bulkDiscountThreshold || 15}

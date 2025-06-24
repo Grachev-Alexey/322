@@ -171,6 +171,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
             procedureCount={procedureCount}
             packagePerkValues={packagePerkValues}
             usedCertificate={usedCertificate}
+            calculatorSettings={calculatorSettings}
             freeZones={freeZones}
             selectedServices={selectedServices}
             bulkDiscountThreshold={calculatorSettings?.bulkDiscountThreshold || 15}

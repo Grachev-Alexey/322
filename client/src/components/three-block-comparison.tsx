@@ -47,6 +47,7 @@ interface ThreeBlockComparisonProps {
   procedureCount: number;
   packagePerkValues?: PackagePerkValue[];
   usedCertificate: boolean;
+  calculatorSettings?: any;
   freeZones?: Array<{
     serviceId: number;
     title: string;
@@ -68,6 +69,7 @@ export default function ThreeBlockComparison({
   procedureCount,
   packagePerkValues = [],
   usedCertificate = false,
+  calculatorSettings,
   freeZones = [],
   selectedServices = [],
   bulkDiscountThreshold = 15,
