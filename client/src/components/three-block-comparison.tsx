@@ -178,16 +178,17 @@ export default function ThreeBlockComparison({
           <use href="#curved-border-blue" mask="url(#title-mask-blue)"/>
         </svg>
         
-        {/* Title and Package Headers on same level */}
-        <div className="flex items-center justify-between pt-4 px-5 mb-6">
-          {/* Title with star icon */}
-          <div className="flex items-center gap-3">
-            <Star className="w-5 h-5 text-yellow-500" />
-            <span className="font-bold text-gray-800 text-lg">Преимущества</span>
-          </div>
-          
-          {/* Package Headers - smaller, no background */}
-          <div className="flex gap-4">
+        {/* Title and Package Headers grid layout */}
+        <div className="pt-4 px-5 mb-6">
+          {/* Title with star icon and package headers in grid */}
+          <div className="grid grid-cols-4 gap-4 items-center">
+            {/* Title with star icon */}
+            <div className="flex items-center gap-3">
+              <Star className="w-5 h-5 text-yellow-500" />
+              <span className="font-bold text-gray-800 text-lg">Преимущества</span>
+            </div>
+            
+            {/* Package Headers - aligned with columns */}
             {packageTypes.map((packageType) => {
               const Icon = getPackageIcon(packageType);
               const isSelected = selectedPackage === packageType;
@@ -195,7 +196,7 @@ export default function ThreeBlockComparison({
               return (
                 <div
                   key={packageType}
-                  className={`text-center cursor-pointer transition-all duration-200 rounded-lg p-1 ${
+                  className={`text-center cursor-pointer transition-all duration-200 rounded-lg p-1 w-full ${
                     isSelected
                       ? "transform scale-105 border-2 border-blue-300"
                       : "hover:scale-105"
@@ -390,7 +391,7 @@ export default function ThreeBlockComparison({
               
               return (
                 <div key={packageType} className="text-center">
-                  <span className="text-base font-bold text-blue-600">
+                  <span className="text-base font-bold text-pink-400">
                     {formatPrice(finalCost)}
                   </span>
                 </div>
@@ -588,7 +589,7 @@ export default function ThreeBlockComparison({
               
               return (
                 <div key={packageType} className="text-center">
-                  <span className="text-base font-bold text-blue-600">
+                  <span className="text-base font-bold text-pink-400">
                     {formatPrice(totalGifts)}
                   </span>
                 </div>
