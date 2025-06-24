@@ -138,7 +138,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                   Спецпредложение гостевого дня
                 </Badge>
               </div>
-              <h3 className="text-sm lg:text-base font-bold text-gray-900 dark:text-white mb-1.5">Выбор услуг</h3>
+              <h3 className="text-xs font-bold text-gray-900 dark:text-white mb-1.5">Выбор услуг</h3>
               <ServiceSelector
                 selectedServices={selectedServices}
                 onServicesChange={setSelectedServices}
@@ -163,9 +163,9 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
 
             {/* Procedure count - компактный */}
             <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-1.5 text-sm">Количество процедур</h4>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-1.5 text-xs">Количество процедур</h4>
               <div className="text-center mb-1.5">
-                <div className="text-lg lg:text-xl font-bold text-premium">{procedureCount}</div>
+                <div className="text-sm font-bold text-premium">{procedureCount}</div>
                 <div className="text-xs text-gray-500">процедур</div>
               </div>
               
@@ -190,14 +190,14 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
 
             {/* Payment settings - минималистичный дизайн */}
             <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
-              <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-1.5">
+              <h4 className="font-bold text-gray-900 dark:text-white text-xs mb-1.5">
                 {selectedPackage === 'vip' ? 'Полная предоплата' : 'Первый взнос'}
               </h4>
               
               <div className="text-center mb-1.5">
                 {selectedPackage === 'vip' ? (
                   // VIP - показываем полную стоимость стандартным цветом
-                  <div className="text-lg lg:text-xl font-bold text-premium">
+                  <div className="text-xs font-bold text-premium">
                     {calculation?.packages?.vip ? formatPrice(calculation.packages.vip.finalCost) : formatPrice(calculation?.baseCost || 0)}
                   </div>
                 ) : (
@@ -226,7 +226,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                         }
                       }}
                       autoFocus
-                      className="text-lg font-bold text-premium bg-transparent border-none text-center w-full focus:outline-none focus:ring-2 focus:ring-pink-500 rounded px-2 py-1"
+                      className="text-xs font-bold text-premium bg-transparent border-none text-center w-full focus:outline-none focus:ring-2 focus:ring-pink-500 rounded px-2 py-1"
                       style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' }}
                     />
                   ) : (
@@ -235,7 +235,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                         setTempPaymentValue(downPayment.toString());
                         setIsEditingPayment(true);
                       }}
-                      className="text-lg font-bold text-premium cursor-pointer hover:bg-pink-50 dark:hover:bg-pink-900/20 rounded px-2 py-1 transition-colors"
+                      className="text-xs font-bold text-premium cursor-pointer hover:bg-pink-50 dark:hover:bg-pink-900/20 rounded px-2 py-1 transition-colors"
                     >
                       {formatPrice(downPayment)}
                     </div>
@@ -279,10 +279,10 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             {/* Installment configuration - компактный */}
             {downPayment < (selectedPackage && calculation ? getPackageData(selectedPackage)?.finalCost || 25000 : 25000) && (
               <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
-                <h4 className="font-semibold text-gray-900 dark:text-white mb-1.5 text-sm">Рассрочка</h4>
+                <h4 className="font-bold text-gray-900 dark:text-white mb-1.5 text-xs">Рассрочка</h4>
                 
                 <div className="text-center mb-1.5">
-                  <div className="text-base font-bold text-premium">{installmentMonths}</div>
+                  <div className="text-sm font-bold text-premium">{installmentMonths}</div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
                     {installmentMonths === 1 ? 'месяц' : 
                      installmentMonths <= 4 ? 'месяца' : 'месяцев'}
@@ -312,7 +312,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="font-semibold text-gray-900 dark:text-white text-sm">Сертификат</h4>
+                  <h4 className="font-bold text-gray-900 dark:text-white text-xs">Сертификат</h4>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
                     Скидка {calculatorSettings?.certificateDiscountAmount?.toLocaleString() || '3 000'}₽
                   </p>
