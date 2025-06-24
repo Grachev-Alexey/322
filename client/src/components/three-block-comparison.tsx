@@ -326,17 +326,12 @@ export default function ThreeBlockComparison({
             <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
               <div className="text-sm font-medium text-gray-700">Скидка</div>
               {packageTypes.map((packageType) => {
-                const packageData = packages.find(
-                  (p) => p.type === packageType,
-                );
-                const discountPercent = packageData
-                  ? Math.round(parseFloat(packageData.discount) * 100)
-                  : 0;
+                const finalDiscountPercent = getFinalDiscountPercent(packageType);
 
                 return (
                   <div key={packageType} className="text-center">
                     <span className="text-sm font-semibold text-gray-700">
-                      {discountPercent}%
+                      {finalDiscountPercent}%
                     </span>
                   </div>
                 );
