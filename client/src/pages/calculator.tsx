@@ -172,6 +172,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
             packagePerkValues={packagePerkValues}
             usedCertificate={usedCertificate}
             freeZones={freeZones}
+            selectedServices={selectedServices}
           />
         )}
 

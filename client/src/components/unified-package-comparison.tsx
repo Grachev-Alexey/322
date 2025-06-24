@@ -67,6 +67,14 @@ interface PackagePerkValue {
   };
 }
 
+interface SelectedService {
+  id: number;
+  yclientsId: number;
+  title: string;
+  priceMin: string;
+  quantity: number;
+}
+
 interface UnifiedPackageComparisonProps {
   calculation: Calculation;
   selectedPackage: string | null;
@@ -83,6 +91,7 @@ interface UnifiedPackageComparisonProps {
     pricePerProcedure: number;
     quantity: number;
   }>;
+  selectedServices?: SelectedService[];
 }
 
 export default function UnifiedPackageComparison({
@@ -96,6 +105,7 @@ export default function UnifiedPackageComparison({
   packagePerkValues = [],
   usedCertificate = false,
   freeZones = [],
+  selectedServices = [],
 }: UnifiedPackageComparisonProps) {
   const packageTypes = ["vip", "standard", "economy"];
   const hasValidCalculation = calculation && calculation.baseCost > 0;
@@ -508,19 +518,23 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Calculate gift procedures value using database settings and current procedure count from slider
-                // The gift should be: (baseCost / totalProcedures) * giftSessions
-                const costPerProcedure = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
+                // Calculate gift using actual selected services and current slider value
+                const servicesPriceSum = selectedServices.reduce((sum, service) => {
+                  return sum + (parseFloat(service.priceMin) * service.quantity);
+                }, 0);
+                
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 
-                  ? costPerProcedure * (packageData.giftSessions || 0)
+                  ? servicesPriceSum * (packageData.giftSessions || 0)
                   : 0;
 
-                // Debug logging
+                // Debug the fixed calculation
                 if (packageType === 'vip') {
-                  console.log('🎁 Package data check:', {
-                    packageData,
+                  console.log('FIXED GIFT CALCULATION:', {
+                    selectedServices,
+                    servicesPriceSum,
                     giftSessions: packageData?.giftSessions,
-                    packagesArray: packages
+                    giftValue,
+                    formula: 'servicesPriceSum * giftSessions'
                   });
                 }
 
@@ -606,10 +620,13 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Calculate total gifts value using database settings and current procedure count from slider
-                const costPerProcedure = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
+                // Calculate total gifts using actual selected services
+                const servicesPriceSum = selectedServices.reduce((sum, service) => {
+                  return sum + (parseFloat(service.priceMin) * service.quantity);
+                }, 0);
+                
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 
-                  ? costPerProcedure * (packageData.giftSessions || 0)
+                  ? servicesPriceSum * (packageData.giftSessions || 0)
                   : 0;
 
 
