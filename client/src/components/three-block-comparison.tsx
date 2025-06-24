@@ -154,7 +154,7 @@ export default function ThreeBlockComparison({
     <div className="space-y-4 w-full max-w-4xl p-4">
 
       {/* Преимущества with curved border */}
-      <div className="relative bg-white overflow-hidden" style={{ borderRadius: '32px' }}>
+      <div className="relative overflow-hidden" style={{ borderRadius: '32px' }}>
         {/* Custom curved border using SVG */}
         <svg 
           className="absolute inset-0 w-full h-full pointer-events-none" 
@@ -178,18 +178,16 @@ export default function ThreeBlockComparison({
           <use href="#curved-border-blue" mask="url(#title-mask-blue)"/>
         </svg>
         
-        {/* Title with star icon - emerging from block */}
-        <div className="absolute -top-1 left-6 bg-white px-6 py-2 z-10 rounded-lg shadow-sm">
+        {/* Title and Package Headers on same level */}
+        <div className="flex items-center justify-between pt-4 px-5 mb-6">
+          {/* Title with star icon */}
           <div className="flex items-center gap-3">
             <Star className="w-5 h-5 text-yellow-500" />
             <span className="font-bold text-gray-800 text-lg">Преимущества</span>
           </div>
-        </div>
-        
-        <div className="pt-12 p-5 relative z-0">
-          {/* Package Headers inside advantages block */}
-          <div className="grid grid-cols-4 gap-3 mb-6">
-            <div></div>
+          
+          {/* Package Headers - smaller, no background */}
+          <div className="flex gap-4">
             {packageTypes.map((packageType) => {
               const Icon = getPackageIcon(packageType);
               const isSelected = selectedPackage === packageType;
@@ -197,14 +195,14 @@ export default function ThreeBlockComparison({
               return (
                 <div
                   key={packageType}
-                  className={`text-center cursor-pointer transition-all duration-200 rounded-lg p-2 ${
+                  className={`text-center cursor-pointer transition-all duration-200 rounded-lg p-1 ${
                     isSelected
-                      ? "bg-blue-50 shadow-md transform scale-105 border-2 border-blue-300"
-                      : "bg-gray-50 hover:bg-white hover:shadow-sm"
+                      ? "transform scale-105 border-2 border-blue-300"
+                      : "hover:scale-105"
                   }`}
                   onClick={() => onPackageSelect(packageType)}
                 >
-                  <div className={`inline-flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-r ${getPackageColor(packageType)} mb-1`}>
+                  <div className={`inline-flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-r ${getPackageColor(packageType)} mb-1`}>
                     <Icon className="h-3 w-3 text-white" />
                   </div>
                   <div className="font-bold text-gray-800 text-xs">
@@ -214,6 +212,9 @@ export default function ThreeBlockComparison({
               );
             })}
           </div>
+        </div>
+        
+        <div className="px-5 pb-5 relative z-0">
 
           <div className="space-y-3">
             {uniquePerks.map((perk) => {
@@ -305,7 +306,7 @@ export default function ThreeBlockComparison({
       </div>
 
       {/* Стоимость with curved border */}
-      <div className="relative bg-white overflow-hidden" style={{ borderRadius: '32px' }}>
+      <div className="relative overflow-hidden" style={{ borderRadius: '32px' }}>
         {/* Custom curved border using SVG */}
         <svg 
           className="absolute inset-0 w-full h-full pointer-events-none" 
@@ -381,7 +382,7 @@ export default function ThreeBlockComparison({
           )}
 
           {/* Итого стоимость курса */}
-          <div className="grid grid-cols-4 gap-4 py-3 border-t-2 border-green-200 mt-2">
+          <div className="grid grid-cols-4 gap-4 py-3 border-t-2 border-blue-200 mt-2">
             <div className="text-base font-bold text-gray-800">Итого стоимость курса:</div>
             {packageTypes.map((packageType) => {
               const packageData = getPackageData(packageType);
@@ -389,7 +390,7 @@ export default function ThreeBlockComparison({
               
               return (
                 <div key={packageType} className="text-center">
-                  <span className="text-base font-bold text-pink-600">
+                  <span className="text-base font-bold text-blue-600">
                     {formatPrice(finalCost)}
                   </span>
                 </div>
@@ -433,7 +434,7 @@ export default function ThreeBlockComparison({
       </div>
 
       {/* Подарки with curved border */}
-      <div className="relative bg-white overflow-hidden" style={{ borderRadius: '32px' }}>
+      <div className="relative overflow-hidden" style={{ borderRadius: '32px' }}>
         {/* Custom curved border using SVG */}
         <svg 
           className="absolute inset-0 w-full h-full pointer-events-none" 
@@ -587,7 +588,7 @@ export default function ThreeBlockComparison({
               
               return (
                 <div key={packageType} className="text-center">
-                  <span className="text-base font-bold text-pink-600">
+                  <span className="text-base font-bold text-blue-600">
                     {formatPrice(totalGifts)}
                   </span>
                 </div>
