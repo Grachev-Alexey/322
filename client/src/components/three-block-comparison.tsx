@@ -248,6 +248,58 @@ export default function ThreeBlockComparison({
                 </div>
               );
             })}
+
+          {/* Free Sessions Row */}
+          <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
+            <div className="text-sm font-medium text-gray-700">Сеансы в подарок</div>
+            {packageTypes.map((packageType) => {
+              const packageData = packages.find(p => p.type === packageType);
+              const giftSessions = packageData?.giftSessions || 0;
+
+              return (
+                <div key={packageType} className="text-center">
+                  <span className="text-sm font-semibold text-gray-700">
+                    {giftSessions > 0 ? giftSessions : "-"}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Discount Row */}
+          <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
+            <div className="text-sm font-medium text-gray-700">Скидка</div>
+            {packageTypes.map((packageType) => {
+              const packageData = packages.find(p => p.type === packageType);
+              const discountPercent = packageData ? Math.round(parseFloat(packageData.discount) * 100) : 0;
+
+              return (
+                <div key={packageType} className="text-center">
+                  <span className="text-sm font-semibold text-gray-700">
+                    {discountPercent}%
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Bonus Account Row */}
+          <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100 last:border-b-0">
+            <div className="text-sm font-medium text-gray-700">Бонусный счет</div>
+            {packageTypes.map((packageType) => {
+              const packageData = packages.find(p => p.type === packageType);
+              const bonusPercent = packageData ? Math.round(parseFloat(packageData.bonusAccountPercent) * 100) : 0;
+
+              return (
+                <div key={packageType} className="text-center">
+                  <div className="text-xs font-semibold text-gray-700">
+                    <div>{bonusPercent}%</div>
+                    <div className="text-xs text-gray-500">от стоимости</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
           </div>
         </div>
       </div>
