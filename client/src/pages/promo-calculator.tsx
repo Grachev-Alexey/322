@@ -275,13 +275,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 />
               )}
               
-              <div className="text-xs mt-1 text-center text-gray-500">
-                {selectedPackage && selectedPackage !== 'vip' ? (
-                  `${formatPrice(getMinDownPayment())} - ${formatPrice(getMaxDownPayment())}`
-                ) : !selectedPackage ? (
-                  'Выберите пакет'
-                ) : null}
-              </div>
+
             </div>
 
             {/* Installment configuration - компактный */}
