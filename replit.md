@@ -4,6 +4,7 @@
 ViVi-Calc is a comprehensive sales calculation tool designed for beauty salons. It helps calculate package deals, discounts, installment payments, and manages client data with different subscription types.
 
 ## Recent Changes
+- **2024-12-26**: Изменен цвет рамок блоков на розовый с прозрачностью для гармоничного дизайна
 - **2024-12-26**: Added 10 test services and 8 test perks with package configurations
 - **2024-12-26**: Migration from Replit Agent to Replit completed with test data
 - **2024-12-26**: Added 10 test services for laser hair removal procedures

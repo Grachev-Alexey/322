@@ -199,7 +199,8 @@ export default function ThreeBlockComparison({
               id="curved-border-blue"
               d="M 8,0 L 92,0 Q 100,0 100,8 L 100,92 Q 100,100 92,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
               fill="none"
-              stroke="#60a5fa"
+              stroke="#ec4899"
+              strokeOpacity="0.3"
               strokeWidth="0.8"
               vectorEffect="non-scaling-stroke"
             />
@@ -416,7 +417,8 @@ export default function ThreeBlockComparison({
               id="curved-border-green"
               d="M 8,0 L 92,0 Q 100,0 100,8 L 100,92 Q 100,100 92,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
               fill="none"
-              stroke="#60a5fa"
+              stroke="#ec4899"
+              strokeOpacity="0.3"
               strokeWidth="0.8"
               vectorEffect="non-scaling-stroke"
             />
@@ -563,7 +565,8 @@ export default function ThreeBlockComparison({
               id="curved-border"
               d="M 8,0 L 92,0 Q 100,0 100,8 L 100,92 Q 100,100 92,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
               fill="none"
-              stroke="#60a5fa"
+              stroke="#ec4899"
+              strokeOpacity="0.3"
               strokeWidth="0.8"
               vectorEffect="non-scaling-stroke"
             />
