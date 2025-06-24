@@ -181,7 +181,7 @@ export default function ThreeBlockComparison({
         </svg>
         
         {/* Title and Package Headers grid layout */}
-        <div className="pt-6 px-5 mb-6">
+        <div className="pt-4 px-5 mb-6">
           {/* Title with star icon and package headers in grid */}
           <div className="grid grid-cols-4 gap-4 items-center p-2">
             {/* Title with star icon */}
