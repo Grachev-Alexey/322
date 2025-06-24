@@ -138,7 +138,7 @@ export default function ServiceSelector({
 
   return (
     <div>
-      <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Зоны для процедур</label>
+      <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Зоны для процедур</label>
       
       {/* Service Selection */}
       <div className="relative mb-2 z-50" ref={dropdownRef}>
@@ -160,13 +160,13 @@ export default function ServiceSelector({
                 setIsOpen(true);
                 updateDropdownPosition();
               }}
-              className="input-premium text-xs lg:text-sm h-8 lg:h-10 pr-10 pl-10 transition-all duration-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-400"
+              className="input-premium text-xs h-7 pr-8 pl-8 transition-all duration-200 focus:ring-2 focus:ring-purple-500/20 focus:border-purple-400"
             />
-            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-              <Search className="h-4 w-4 text-gray-400 group-focus-within:text-purple-500 transition-colors" />
+            <div className="absolute left-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
+              <Search className="h-3 w-3 text-gray-400 group-focus-within:text-purple-500 transition-colors" />
             </div>
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-              <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+            <div className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none">
+              <ChevronDown className={`h-3 w-3 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
             </div>
           </div>
         </div>
@@ -199,7 +199,7 @@ export default function ServiceSelector({
                   {filteredServices.slice(0, 20).map((service, index) => (
                     <div
                       key={service.yclientsId}
-                      className="group/item flex items-center justify-between p-3 rounded-lg cursor-pointer hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 dark:hover:from-purple-900/20 dark:hover:to-indigo-900/20 transition-all duration-200 hover:shadow-sm"
+                      className="group/item flex items-center justify-between p-2 rounded-lg cursor-pointer hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 dark:hover:from-purple-900/20 dark:hover:to-indigo-900/20 transition-all duration-200 hover:shadow-sm"
                       onMouseDown={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
@@ -210,20 +210,20 @@ export default function ServiceSelector({
                       }}
                     >
                       <div className="flex items-center min-w-0 flex-1">
-                        <div className="w-2 h-2 rounded-full bg-gradient-to-r from-purple-400 to-indigo-400 mr-3 opacity-60 group-hover/item:opacity-100 transition-opacity" />
+                        <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-purple-400 to-indigo-400 mr-2 opacity-60 group-hover/item:opacity-100 transition-opacity" />
                         <div className="min-w-0 flex-1">
-                          <div className="text-xs lg:text-sm font-medium text-gray-900 dark:text-white truncate group-hover/item:text-purple-700 dark:group-hover/item:text-purple-300 transition-colors">
+                          <div className="text-xs font-medium text-gray-900 dark:text-white truncate group-hover/item:text-purple-700 dark:group-hover/item:text-purple-300 transition-colors">
                             {service.title}
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center ml-2">
-                        <div className="bg-gradient-to-r from-purple-100 to-indigo-100 dark:from-purple-900/30 dark:to-indigo-900/30 px-2 py-1 rounded-full">
+                      <div className="flex items-center ml-1">
+                        <div className="bg-gradient-to-r from-purple-100 to-indigo-100 dark:from-purple-900/30 dark:to-indigo-900/30 px-1.5 py-0.5 rounded-full">
                           <span className="text-xs font-semibold text-purple-700 dark:text-purple-300">
                             {formatPrice(parseFloat(service.priceMin))}
                           </span>
                         </div>
-                        <Plus className="h-4 w-4 text-gray-400 ml-2 group-hover/item:text-purple-500 transition-colors" />
+                        <Plus className="h-3 w-3 text-gray-400 ml-1 group-hover/item:text-purple-500 transition-colors" />
                       </div>
                     </div>
                   ))}
@@ -246,16 +246,16 @@ export default function ServiceSelector({
       </div>
       
       {/* Selected Services */}
-      <div className="space-y-1 lg:space-y-2">
+      <div className="space-y-1">
         {selectedServices.map((service) => (
           <div
             key={service.yclientsId}
-            className={`flex items-center justify-between bg-gray-50 dark:bg-gray-800 rounded-lg p-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border border-gray-200 ${freeZones.length > 0 ? 'opacity-50' : ''}`}
+            className={`flex items-center justify-between bg-gray-50 dark:bg-gray-800 rounded-lg p-1.5 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors border border-gray-200 ${freeZones.length > 0 ? 'opacity-50' : ''}`}
             onDoubleClick={() => handleDoubleClick(service)}
             title={freeZones.length > 0 ? "Можно добавить только одну бесплатную зону" : "Двойной клик для добавления бесплатной зоны"}
           >
             <div className="flex items-center min-w-0 flex-1">
-              <span className="text-xs lg:text-sm font-medium text-gray-900 dark:text-white truncate">{service.title}</span>
+              <span className="text-xs font-medium text-gray-900 dark:text-white truncate">{service.title}</span>
               <span className="ml-2 text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">
                 {formatPrice(parseFloat(service.priceMin))}
               </span>
@@ -274,28 +274,28 @@ export default function ServiceSelector({
 
       {/* Free Zones - only show if there are any */}
       {freeZones.length > 0 && (
-        <div className="mt-3 lg:mt-4">
-          <div className="flex items-center gap-2 mb-2">
-            <Gift className="w-3 h-3 lg:w-4 lg:h-4 text-pink-500" />
-            <span className="text-xs lg:text-sm font-medium text-pink-600">Бесплатные зоны</span>
+        <div className="mt-2">
+          <div className="flex items-center gap-1.5 mb-1.5">
+            <Gift className="w-3 h-3 text-pink-500" />
+            <span className="text-xs font-bold text-pink-600">Бесплатные зоны</span>
           </div>
           
-          <div className="space-y-1 lg:space-y-2">
+          <div className="space-y-1">
             {freeZones.map((zone) => (
               <div
                 key={zone.serviceId}
                 className="flex items-center justify-between bg-pink-50 rounded-lg p-2 border border-pink-200"
               >
                 <div className="flex items-center min-w-0 flex-1">
-                  <span className="text-xs lg:text-sm font-medium truncate">{zone.title}</span>
+                  <span className="text-xs font-medium truncate">{zone.title}</span>
                 </div>
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => removeFreeZone(zone.serviceId)}
-                  className="text-red-500 hover:text-red-700 p-1 flex-shrink-0 h-6 w-6"
+                  className="text-red-500 hover:text-red-700 p-0.5 flex-shrink-0 h-5 w-5"
                 >
-                  <X size={12} />
+                  <X size={10} />
                 </Button>
               </div>
             ))}
