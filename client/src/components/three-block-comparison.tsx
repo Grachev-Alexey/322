@@ -182,7 +182,7 @@ export default function ThreeBlockComparison({
   }
 
   return (
-    <div className="space-y-5 w-full max-w-4xl p-1">
+    <div className="space-y-3 w-full max-w-4xl p-1">
       {/* Преимущества with curved border */}
       <div
         className="relative overflow-hidden border border-pink-300/50"
