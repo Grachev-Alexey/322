@@ -146,9 +146,17 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 freeZones={freeZones}
               />
               
-              {/* Subscription cost before discounts */}
+              {/* Cost per procedure and subscription cost */}
               {calculation && calculation.baseCost > 0 && (
                 <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
+                      Стоимость за процедуру:
+                    </span>
+                    <span className="text-xs font-bold text-gray-800 dark:text-gray-200">
+                      {formatPrice(calculation.baseCost / calculation.totalProcedures)}
+                    </span>
+                  </div>
                   <div className="flex justify-between items-center">
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Стоимость абонемента:
