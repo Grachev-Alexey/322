@@ -132,7 +132,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
         {/* Left panel - Controls */}
         <div className="w-full lg:w-72 xl:w-80 flex flex-col h-auto lg:h-full order-2 lg:order-1">
           {/* Scrollable content area with custom scrollbar */}
-          <div className="flex-1 overflow-y-auto space-y-1.5 lg:space-y-2 pr-1 custom-left-scrollbar max-h-[40vh] lg:max-h-none">
+          <div className="flex-1 overflow-y-auto space-y-1.5 lg:space-y-2 custom-left-scrollbar max-h-[40vh] lg:max-h-none" style={{ scrollbarGutter: 'stable' }}>
             {/* Service selection card with special offer badge */}
             <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
               {/* Special offer badge inside the card */}
