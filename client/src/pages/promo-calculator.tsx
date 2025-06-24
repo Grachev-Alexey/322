@@ -360,6 +360,8 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 usedCertificate={usedCertificate}
                 freeZones={freeZones}
                 selectedServices={selectedServices}
+                bulkDiscountThreshold={calculatorSettings?.bulkDiscountThreshold || 15}
+                bulkDiscountPercentage={calculatorSettings?.bulkDiscountPercentage || 0.025}
               />
             </div>
           )}
