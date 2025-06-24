@@ -4,6 +4,9 @@
 ViVi-Calc is a comprehensive sales calculation tool designed for beauty salons. It helps calculate package deals, discounts, installment payments, and manages client data with different subscription types.
 
 ## Recent Changes
+- **2024-12-26**: Migration from Replit Agent to Replit completed with test data
+- **2024-12-26**: Added 10 test services for laser hair removal procedures
+- **2024-12-26**: Added 8 test perks with package-specific values for all three packages
 - **2024-12-26**: Successfully completed migration from Replit Agent to Replit environment
 - **2024-12-26**: Redesigned package comparison into three modern curved blocks with SVG borders
 - **2024-12-26**: Implemented all original table elements: perks, gift sessions, discounts, bonus accounts
