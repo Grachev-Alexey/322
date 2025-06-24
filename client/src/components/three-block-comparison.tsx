@@ -388,7 +388,7 @@ export default function ThreeBlockComparison({
           )}
 
           {/* Итого стоимость курса */}
-          <div className="grid grid-cols-4 gap-4 py-3 border-t-2 border-blue-200 mt-2">
+          <div className="grid grid-cols-4 gap-4 py-3 mt-2">
             <div className="text-base font-bold text-gray-800">Итого стоимость курса:</div>
             {packageTypes.map((packageType) => {
               const packageData = getPackageData(packageType);
@@ -403,6 +403,9 @@ export default function ThreeBlockComparison({
               );
             })}
           </div>
+          
+          {/* Thin underline after total */}
+          <div className="border-t border-blue-300 mt-2"></div>
 
           {/* Первый взнос */}
           <div className="grid grid-cols-4 gap-4 py-2">
@@ -555,7 +558,7 @@ export default function ThreeBlockComparison({
           </div>
 
           {/* Total Gifts Value Row */}
-          <div className="grid grid-cols-4 gap-4 py-3 border-t-2 border-blue-200 mt-2">
+          <div className="grid grid-cols-4 gap-4 py-3 mt-2">
             <div className="text-base font-bold text-gray-800">Итого стоимость подарков:</div>
             {packageTypes.map((packageType) => {
               const packageData = packages.find(p => p.type === packageType);
@@ -601,6 +604,9 @@ export default function ThreeBlockComparison({
               );
             })}
           </div>
+          
+          {/* Thin underline after total */}
+          <div className="border-t border-blue-300 mt-2"></div>
         </div>
       </div>
     </div>
