@@ -508,13 +508,13 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Calculate gift procedures value
+                // Calculate gift procedures value using original cost per procedure
                 const giftValue =
                   data &&
                   packageData &&
                   (packageData.giftSessions || 0) > 0 &&
                   calculation.totalProcedures > 0
-                    ? (data.finalCost / calculation.totalProcedures) *
+                    ? (calculation.baseCost / calculation.totalProcedures) *
                       (packageData.giftSessions || 0)
                     : 0;
 
@@ -598,13 +598,13 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Calculate total gifts value
+                // Calculate total gifts value using original cost per procedure
                 const giftValue =
                   data &&
                   packageData &&
                   (packageData.giftSessions || 0) > 0 &&
                   calculation.totalProcedures > 0
-                    ? (data.finalCost / calculation.totalProcedures) *
+                    ? (calculation.baseCost / calculation.totalProcedures) *
                       (packageData.giftSessions || 0)
                     : 0;
 

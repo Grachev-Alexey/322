@@ -108,19 +108,21 @@ export function calculatePackagePricing(
 
 
     // Calculate gift session value based on package type
-    // Gift sessions are full procedure sessions, not individual visits
+    // Gift sessions are calculated using the original cost per procedure (before discount)
+    const packageDiscount = baseCost * discount;
+    const originalCostPerProcedure = totalProcedures > 0 ? baseCost / totalProcedures : 0;
+    
     let giftSessionValue = 0;
     if (packageType === 'vip') {
-      giftSessionValue = baseCost / totalProcedures * 3; // 3 full sessions for VIP
+      giftSessionValue = originalCostPerProcedure * 3; // 3 full sessions for VIP
     } else if (packageType === 'standard') {
-      giftSessionValue = baseCost / totalProcedures * 1; // 1 full session for Standard
+      giftSessionValue = originalCostPerProcedure * 1; // 1 full session for Standard
     }
 
     // Calculate free zones value from params
     const freeZonesValue = params.freeZonesValue || 0;
     
     // Total savings - gift sessions only for display, not actual cost reduction
-    const packageDiscount = baseCost * discount;
     const actualDiscounts = packageDiscount + certificateDiscount + additionalDiscount;
     const totalSavings = actualDiscounts + giftSessionValue + freeZonesValue; // Include free zones in display
     const finalCost = baseCost - actualDiscounts; // Actual cost without gift sessions (free zones already subtracted from baseCost)
