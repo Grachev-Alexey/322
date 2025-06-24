@@ -186,7 +186,7 @@ export default function ThreeBlockComparison({
       {/* Преимущества with curved border */}
       <div
         className="relative overflow-hidden"
-        style={{ borderRadius: "32px" }}
+        style={{ borderRadius: "16px" }}
       >
         {/* Custom curved border using SVG */}
         <svg
@@ -403,7 +403,7 @@ export default function ThreeBlockComparison({
       {/* Стоимость with curved border */}
       <div
         className="relative overflow-hidden"
-        style={{ borderRadius: "32px" }}
+        style={{ borderRadius: "16px" }}
       >
         {/* Custom curved border using SVG */}
         <svg
@@ -550,7 +550,7 @@ export default function ThreeBlockComparison({
       {/* Подарки with curved border */}
       <div
         className="relative overflow-hidden"
-        style={{ borderRadius: "32px" }}
+        style={{ borderRadius: "16px" }}
       >
         {/* Custom curved border using SVG */}
         <svg
