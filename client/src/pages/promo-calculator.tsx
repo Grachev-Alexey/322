@@ -138,7 +138,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                   Спецпредложение гостевого дня
                 </Badge>
               </div>
-              <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-2">Выбор услуг</h3>
+              <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">Выбор услуг</h3>
               <ServiceSelector
                 selectedServices={selectedServices}
                 onServicesChange={setSelectedServices}
