@@ -518,6 +518,19 @@ export default function UnifiedPackageComparison({
                       (packageData.giftSessions || 0)
                     : 0;
 
+                // DEBUG LOGGING
+                if (packageType === 'vip') {
+                  console.log('🎁 Gift calculation DEBUG:', {
+                    packageType,
+                    baseCost: calculation.baseCost,
+                    totalProcedures: calculation.totalProcedures,
+                    giftSessions: packageData?.giftSessions,
+                    costPerProcedure: calculation.baseCost / calculation.totalProcedures,
+                    giftValue,
+                    procedureCount
+                  });
+                }
+
                 return (
                   <div key={packageType} className="text-center py-1">
                     <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -607,6 +620,18 @@ export default function UnifiedPackageComparison({
                     ? (calculation.baseCost / calculation.totalProcedures) *
                       (packageData.giftSessions || 0)
                     : 0;
+
+                // DEBUG LOGGING for total gifts
+                if (packageType === 'vip') {
+                  console.log('🎁 Total gifts calculation DEBUG:', {
+                    packageType,
+                    baseCost: calculation.baseCost,
+                    totalProcedures: calculation.totalProcedures,
+                    giftSessions: packageData?.giftSessions,
+                    giftValue,
+                    procedureCount
+                  });
+                }
 
                 const bonusPercent = packageData
                   ? parseFloat(packageData.bonusAccountPercent)
