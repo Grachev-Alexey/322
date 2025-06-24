@@ -1,0 +1,156 @@
+unified-package-comparison.tsx:533 CORRECTED GIFT CALCULATION: 
+{baseCost: 45500, procedureCount: 13, totalProcedures: 26, selectedServicesTotalCost: 3500, giftSessions: 2, …}
+baseCost
+: 
+45500
+formula
+: 
+"baseCost / procedureCount * giftSessions"
+giftSessions
+: 
+2
+giftValue
+: 
+7000
+procedureCount
+: 
+13
+selectedServicesTotalCost
+: 
+3500
+totalProcedures
+: 
+26
+[[Prototype]]
+: 
+Object
+unified-package-comparison.tsx:533 CORRECTED GIFT CALCULATION: 
+{baseCost: 45500, procedureCount: 14, totalProcedures: 26, selectedServicesTotalCost: 3250, giftSessions: 2, …}
+baseCost
+: 
+45500
+formula
+: 
+"baseCost / procedureCount * giftSessions"
+giftSessions
+: 
+2
+giftValue
+: 
+6500
+procedureCount
+: 
+14
+selectedServicesTotalCost
+: 
+3250
+totalProcedures
+: 
+26
+[[Prototype]]
+: 
+Object
+unified-package-comparison.tsx:533 CORRECTED GIFT CALCULATION: 
+{baseCost: 49000, procedureCount: 14, totalProcedures: 28, selectedServicesTotalCost: 3500, giftSessions: 2, …}
+baseCost
+: 
+49000
+formula
+: 
+"baseCost / procedureCount * giftSessions"
+giftSessions
+: 
+2
+giftValue
+: 
+7000
+procedureCount
+: 
+14
+selectedServicesTotalCost
+: 
+3500
+totalProcedures
+: 
+28
+[[Prototype]]
+: 
+Object
+unified-package-comparison.tsx:533 CORRECTED GIFT CALCULATION: 
+{baseCost: 49000, procedureCount: 15, totalProcedures: 28, selectedServicesTotalCost: 3266.6666666666665, giftSessions: 2, …}
+baseCost
+: 
+49000
+formula
+: 
+"baseCost / procedureCount * giftSessions"
+giftSessions
+: 
+2
+giftValue
+: 
+6533.333333333333
+procedureCount
+: 
+15
+selectedServicesTotalCost
+: 
+3266.6666666666665
+totalProcedures
+: 
+28
+[[Prototype]]
+: 
+Object
+unified-package-comparison.tsx:533 CORRECTED GIFT CALCULATION: 
+{baseCost: 52500, procedureCount: 15, totalProcedures: 30, selectedServicesTotalCost: 3500, giftSessions: 2, …}
+baseCost
+: 
+52500
+formula
+: 
+"baseCost / procedureCount * giftSessions"
+giftSessions
+: 
+2
+giftValue
+: 
+7000
+procedureCount
+: 
+15
+selectedServicesTotalCost
+: 
+3500
+totalProcedures
+: 
+30
+[[Prototype]]
+: 
+Object
+unified-package-comparison.tsx:533 CORRECTED GIFT CALCULATION: 
+{baseCost: 52500, procedureCount: 16, totalProcedures: 30, selectedServicesTotalCost: 3281.25, giftSessions: 2, …}
+baseCost
+: 
+52500
+formula
+: 
+"baseCost / procedureCount * giftSessions"
+giftSessions
+: 
+2
+giftValue
+: 
+6562.5
+procedureCount
+: 
+16
+selectedServicesTotalCost
+: 
+3281.25
+totalProcedures
+: 
+30
+[[Prototype]]
+: 
+Object

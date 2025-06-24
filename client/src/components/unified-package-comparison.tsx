@@ -518,26 +518,24 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // CORRECT CALCULATION: Gift = total cost of selected services × gift sessions
-                // NOT per procedure, but the TOTAL cost of all selected services
+                // FIXED: Use totalProcedures from calculation, not procedureCount from slider
                 const selectedServicesTotalCost = calculation.totalProcedures > 0 
-                  ? calculation.baseCost / procedureCount // Total cost of selected services for 1 procedure
+                  ? calculation.baseCost / calculation.totalProcedures // Cost per procedure
                   : 0;
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 
                   ? selectedServicesTotalCost * (packageData.giftSessions || 0)
                   : 0;
 
-                // Debug the CORRECTED calculation
+                // Debug the FINAL FIXED calculation
                 if (packageType === 'vip') {
-                  console.log('CORRECTED GIFT CALCULATION:', {
+                  console.log('FINAL FIXED CALCULATION:', {
                     baseCost: calculation.baseCost,
-                    procedureCount,
                     totalProcedures: calculation.totalProcedures,
-                    selectedServicesTotalCost,
+                    costPerProcedure: selectedServicesTotalCost,
                     giftSessions: packageData?.giftSessions,
                     giftValue,
-                    formula: 'baseCost / procedureCount * giftSessions'
+                    formula: 'baseCost / totalProcedures * giftSessions'
                   });
                 }
 
@@ -623,9 +621,9 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // CORRECT: Total cost of selected services for gift calculation
+                // FIXED: Use totalProcedures from calculation
                 const selectedServicesTotalCost = calculation.totalProcedures > 0 
-                  ? calculation.baseCost / procedureCount
+                  ? calculation.baseCost / calculation.totalProcedures
                   : 0;
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 
