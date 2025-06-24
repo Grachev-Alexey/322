@@ -180,16 +180,40 @@ export default function ThreeBlockComparison({
         })}
       </div>
 
-      {/* Преимущества */}
-      <div className="relative bg-white rounded-2xl border-2 border-blue-300 overflow-hidden">
-        <div className="absolute -top-1 left-6 bg-white px-4 py-1 rounded-b-lg border-l-2 border-r-2 border-b-2 border-blue-300">
+      {/* Преимущества with curved border */}
+      <div className="relative bg-white overflow-hidden" style={{ borderRadius: '24px' }}>
+        {/* Custom curved border using SVG */}
+        <svg 
+          className="absolute inset-0 w-full h-full pointer-events-none" 
+          preserveAspectRatio="none"
+          viewBox="0 0 100 100"
+        >
+          <defs>
+            <path 
+              id="curved-border-blue" 
+              d="M 8,0 L 88,0 Q 96,0 96,8 L 96,92 Q 96,100 88,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
+              fill="none"
+              stroke="#93c5fd"
+              strokeWidth="0.4"
+              vectorEffect="non-scaling-stroke"
+            />
+            <mask id="title-mask-blue">
+              <rect width="100%" height="100%" fill="white"/>
+              <rect x="12%" y="-2%" width="28%" height="8%" fill="black"/>
+            </mask>
+          </defs>
+          <use href="#curved-border-blue" mask="url(#title-mask-blue)"/>
+        </svg>
+        
+        {/* Title with star icon */}
+        <div className="absolute -top-0.5 left-6 bg-white px-4 py-1 z-10">
           <div className="flex items-center gap-2">
             <Star className="w-4 h-4 text-yellow-500" />
             <span className="font-bold text-gray-800">Преимущества</span>
           </div>
         </div>
         
-        <div className="pt-8 p-6">
+        <div className="pt-8 p-6 relative z-0">
           <div className="space-y-3">
             {uniquePerks.map((perk) => {
               const IconComponent = (Icons as any)[perk.icon] || Star;
@@ -227,9 +251,33 @@ export default function ThreeBlockComparison({
         </div>
       </div>
 
-      {/* Стоимость */}
-      <div className="relative bg-white rounded-2xl border-2 border-green-300 overflow-hidden">
-        <div className="absolute -top-1 left-6 bg-white px-4 py-1 rounded-b-lg border-l-2 border-r-2 border-b-2 border-green-300">
+      {/* Стоимость with curved border */}
+      <div className="relative bg-white overflow-hidden" style={{ borderRadius: '24px' }}>
+        {/* Custom curved border using SVG */}
+        <svg 
+          className="absolute inset-0 w-full h-full pointer-events-none" 
+          preserveAspectRatio="none"
+          viewBox="0 0 100 100"
+        >
+          <defs>
+            <path 
+              id="curved-border-green" 
+              d="M 8,0 L 88,0 Q 96,0 96,8 L 96,92 Q 96,100 88,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
+              fill="none"
+              stroke="#86efac"
+              strokeWidth="0.4"
+              vectorEffect="non-scaling-stroke"
+            />
+            <mask id="title-mask-green">
+              <rect width="100%" height="100%" fill="white"/>
+              <rect x="12%" y="-2%" width="22%" height="8%" fill="black"/>
+            </mask>
+          </defs>
+          <use href="#curved-border-green" mask="url(#title-mask-green)"/>
+        </svg>
+        
+        {/* Title with money icon */}
+        <div className="absolute -top-0.5 left-6 bg-white px-4 py-1 z-10">
           <div className="flex items-center gap-2">
             <span className="text-lg">💰</span>
             <span className="font-bold text-gray-800">Стоимость</span>
@@ -331,16 +379,40 @@ export default function ThreeBlockComparison({
         </div>
       </div>
 
-      {/* Подарки */}
-      <div className="relative bg-white rounded-2xl border-2 border-pink-300 overflow-hidden">
-        <div className="absolute -top-1 left-6 bg-white px-4 py-1 rounded-b-lg border-l-2 border-r-2 border-b-2 border-pink-300">
+      {/* Подарки with curved border */}
+      <div className="relative bg-white overflow-hidden" style={{ borderRadius: '24px' }}>
+        {/* Custom curved border using SVG */}
+        <svg 
+          className="absolute inset-0 w-full h-full pointer-events-none" 
+          preserveAspectRatio="none"
+          viewBox="0 0 100 100"
+        >
+          <defs>
+            <path 
+              id="curved-border" 
+              d="M 8,0 L 88,0 Q 96,0 96,8 L 96,92 Q 96,100 88,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
+              fill="none"
+              stroke="#f9a8d4"
+              strokeWidth="0.4"
+              vectorEffect="non-scaling-stroke"
+            />
+            <mask id="title-mask">
+              <rect width="100%" height="100%" fill="white"/>
+              <rect x="12%" y="-2%" width="25%" height="8%" fill="black"/>
+            </mask>
+          </defs>
+          <use href="#curved-border" mask="url(#title-mask)"/>
+        </svg>
+        
+        {/* Title with gift icon */}
+        <div className="absolute -top-0.5 left-6 bg-white px-4 py-1 z-10">
           <div className="flex items-center gap-2">
             <Gift className="w-4 h-4 text-pink-500" />
             <span className="font-bold text-gray-800">Подарки</span>
           </div>
         </div>
         
-        <div className="pt-8 p-6 space-y-3">
+        <div className="pt-8 p-6 space-y-3 relative z-0">
           {/* Стоимость подарочных процедур */}
           <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
             <div className="text-sm font-medium text-gray-700">Стоимость подарочных процедур</div>
