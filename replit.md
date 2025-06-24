@@ -16,6 +16,7 @@ ViVi-Calc is a comprehensive sales calculation tool designed for beauty salons. 
 - **2024-12-23**: Fixed gift services calculation to use database settings (giftSessions) and update properly when procedure count changes
 - **2024-12-23**: Fixed gift calculation to use correct formula: baseCost ÷ totalProcedures × giftSessions
 - **2024-12-23**: Gift calculation now properly calculates cost per procedure and multiplies by database gift sessions setting
+- **2024-12-23**: Fixed gift calculation to be independent of procedure count slider - now uses totalProcedures from calculation for stable gift values
 
 ## Project Architecture
 - **Frontend**: React with Vite, TailwindCSS, Radix UI components

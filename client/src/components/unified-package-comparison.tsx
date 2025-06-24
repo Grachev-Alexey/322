@@ -518,23 +518,14 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Calculate based on actual calculation data
-                const costPerProcedure = procedureCount > 0 ? calculation.baseCost / procedureCount : 0;
+                // Fixed cost per procedure calculation - use totalProcedures from calculation, not slider
+                const costPerProcedure = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 
                   ? costPerProcedure * (packageData.giftSessions || 0)
                   : 0;
 
-                // Final debug
-                if (packageType === 'vip') {
-                  console.log('FINAL GIFT CALCULATION:', {
-                    baseCost: calculation.baseCost,
-                    procedureCount,
-                    costPerProcedure,
-                    giftSessions: packageData?.giftSessions,
-                    giftValue
-                  });
-                }
+                // Remove debug - gifts are now fixed
 
 
 
@@ -618,8 +609,8 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Use actual calculation baseCost
-                const costPerProcedure = procedureCount > 0 ? calculation.baseCost / procedureCount : 0;
+                // Fixed cost per procedure - independent of slider
+                const costPerProcedure = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 
                   ? costPerProcedure * (packageData.giftSessions || 0)
