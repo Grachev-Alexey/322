@@ -71,6 +71,8 @@ export default function ThreeBlockComparison({
 }: ThreeBlockComparisonProps) {
   const packageTypes = ["vip", "standard", "economy"];
   const hasValidCalculation = calculation && calculation.baseCost > 0;
+  
+
 
   const getPackageData = (packageType: string) => {
     if (!hasValidCalculation) return null;
@@ -191,14 +193,14 @@ export default function ThreeBlockComparison({
             {/* Package Headers - aligned with columns */}
             {packageTypes.map((packageType) => {
               const Icon = getPackageIcon(packageType);
-              const isSelected = selectedPackage === packageType;
+              const isSelected = selectedPackage === packageType && selectedPackage !== null;
               
               return (
                 <div
                   key={packageType}
                   className={`text-center cursor-pointer transition-all duration-200 rounded-lg p-1 w-full ${
                     isSelected
-                      ? "transform scale-105 border-2 border-blue-300"
+                      ? "transform scale-105 border-2 border-blue-300 bg-blue-50"
                       : "hover:scale-105"
                   }`}
                   onClick={() => onPackageSelect(packageType)}
