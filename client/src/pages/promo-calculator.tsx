@@ -148,13 +148,13 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
               
               {/* Cost per procedure and subscription cost */}
               {calculation && calculation.baseCost > 0 && (
-                <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                  <div className="flex justify-between items-center mb-1">
+                <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 space-y-2">
+                  <div className="flex justify-between items-center">
                     <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
-                      Стоимость за процедуру:
+                      Средняя стоимость за процедуру:
                     </span>
                     <span className="text-xs font-bold text-gray-800 dark:text-gray-200">
-                      {formatPrice(calculation.baseCost / calculation.totalProcedures)}
+                      {formatPrice(Math.round(calculation.baseCost / procedureCount))}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
