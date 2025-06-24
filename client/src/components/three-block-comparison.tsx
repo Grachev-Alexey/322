@@ -384,27 +384,7 @@ export default function ThreeBlockComparison({
         className="relative overflow-hidden"
         style={{ borderRadius: "6px" }}
       >
-        {/* Custom curved border using SVG - continuous border */}
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          preserveAspectRatio="none"
-          viewBox="0 0 100 100"
-        >
-          <defs>
-            <path
-              id="curved-border-green"
-              d="M 3,0 L 97,0 Q 100,0 100,3 L 100,97 Q 100,100 97,100 L 3,100 Q 0,100 0,97 L 0,3 Q 0,0 3,0 Z"
-              fill="none"
-              stroke="#ec4899"
-              strokeOpacity="0.5"
-              strokeWidth="1.5"
-              vectorEffect="non-scaling-stroke"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </defs>
-          <use href="#curved-border-green" />
-        </svg>
+
 
         {/* Title with money icon */}
         <div className="absolute -top-1 left-6 px-2 py-1 z-10">
@@ -533,27 +513,7 @@ export default function ThreeBlockComparison({
         className="relative overflow-hidden"
         style={{ borderRadius: "6px" }}
       >
-        {/* Custom curved border using SVG - continuous border */}
-        <svg
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          preserveAspectRatio="none"
-          viewBox="0 0 100 100"
-        >
-          <defs>
-            <path
-              id="curved-border"
-              d="M 3,0 L 97,0 Q 100,0 100,3 L 100,97 Q 100,100 97,100 L 3,100 Q 0,100 0,97 L 0,3 Q 0,0 3,0 Z"
-              fill="none"
-              stroke="#ec4899"
-              strokeOpacity="0.5"
-              strokeWidth="1.5"
-              vectorEffect="non-scaling-stroke"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </defs>
-          <use href="#curved-border" />
-        </svg>
+
 
         {/* Title with gift box icon */}
         <div className="absolute -top-1 left-6 px-2 py-1 z-10">
