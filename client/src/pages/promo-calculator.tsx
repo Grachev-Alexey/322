@@ -344,62 +344,56 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
 
             {/* Correction block - компактный */}
             <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  {isEditingCorrection ? (
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="number"
-                        min="0"
-                        max="10"
-                        step="0.1"
-                        value={tempCorrectionValue}
-                        onChange={(e) => setTempCorrectionValue(e.target.value)}
-                        onBlur={() => {
-                          const value = Math.min(10, Math.max(0, parseFloat(tempCorrectionValue) || 0));
-                          setCorrectionPercent(value);
-                          setIsEditingCorrection(false);
-                        }}
-                        onKeyPress={(e) => {
-                          if (e.key === 'Enter') {
-                            const value = Math.min(10, Math.max(0, parseFloat(tempCorrectionValue) || 0));
-                            setCorrectionPercent(value);
-                            setIsEditingCorrection(false);
-                          }
-                        }}
-                        autoFocus
-                        onFocus={(e) => e.target.select()}
-                        className="w-16 text-sm text-center border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                      />
-                      <span className="text-sm text-gray-500 dark:text-gray-400">%</span>
-                    </div>
-                  ) : (
-                    <h4 
-                      className="font-bold text-gray-900 dark:text-white text-sm cursor-pointer hover:text-premium transition-colors"
-                      onClick={() => {
-                        setTempCorrectionValue(correctionPercent.toString());
-                        setIsEditingCorrection(true);
-                      }}
-                    >
-                      Коррекция
-                    </h4>
-                  )}
+              {isEditingCorrection ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <input
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="0.1"
+                    value={tempCorrectionValue}
+                    onChange={(e) => setTempCorrectionValue(e.target.value)}
+                    onBlur={() => {
+                      const value = Math.min(10, Math.max(0, parseFloat(tempCorrectionValue) || 0));
+                      setCorrectionPercent(value);
+                      setIsEditingCorrection(false);
+                    }}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        const value = Math.min(10, Math.max(0, parseFloat(tempCorrectionValue) || 0));
+                        setCorrectionPercent(value);
+                        setIsEditingCorrection(false);
+                      }
+                    }}
+                    autoFocus
+                    onFocus={(e) => e.target.select()}
+                    className="w-16 text-sm text-center border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                  <span className="text-sm text-gray-500 dark:text-gray-400">%</span>
                 </div>
-                {!isEditingCorrection && (
-                  <div className="flex items-center space-x-2">
-                    <div
-                      onClick={() => {
-                        setTempCorrectionValue(correctionPercent.toString());
-                        setIsEditingCorrection(true);
-                      }}
-                      className="w-12 text-xs text-center cursor-pointer hover:bg-pink-50 dark:hover:bg-pink-900/20 rounded px-1 py-1 transition-colors font-bold text-premium"
-                    >
-                      {correctionPercent}
-                    </div>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">%</span>
+              ) : (
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-bold text-gray-900 dark:text-white text-sm">Коррекция</h4>
                   </div>
-                )}
-              </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={correctionPercent > 0}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setTempCorrectionValue(correctionPercent > 0 ? correctionPercent.toString() : '5');
+                          setIsEditingCorrection(true);
+                        } else {
+                          setCorrectionPercent(0);
+                        }
+                      }}
+                      className="sr-only peer"
+                    />
+                    <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-0 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-premium focus:outline-none focus:ring-0"></div>
+                  </label>
+                </div>
+              )}
             </div>
           </div>
 
