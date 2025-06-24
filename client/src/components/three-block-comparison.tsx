@@ -90,6 +90,21 @@ export default function ThreeBlockComparison({
     }
   };
 
+  // Calculate final discount percentage with additional discounts
+  const getFinalDiscountPercent = (packageType: string) => {
+    const packageData = packages.find((p) => p.type === packageType);
+    if (!packageData) return 0;
+
+    let baseDiscountPercent = parseFloat(packageData.discount) * 100;
+    
+    // Add bulk discount if 15+ procedures
+    if (procedureCount >= 15) {
+      baseDiscountPercent += 2.5; // +2.5%
+    }
+    
+    return Math.round(baseDiscountPercent);
+  };
+
   const getPackageName = (packageType: string) => {
     switch (packageType) {
       case "vip":
