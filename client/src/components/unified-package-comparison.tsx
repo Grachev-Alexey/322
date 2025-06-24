@@ -518,11 +518,13 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Use real calculation data: baseCost ÷ procedureCount
-                const costPerProcedure = procedureCount > 0 ? calculation.baseCost / procedureCount : 0;
+                // Simple: sum of selected services × gift sessions from package
+                const baseServicesCost = selectedServices && selectedServices.length > 0 
+                  ? selectedServices.reduce((sum, service) => sum + parseFloat(service.priceMin) * service.quantity, 0)
+                  : 0;
                 
-                const giftValue = packageData && (packageData.giftSessions || 0) > 0
-                  ? costPerProcedure * (packageData.giftSessions || 0)
+                const giftValue = packageData && (packageData.giftSessions || 0) > 0 && baseServicesCost > 0
+                  ? baseServicesCost * (packageData.giftSessions || 0)
                   : 0;
 
                 // Remove debug - gifts are now fixed
@@ -609,11 +611,13 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Use real calculation data
-                const costPerProcedure = procedureCount > 0 ? calculation.baseCost / procedureCount : 0;
+                // Sum of base services × gift sessions
+                const baseServicesCost = selectedServices && selectedServices.length > 0 
+                  ? selectedServices.reduce((sum, service) => sum + parseFloat(service.priceMin) * service.quantity, 0)
+                  : 0;
                 
-                const giftValue = packageData && (packageData.giftSessions || 0) > 0
-                  ? costPerProcedure * (packageData.giftSessions || 0)
+                const giftValue = packageData && (packageData.giftSessions || 0) > 0 && baseServicesCost > 0
+                  ? baseServicesCost * (packageData.giftSessions || 0)
                   : 0;
 
 
