@@ -518,11 +518,13 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Fixed cost per procedure calculation - use totalProcedures from calculation, not slider
-                const costPerProcedure = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
+                // Simple calculation: base cost of selected services × gift sessions from package
+                const selectedServicesCost = selectedServices ? selectedServices.reduce((sum, service) => {
+                  return sum + (parseFloat(service.priceMin) * service.quantity);
+                }, 0) : 0;
                 
-                const giftValue = packageData && (packageData.giftSessions || 0) > 0 
-                  ? costPerProcedure * (packageData.giftSessions || 0)
+                const giftValue = packageData && (packageData.giftSessions || 0) > 0 && selectedServicesCost > 0
+                  ? selectedServicesCost * (packageData.giftSessions || 0)
                   : 0;
 
                 // Remove debug - gifts are now fixed
@@ -609,11 +611,13 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Fixed cost per procedure - independent of slider
-                const costPerProcedure = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
+                // Base services cost × gift sessions from database
+                const selectedServicesCost = selectedServices ? selectedServices.reduce((sum, service) => {
+                  return sum + (parseFloat(service.priceMin) * service.quantity);
+                }, 0) : 0;
                 
-                const giftValue = packageData && (packageData.giftSessions || 0) > 0 
-                  ? costPerProcedure * (packageData.giftSessions || 0)
+                const giftValue = packageData && (packageData.giftSessions || 0) > 0 && selectedServicesCost > 0
+                  ? selectedServicesCost * (packageData.giftSessions || 0)
                   : 0;
 
 
