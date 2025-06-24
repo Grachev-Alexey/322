@@ -200,7 +200,7 @@ export default function ThreeBlockComparison({
               d="M 8,0 L 92,0 Q 100,0 100,8 L 100,92 Q 100,100 92,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
               fill="none"
               stroke="#ec4899"
-              strokeOpacity="0.3"
+              strokeOpacity="0.5"
               strokeWidth="0.8"
               vectorEffect="non-scaling-stroke"
             />
@@ -418,7 +418,7 @@ export default function ThreeBlockComparison({
               d="M 8,0 L 92,0 Q 100,0 100,8 L 100,92 Q 100,100 92,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
               fill="none"
               stroke="#ec4899"
-              strokeOpacity="0.3"
+              strokeOpacity="0.5"
               strokeWidth="0.8"
               vectorEffect="non-scaling-stroke"
             />
@@ -508,7 +508,7 @@ export default function ThreeBlockComparison({
           </div>
 
           {/* Thin underline after total - with proper margins */}
-          <div className="mx-6 border-t border-blue-300 mt-2"></div>
+          <div className="mx-6 border-t border-pink-300 mt-2"></div>
 
           {/* Первый взнос */}
           <div className="grid grid-cols-4 gap-4 py-2">
@@ -566,7 +566,7 @@ export default function ThreeBlockComparison({
               d="M 8,0 L 92,0 Q 100,0 100,8 L 100,92 Q 100,100 92,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
               fill="none"
               stroke="#ec4899"
-              strokeOpacity="0.3"
+              strokeOpacity="0.5"
               strokeWidth="0.8"
               vectorEffect="non-scaling-stroke"
             />
@@ -701,7 +701,7 @@ export default function ThreeBlockComparison({
           </div>
 
           {/* Thin underline before total - with proper margins */}
-          <div className="mx-5 border-t border-blue-300 mt-2 mb-2"></div>
+          <div className="mx-5 border-t border-pink-300 mt-2 mb-2"></div>
           
           {/* Total Gifts Value Row */}
           <div className="grid grid-cols-4 gap-4 py-3 mt-2">
