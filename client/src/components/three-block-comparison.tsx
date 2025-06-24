@@ -509,7 +509,7 @@ export default function ThreeBlockComparison({
       </div>
 
       {/* Первый взнос и Платеж в месяц - вынесены за пределы блока */}
-      <div className="space-y-0.5 -mt-2">
+<div className="space-y-0.5 -mt-4">
         {/* Первый взнос */}
         <div className="grid grid-cols-4 gap-2.5 py-1">
           <div className="text-xs text-gray-600">Первый взнос:</div>
