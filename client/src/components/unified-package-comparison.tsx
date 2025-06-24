@@ -523,22 +523,24 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Calculate from selectedServices if available, otherwise from calculation
-                let servicesCost = 0;
+                // Calculate gift value based on slider procedure count * cost per procedure * gift sessions
+                let costPerProcedure = 0;
                 
                 if (selectedServices && selectedServices.length > 0) {
-                  // Use actual selected services
-                  servicesCost = selectedServices.reduce((sum, service) => {
+                  // Use actual selected services total cost divided by total quantity
+                  const totalServicesCost = selectedServices.reduce((sum, service) => {
                     return sum + (parseFloat(service.priceMin) * service.quantity);
                   }, 0);
+                  const totalServicesQuantity = selectedServices.reduce((sum, service) => sum + service.quantity, 0);
+                  costPerProcedure = totalServicesQuantity > 0 ? totalServicesCost / totalServicesQuantity : 0;
                 } else {
-                  // Extract base cost per procedure from calculation
-                  // calculation.baseCost is total for all procedures, divide by procedureCount to get per procedure
-                  servicesCost = procedureCount > 0 ? calculation.baseCost / procedureCount : 0;
+                  // Extract cost per procedure from calculation using total procedures
+                  costPerProcedure = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
                 }
                 
-                const giftValue = packageData && (packageData.giftSessions || 0) > 0
-                  ? servicesCost * (packageData.giftSessions || 0)
+                // Gift value = cost per procedure * procedure count from slider * gift sessions
+                const giftValue = packageData && (packageData.giftSessions || 0) > 0 && procedureCount > 0
+                  ? costPerProcedure * procedureCount * (packageData.giftSessions || 0)
                   : 0;
 
                 // Remove debug - gifts are now fixed
@@ -565,8 +567,8 @@ export default function UnifiedPackageComparison({
                   {zone.title} {zone.quantity > 1 ? `(${zone.quantity} шт.)` : ''}
                 </div>
                 {packageTypes.map((packageType) => {
-                  // Calculate individual zone value: price per procedure * quantity
-                  const zoneValue = zone.pricePerProcedure * zone.quantity;
+                  // Calculate individual zone value: price per procedure * procedure count from slider
+                  const zoneValue = zone.pricePerProcedure * procedureCount;
 
                   return (
                     <div key={packageType} className="text-center py-1">

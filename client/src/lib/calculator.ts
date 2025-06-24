@@ -99,9 +99,9 @@ export function calculatePackagePricing(
     // Calculate free zones value from params
     const freeZonesValue = params.freeZonesValue || 0;
     
-    // Total savings - gift sessions only for display, not actual cost reduction
+    // Total savings - exclude free zones from discounts, they are gifts not discounts
     const actualDiscounts = packageDiscount + certificateDiscount + additionalDiscount;
-    const totalSavings = actualDiscounts + giftSessionValue + freeZonesValue; // Include free zones in display
+    const totalSavings = actualDiscounts; // Only actual discounts, not gifts
     const finalCost = baseCost - actualDiscounts; // Actual cost without gift sessions (free zones already subtracted from baseCost)
 
     // All packages are available for selection - payment constraints will be applied when selected
@@ -128,7 +128,7 @@ export function calculatePackagePricing(
         { type: 'package', amount: packageDiscount },
         ...(qualifiesForBulkDiscount && additionalDiscount > 0 ? [{ type: 'bulk', amount: additionalDiscount }] : []),
         ...(certificateDiscount > 0 ? [{ type: 'certificate', amount: certificateDiscount }] : []),
-        ...(freeZonesValue > 0 ? [{ type: 'free_zones', amount: freeZonesValue }] : []),
+
         ...(giftSessionValue > 0 ? [{ type: 'gift_sessions', amount: giftSessionValue }] : [])
       ]
     };
