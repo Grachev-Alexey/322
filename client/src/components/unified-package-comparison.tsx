@@ -558,23 +558,21 @@ export default function UnifiedPackageComparison({
               <div></div> {/* Empty column */}
             </div>
 
-            {/* Free Zones Cost Row - Only show if there are free zones */}
-            {freeZones && freeZones.length > 0 && (
-              <div className="grid grid-cols-5 gap-0 py-1 border-b border-gray-50 dark:border-gray-800">
+            {/* Free Zones Cost Rows - Show each free zone separately */}
+            {freeZones && freeZones.length > 0 && freeZones.map((zone, index) => (
+              <div key={`free-zone-${zone.serviceId}-${index}`} className="grid grid-cols-5 gap-0 py-1 border-b border-gray-50 dark:border-gray-800">
                 <div className="text-sm text-gray-700 dark:text-gray-300">
-                  Стоимость бесплатных зон
+                  {zone.title} {zone.quantity > 1 ? `(${zone.quantity} шт.)` : ''}
                 </div>
                 {packageTypes.map((packageType) => {
-                  // Calculate free zones value properly: price per procedure * quantity
-                  const freeZoneValue = freeZones.reduce((total, zone) => {
-                    return total + zone.pricePerProcedure * zone.quantity;
-                  }, 0);
+                  // Calculate individual zone value: price per procedure * quantity
+                  const zoneValue = zone.pricePerProcedure * zone.quantity;
 
                   return (
                     <div key={packageType} className="text-center py-1">
                       <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                        {freeZoneValue > 0
-                          ? `${Math.round(freeZoneValue).toLocaleString()} ₽`
+                        {zoneValue > 0
+                          ? `${Math.round(zoneValue).toLocaleString()} ₽`
                           : "-"}
                       </span>
                     </div>
@@ -582,7 +580,7 @@ export default function UnifiedPackageComparison({
                 })}
                 <div></div> {/* Empty column */}
               </div>
-            )}
+            ))}
 
             {/* Bonus Account Row */}
             <div className="grid grid-cols-5 gap-0 py-1 border-b border-gray-50 dark:border-gray-800">
