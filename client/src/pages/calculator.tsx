@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { RangeSlider } from "@/components/ui/range-slider";
 import { Calculator, LogOut, Star } from "lucide-react";
 import ServiceSelector from "@/components/service-selector";
-import UnifiedPackageComparison from "@/components/unified-package-comparison";
+import ThreeBlockComparison from "@/components/three-block-comparison";
 import PaymentConfig from "@/components/payment-config";
 import ClientModal from "@/components/client-modal";
 import { useCalculator } from "@/hooks/use-calculator";
@@ -161,7 +161,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
 
         {/* Package Comparison */}
         {calculation && (
-          <UnifiedPackageComparison
+          <ThreeBlockComparison
             calculation={calculation}
             selectedPackage={selectedPackage}
             onPackageSelect={setSelectedPackage}
