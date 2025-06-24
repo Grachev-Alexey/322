@@ -181,7 +181,7 @@ export default function ThreeBlockComparison({
         </svg>
         
         {/* Title and Package Headers grid layout */}
-        <div className="pt-4 px-5 mb-6">
+        <div className="pt-6 px-5 mb-6">
           {/* Title with star icon and package headers in grid */}
           <div className="grid grid-cols-4 gap-4 items-center p-2">
             {/* Title with star icon */}
@@ -337,14 +337,14 @@ export default function ThreeBlockComparison({
         </svg>
         
         {/* Title with money icon - emerging from block */}
-        <div className="absolute -top-1 left-8 bg-white px-6 py-2 z-10 rounded-lg shadow-sm">
+        <div className="absolute -top-2 left-8 bg-white px-6 py-2 z-10 rounded-lg shadow-sm">
           <div className="flex items-center gap-3">
             <span className="text-xl">💰</span>
             <span className="font-bold text-gray-800 text-lg">Стоимость</span>
           </div>
         </div>
         
-        <div className="pt-8 p-6 space-y-3">
+        <div className="pt-10 p-6 space-y-3">
 
           {/* Первоначальная стоимость */}
           <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
@@ -465,14 +465,14 @@ export default function ThreeBlockComparison({
         </svg>
         
         {/* Title with gift box icon - emerging from block */}
-        <div className="absolute -top-1 left-6 bg-white px-6 py-2 z-10 rounded-lg shadow-sm">
+        <div className="absolute -top-2 left-6 bg-white px-6 py-2 z-10 rounded-lg shadow-sm">
           <div className="flex items-center gap-3">
             <span className="text-xl">🎁</span>
             <span className="font-bold text-gray-800 text-lg">Подарки</span>
           </div>
         </div>
         
-        <div className="pt-12 p-5 space-y-3 relative z-0">
+        <div className="pt-14 p-5 space-y-3 relative z-0">
           {/* Gift Procedures Cost Row - using original table logic */}
           <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
             <div className="text-sm font-medium text-gray-700">Стоимость подарочных процедур</div>
