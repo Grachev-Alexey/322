@@ -90,21 +90,21 @@ export default function PaymentConfig({
     : 0;
 
   return (
-    <Card className="rounded-xl p-8 mb-8">
-      <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--graphite)' }}>Условия оплаты</h3>
+    <Card className="rounded p-3 mb-3">
+      <h3 className="text-sm font-bold mb-2" style={{ color: 'var(--graphite)' }}>Условия оплаты</h3>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         {/* Down Payment */}
         <div>
-          <Label htmlFor="downPayment" className="block text-sm font-medium text-gray-700 mb-3">
+          <Label htmlFor="downPayment" className="block text-xs font-medium text-gray-700 mb-1.5">
             Первый взнос
           </Label>
-          <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-            <div className="text-center mb-4">
-              <div className="text-2xl font-bold text-purple-600">
+          <div className="bg-gray-50 rounded p-3 border border-gray-200">
+            <div className="text-center mb-2">
+              <div className="text-sm font-bold text-purple-600">
                 {formatPrice(downPayment)}
               </div>
-              <div className="text-sm text-gray-600">
+              <div className="text-xs text-gray-600">
                 {selectedPackage ? `Пакет: ${selectedPackage.toUpperCase()}` : 'Выберите пакет'}
               </div>
             </div>
@@ -122,7 +122,7 @@ export default function PaymentConfig({
             )}
             
             {selectedPackage && (
-              <div className="text-xs text-center text-gray-500 mt-2">
+              <div className="text-xs text-center text-gray-500 mt-1">
                 Диапазон: {formatPrice(getMinDownPayment())} - {formatPrice(getMaxDownPayment())}
               </div>
             )}
@@ -131,13 +131,13 @@ export default function PaymentConfig({
         
         {/* Installment Period */}
         <div>
-          <Label htmlFor="installmentMonths" className="block text-sm font-medium text-gray-700 mb-3">
+          <Label htmlFor="installmentMonths" className="block text-xs font-medium text-gray-700 mb-1.5">
             Срок рассрочки
           </Label>
-          <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-2xl font-bold text-purple-600">{installmentMonths}</span>
-              <span className="text-sm text-gray-600">
+          <div className="bg-gray-50 rounded p-3 border border-gray-200">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-bold text-purple-600">{installmentMonths}</span>
+              <span className="text-xs text-gray-600">
                 {installmentMonths === 1 ? 'месяц' : 
                  installmentMonths <= 4 ? 'месяца' : 'месяцев'}
               </span>

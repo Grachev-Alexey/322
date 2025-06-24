@@ -138,10 +138,10 @@ export default function ServiceSelector({
 
   return (
     <div>
-      <label className="block text-xs lg:text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Зоны для процедур</label>
+      <label className="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Зоны для процедур</label>
       
       {/* Service Selection */}
-      <div className="relative mb-2 lg:mb-3 z-50" ref={dropdownRef}>
+      <div className="relative mb-2 z-50" ref={dropdownRef}>
         <div className="relative group">
           <div className="relative">
             <Input

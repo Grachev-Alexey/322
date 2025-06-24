@@ -118,10 +118,10 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
           </div>
 
           {/* Service Selection */}
-          <Card className="rounded-xl p-8 mb-8">
-          <h3 className="text-2xl font-bold mb-6" style={{ color: 'var(--graphite)' }}>Выбор услуг</h3>
+          <Card className="rounded p-3 mb-3">
+          <h3 className="text-sm font-bold mb-2" style={{ color: 'var(--graphite)' }}>Выбор услуг</h3>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             <ServiceSelector
               selectedServices={selectedServices}
               onServicesChange={setSelectedServices}
@@ -130,11 +130,11 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
             />
             
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-3">Количество процедур</label>
-              <div className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-2xl font-bold text-purple-600">{procedureCount}</span>
-                  <span className="text-sm text-gray-600">процедур</span>
+              <label className="block text-xs font-medium text-gray-700 mb-1.5">Количество процедур</label>
+              <div className="bg-gray-50 rounded p-3 border border-gray-200">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-bold text-purple-600">{procedureCount}</span>
+                  <span className="text-xs text-gray-600">процедур</span>
                 </div>
                 
                 <RangeSlider
