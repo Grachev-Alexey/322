@@ -151,52 +151,53 @@ export default function ThreeBlockComparison({
   }
 
   return (
-    <div className="space-y-6 w-full p-4">
+    <div className="space-y-4 w-full max-w-5xl mx-auto p-4">
+      {/* Package Headers */}
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        <div></div>
+        {packageTypes.map((packageType) => {
+          const Icon = getPackageIcon(packageType);
+          const isSelected = selectedPackage === packageType;
+          
+          return (
+            <div
+              key={packageType}
+              className={`text-center cursor-pointer transition-all duration-200 rounded-lg p-3 ${
+                isSelected
+                  ? "bg-white shadow-lg transform scale-105 border-2 border-blue-300"
+                  : "bg-white/70 hover:bg-white hover:shadow-md"
+              }`}
+              onClick={() => onPackageSelect(packageType)}
+            >
+              <div className={`inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r ${getPackageColor(packageType)} mb-2`}>
+                <Icon className="h-4 w-4 text-white" />
+              </div>
+              <div className="font-bold text-gray-800 text-sm">
+                {getPackageName(packageType)}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
       {/* Преимущества */}
-      <div className="relative bg-gradient-to-br from-blue-50 to-blue-100 rounded-3xl border-2 border-blue-300 overflow-hidden min-h-[300px]">
-        <div className="absolute -top-1 left-8 bg-white px-6 py-2 rounded-b-2xl border-l-2 border-r-2 border-b-2 border-blue-300">
+      <div className="relative bg-white rounded-2xl border-2 border-blue-300 overflow-hidden">
+        <div className="absolute -top-1 left-6 bg-white px-4 py-1 rounded-b-lg border-l-2 border-r-2 border-b-2 border-blue-300">
           <div className="flex items-center gap-2">
-            <Star className="w-5 h-5 text-yellow-500" />
-            <span className="font-bold text-gray-800 text-lg">Преимущества</span>
+            <Star className="w-4 h-4 text-yellow-500" />
+            <span className="font-bold text-gray-800">Преимущества</span>
           </div>
         </div>
         
-        <div className="pt-12 p-8">
-          <div className="grid grid-cols-4 gap-6 mb-8">
-            <div className="font-medium text-gray-600"></div>
-            {packageTypes.map((packageType) => {
-              const Icon = getPackageIcon(packageType);
-              const isSelected = selectedPackage === packageType;
-              
-              return (
-                <div
-                  key={packageType}
-                  className={`text-center cursor-pointer transition-all duration-200 rounded-2xl p-4 ${
-                    isSelected
-                      ? "bg-white shadow-xl transform scale-105 border-3 border-blue-400"
-                      : "bg-white/70 hover:bg-white hover:shadow-lg"
-                  }`}
-                  onClick={() => onPackageSelect(packageType)}
-                >
-                  <div className={`inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r ${getPackageColor(packageType)} mb-3 shadow-lg`}>
-                    <Icon className="h-6 w-6 text-white" />
-                  </div>
-                  <div className="font-bold text-gray-800 text-base">
-                    {getPackageName(packageType)}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-          
-          <div className="space-y-4">
+        <div className="pt-8 p-6">
+          <div className="space-y-3">
             {uniquePerks.map((perk) => {
               const IconComponent = (Icons as any)[perk.icon] || Star;
               
               return (
-                <div key={perk.id} className="grid grid-cols-4 gap-6 py-3 border-b border-blue-200 last:border-b-0">
-                  <div className="flex items-center gap-3 text-sm font-medium text-gray-700">
-                    <IconComponent className="w-5 h-5" style={{ color: perk.iconColor || '#3b82f6' }} />
+                <div key={perk.id} className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100 last:border-b-0">
+                  <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                    <IconComponent className="w-4 h-4" style={{ color: perk.iconColor || '#666' }} />
                     <span>{perk.name}</span>
                   </div>
                   {packageTypes.map((packageType) => {
@@ -206,8 +207,8 @@ export default function ThreeBlockComparison({
                     
                     let displayContent = perkValue?.displayValue || "-";
                     if (displayContent === "✓") {
-                      displayContent = <div className="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                        <span className="text-white text-sm font-bold">✓</span>
+                      displayContent = <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs font-bold">✓</span>
                       </div>;
                     }
                     
@@ -227,29 +228,18 @@ export default function ThreeBlockComparison({
       </div>
 
       {/* Стоимость */}
-      <div className="relative bg-gradient-to-br from-green-50 to-green-100 rounded-3xl border-2 border-green-300 overflow-hidden min-h-[250px]">
-        <div className="absolute -top-1 left-8 bg-white px-6 py-2 rounded-b-2xl border-l-2 border-r-2 border-b-2 border-green-300">
+      <div className="relative bg-white rounded-2xl border-2 border-green-300 overflow-hidden">
+        <div className="absolute -top-1 left-6 bg-white px-4 py-1 rounded-b-lg border-l-2 border-r-2 border-b-2 border-green-300">
           <div className="flex items-center gap-2">
-            <span className="text-2xl">💰</span>
-            <span className="font-bold text-gray-800 text-lg">Стоимость</span>
+            <span className="text-lg">💰</span>
+            <span className="font-bold text-gray-800">Стоимость</span>
           </div>
         </div>
         
-        <div className="pt-8 p-6 space-y-4">
-          {/* Header row for package names */}
-          <div className="grid grid-cols-4 gap-6 mb-4">
-            <div></div>
-            {packageTypes.map((packageType) => (
-              <div key={packageType} className="text-center">
-                <span className="text-base font-bold text-gray-700">
-                  {getPackageName(packageType)}
-                </span>
-              </div>
-            ))}
-          </div>
+        <div className="pt-8 p-6 space-y-3">
 
           {/* Первоначальная стоимость */}
-          <div className="grid grid-cols-4 gap-6 py-2">
+          <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
             <div className="text-sm font-medium text-gray-700">Первоначальная</div>
             {packageTypes.map((packageType) => (
               <div key={packageType} className="text-center">
@@ -261,7 +251,7 @@ export default function ThreeBlockComparison({
           </div>
 
           {/* Скидка */}
-          <div className="grid grid-cols-4 gap-6 py-2">
+          <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
             <div className="text-sm font-medium text-gray-700">Скидка</div>
             {packageTypes.map((packageType) => {
               const packageData = getPackageData(packageType);
@@ -279,7 +269,7 @@ export default function ThreeBlockComparison({
 
           {/* Сертификат */}
           {usedCertificate && (
-            <div className="grid grid-cols-4 gap-6 py-2">
+            <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
               <div className="text-sm font-medium text-gray-700">Сертификат</div>
               {packageTypes.map((packageType) => (
                 <div key={packageType} className="text-center">
@@ -290,7 +280,7 @@ export default function ThreeBlockComparison({
           )}
 
           {/* Итого стоимость курса */}
-          <div className="grid grid-cols-4 gap-6 py-4 border-t-2 border-green-300 mt-4">
+          <div className="grid grid-cols-4 gap-4 py-3 border-t-2 border-green-200 mt-2">
             <div className="text-base font-bold text-gray-800">Итого стоимость курса:</div>
             {packageTypes.map((packageType) => {
               const packageData = getPackageData(packageType);
@@ -298,7 +288,7 @@ export default function ThreeBlockComparison({
               
               return (
                 <div key={packageType} className="text-center">
-                  <span className="text-lg font-bold text-pink-600">
+                  <span className="text-base font-bold text-pink-600">
                     {formatPrice(finalCost)}
                   </span>
                 </div>
@@ -307,12 +297,9 @@ export default function ThreeBlockComparison({
           </div>
 
           {/* Первый взнос */}
-          <div className="grid grid-cols-4 gap-6 py-2">
+          <div className="grid grid-cols-4 gap-4 py-2">
             <div className="text-sm text-gray-600">Первый взнос:</div>
             {packageTypes.map((packageType) => {
-              const packageData = getPackageData(packageType);
-              const monthlyPayment = packageData?.monthlyPayment || 0;
-              
               return (
                 <div key={packageType} className="text-center">
                   <span className="text-sm text-gray-600">
@@ -325,7 +312,7 @@ export default function ThreeBlockComparison({
 
           {/* Платеж в месяц */}
           {installmentMonths > 0 && (
-            <div className="grid grid-cols-4 gap-6 py-2">
+            <div className="grid grid-cols-4 gap-4 py-2">
               <div className="text-sm text-gray-600">Платеж в месяц</div>
               {packageTypes.map((packageType) => {
                 const packageData = getPackageData(packageType);
@@ -345,36 +332,24 @@ export default function ThreeBlockComparison({
       </div>
 
       {/* Подарки */}
-      <div className="relative bg-gradient-to-br from-pink-50 to-pink-100 rounded-3xl border-2 border-pink-300 overflow-hidden min-h-[200px]">
-        <div className="absolute -top-1 left-8 bg-white px-6 py-2 rounded-b-2xl border-l-2 border-r-2 border-b-2 border-pink-300">
+      <div className="relative bg-white rounded-2xl border-2 border-pink-300 overflow-hidden">
+        <div className="absolute -top-1 left-6 bg-white px-4 py-1 rounded-b-lg border-l-2 border-r-2 border-b-2 border-pink-300">
           <div className="flex items-center gap-2">
-            <Gift className="w-5 h-5 text-pink-500" />
-            <span className="font-bold text-gray-800 text-lg">Подарки</span>
+            <Gift className="w-4 h-4 text-pink-500" />
+            <span className="font-bold text-gray-800">Подарки</span>
           </div>
         </div>
         
-        <div className="pt-12 p-8 space-y-4">
-          {/* Header row for package names */}
-          <div className="grid grid-cols-4 gap-6 mb-4">
-            <div></div>
-            {packageTypes.map((packageType) => (
-              <div key={packageType} className="text-center">
-                <span className="text-base font-bold text-gray-700">
-                  {getPackageName(packageType)}
-                </span>
-              </div>
-            ))}
-          </div>
-
+        <div className="pt-8 p-6 space-y-3">
           {/* Стоимость подарочных процедур */}
-          <div className="grid grid-cols-4 gap-6 py-2">
+          <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
             <div className="text-sm font-medium text-gray-700">Стоимость подарочных процедур</div>
             {packageTypes.map((packageType) => {
               const giftCost = calculateGiftCost(packageType);
               
               return (
                 <div key={packageType} className="text-center">
-                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  <span className="text-sm font-semibold text-gray-700">
                     {giftCost > 0 ? formatPrice(giftCost) : "-"}
                   </span>
                 </div>
@@ -383,15 +358,15 @@ export default function ThreeBlockComparison({
           </div>
 
           {/* Стоимость бесплатных зон */}
-          <div className="grid grid-cols-4 gap-6 py-2">
+          <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
             <div className="text-sm font-medium text-gray-700">Стоимость бесплатных зон</div>
             {packageTypes.map((packageType) => {
-              const freeCost = calculateFreeCost(packageType);
+              const freeCost = calculation?.freeZonesValue || 800;
               
               return (
                 <div key={packageType} className="text-center">
-                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                    {freeCost > 0 ? formatPrice(freeCost) : "800 ₽"}
+                  <span className="text-sm font-semibold text-gray-700">
+                    {formatPrice(freeCost)}
                   </span>
                 </div>
               );
@@ -399,14 +374,14 @@ export default function ThreeBlockComparison({
           </div>
 
           {/* Бонусный счет */}
-          <div className="grid grid-cols-4 gap-6 py-2">
+          <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
             <div className="text-sm font-medium text-gray-700">Бонусный счет</div>
             {packageTypes.map((packageType) => {
               const bonusAmount = calculateBonusAmount(packageType);
               
               return (
                 <div key={packageType} className="text-center">
-                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                  <span className="text-sm font-semibold text-gray-700">
                     {bonusAmount > 0 ? formatPrice(bonusAmount) : "-"}
                   </span>
                 </div>
@@ -415,17 +390,17 @@ export default function ThreeBlockComparison({
           </div>
 
           {/* Итого стоимость подарков */}
-          <div className="grid grid-cols-4 gap-6 py-4 border-t-2 border-pink-300 mt-4">
+          <div className="grid grid-cols-4 gap-4 py-3 border-t-2 border-pink-200 mt-2">
             <div className="text-base font-bold text-gray-800">Итого стоимость подарков:</div>
             {packageTypes.map((packageType) => {
               const giftCost = calculateGiftCost(packageType);
-              const freeCost = calculateFreeCost(packageType) || 800; // Default 800 if no free zones
+              const freeCost = calculation?.freeZonesValue || 800;
               const bonusAmount = calculateBonusAmount(packageType);
               const totalGifts = giftCost + freeCost + bonusAmount;
               
               return (
                 <div key={packageType} className="text-center">
-                  <span className="text-lg font-bold text-pink-600">
+                  <span className="text-base font-bold text-pink-600">
                     {formatPrice(totalGifts)}
                   </span>
                 </div>
