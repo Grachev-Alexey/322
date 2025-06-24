@@ -518,10 +518,14 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Simple: sum of selected services × gift sessions from package
-                const baseServicesCost = selectedServices && selectedServices.length > 0 
-                  ? selectedServices.reduce((sum, service) => sum + parseFloat(service.priceMin) * service.quantity, 0)
-                  : 0;
+                // Emergency fix: if selectedServices is empty, calculate from visible data
+                let baseServicesCost = 0;
+                if (selectedServices && selectedServices.length > 0) {
+                  baseServicesCost = selectedServices.reduce((sum, service) => sum + parseFloat(service.priceMin) * service.quantity, 0);
+                } else {
+                  // Fallback: extract from calculation if available
+                  baseServicesCost = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
+                }
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 && baseServicesCost > 0
                   ? baseServicesCost * (packageData.giftSessions || 0)
@@ -611,10 +615,13 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Sum of base services × gift sessions
-                const baseServicesCost = selectedServices && selectedServices.length > 0 
-                  ? selectedServices.reduce((sum, service) => sum + parseFloat(service.priceMin) * service.quantity, 0)
-                  : 0;
+                // Fallback calculation
+                let baseServicesCost = 0;
+                if (selectedServices && selectedServices.length > 0) {
+                  baseServicesCost = selectedServices.reduce((sum, service) => sum + parseFloat(service.priceMin) * service.quantity, 0);
+                } else {
+                  baseServicesCost = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
+                }
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 && baseServicesCost > 0
                   ? baseServicesCost * (packageData.giftSessions || 0)
