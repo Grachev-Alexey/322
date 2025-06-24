@@ -167,10 +167,10 @@ export default function PaymentConfig({
       {/* Additional Options */}
       <div className="mt-8">
         {/* Certificate */}
-        <div className="p-4 border-2 border-dashed border-gray-200 rounded-xl hover:border-purple-300 transition-colors max-w-md">
+        <div className="p-4 border-2 border-dashed border-gray-200 rounded-xl hover:border-premium/30 transition-colors max-w-md">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <Gift className="text-purple-600" size={20} />
+              <Gift className="text-premium" size={20} />
               <div>
                 <h4 className="font-semibold text-gray-900">Сертификат на скидку</h4>
                 <p className="text-sm text-gray-600">

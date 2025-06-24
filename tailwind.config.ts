@@ -61,6 +61,7 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
+        premium: "var(--dusty-pink)",
       },
       keyframes: {
         "accordion-down": {
