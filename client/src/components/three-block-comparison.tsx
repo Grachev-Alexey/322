@@ -326,7 +326,7 @@ export default function ThreeBlockComparison({
                 return (
                   <div key={packageType} className="flex items-center justify-center">
                     {giftSessions > 0 ? (
-                      <span className="text-xs font-bold text-gray-800">
+                      <span className="text-sm font-bold text-gray-800">
                         {giftSessions}
                       </span>
                     ) : (
@@ -345,7 +345,7 @@ export default function ThreeBlockComparison({
 
                 return (
                   <div key={packageType} className="flex items-center justify-center">
-                    <span className="text-xs font-bold text-gray-800">
+                    <span className="text-sm font-bold text-gray-800">
                       {finalDiscountPercent}%
                     </span>
                   </div>
@@ -465,7 +465,7 @@ export default function ThreeBlockComparison({
 
               return (
                 <div key={packageType} className="text-center">
-                  <span className="text-xs font-bold text-pink-400">
+                  <span className="text-sm font-bold text-pink-400">
                     {formatPrice(finalCost)}
                   </span>
                 </div>
@@ -764,7 +764,7 @@ export default function ThreeBlockComparison({
 
               return (
                 <div key={packageType} className="text-center">
-                  <span className="text-xs font-bold text-pink-400">
+                  <span className="text-sm font-bold text-pink-400">
                     {formatPrice(totalGifts)}
                   </span>
                 </div>
