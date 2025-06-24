@@ -518,24 +518,23 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Calculate cost of selected services for 1 procedure
-                // baseCost = total cost for all procedures, totalProcedures = number of procedures
-                const costPerProcedure = calculation.totalProcedures > 0 
-                  ? calculation.baseCost / calculation.totalProcedures 
-                  : 0;
+                // FINAL FIX: Use actual selected services from props, not calculation
+                const actualServicesCost = selectedServices ? selectedServices.reduce((sum, service) => {
+                  return sum + (parseFloat(service.priceMin) * service.quantity);
+                }, 0) : 0;
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 
-                  ? costPerProcedure * (packageData.giftSessions || 0)
+                  ? actualServicesCost * (packageData.giftSessions || 0)
                   : 0;
 
-                // Debug final calculation
+                // Debug with actual services
                 if (packageType === 'vip') {
-                  console.log('GIFT CALCULATION FINAL:', {
-                    baseCost: calculation.baseCost,
-                    totalProcedures: calculation.totalProcedures,
-                    costPerProcedure,
+                  console.log('GIFT WITH ACTUAL SERVICES:', {
+                    selectedServices,
+                    actualServicesCost,
                     giftSessions: packageData?.giftSessions,
-                    giftValue
+                    giftValue,
+                    expectedFor7000: '7000 * 2 = 14000'
                   });
                 }
 
@@ -621,13 +620,13 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Calculate cost per procedure and multiply by gift sessions
-                const costPerProcedure = calculation.totalProcedures > 0 
-                  ? calculation.baseCost / calculation.totalProcedures 
-                  : 0;
+                // Use actual services cost from selected services
+                const actualServicesCost = selectedServices ? selectedServices.reduce((sum, service) => {
+                  return sum + (parseFloat(service.priceMin) * service.quantity);
+                }, 0) : 0;
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 
-                  ? costPerProcedure * (packageData.giftSessions || 0)
+                  ? actualServicesCost * (packageData.giftSessions || 0)
                   : 0;
 
 
