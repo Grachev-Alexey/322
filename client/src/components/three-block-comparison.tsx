@@ -152,33 +152,6 @@ export default function ThreeBlockComparison({
 
   return (
     <div className="space-y-4 w-full max-w-4xl p-4">
-      {/* Package Headers */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
-        <div></div>
-        {packageTypes.map((packageType) => {
-          const Icon = getPackageIcon(packageType);
-          const isSelected = selectedPackage === packageType;
-          
-          return (
-            <div
-              key={packageType}
-              className={`text-center cursor-pointer transition-all duration-200 rounded-lg p-3 ${
-                isSelected
-                  ? "bg-white shadow-lg transform scale-105 border-2 border-blue-300"
-                  : "bg-white/70 hover:bg-white hover:shadow-md"
-              }`}
-              onClick={() => onPackageSelect(packageType)}
-            >
-              <div className={`inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-r ${getPackageColor(packageType)} mb-2`}>
-                <Icon className="h-4 w-4 text-white" />
-              </div>
-              <div className="font-bold text-gray-800 text-sm">
-                {getPackageName(packageType)}
-              </div>
-            </div>
-          );
-        })}
-      </div>
 
       {/* Преимущества with curved border */}
       <div className="relative bg-white overflow-hidden" style={{ borderRadius: '32px' }}>
@@ -206,14 +179,42 @@ export default function ThreeBlockComparison({
         </svg>
         
         {/* Title with star icon - emerging from block */}
-        <div className="absolute -top-1 left-8 bg-white px-6 py-2 z-10 rounded-lg shadow-sm">
+        <div className="absolute -top-1 left-6 bg-white px-6 py-2 z-10 rounded-lg shadow-sm">
           <div className="flex items-center gap-3">
             <Star className="w-5 h-5 text-yellow-500" />
             <span className="font-bold text-gray-800 text-lg">Преимущества</span>
           </div>
         </div>
         
-        <div className="pt-10 p-5 relative z-0">
+        <div className="pt-12 p-5 relative z-0">
+          {/* Package Headers inside advantages block */}
+          <div className="grid grid-cols-4 gap-3 mb-6">
+            <div></div>
+            {packageTypes.map((packageType) => {
+              const Icon = getPackageIcon(packageType);
+              const isSelected = selectedPackage === packageType;
+              
+              return (
+                <div
+                  key={packageType}
+                  className={`text-center cursor-pointer transition-all duration-200 rounded-lg p-2 ${
+                    isSelected
+                      ? "bg-blue-50 shadow-md transform scale-105 border-2 border-blue-300"
+                      : "bg-gray-50 hover:bg-white hover:shadow-sm"
+                  }`}
+                  onClick={() => onPackageSelect(packageType)}
+                >
+                  <div className={`inline-flex items-center justify-center w-6 h-6 rounded-full bg-gradient-to-r ${getPackageColor(packageType)} mb-1`}>
+                    <Icon className="h-3 w-3 text-white" />
+                  </div>
+                  <div className="font-bold text-gray-800 text-xs">
+                    {getPackageName(packageType)}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
           <div className="space-y-3">
             {uniquePerks.map((perk) => {
               const IconComponent = (Icons as any)[perk.icon] || Star;
@@ -405,19 +406,26 @@ export default function ThreeBlockComparison({
         </svg>
         
         {/* Title with gift box icon - emerging from block */}
-        <div className="absolute -top-1 left-8 bg-white px-6 py-2 z-10 rounded-lg shadow-sm">
+        <div className="absolute -top-1 left-6 bg-white px-6 py-2 z-10 rounded-lg shadow-sm">
           <div className="flex items-center gap-3">
             <span className="text-xl">🎁</span>
             <span className="font-bold text-gray-800 text-lg">Подарки</span>
           </div>
         </div>
         
-        <div className="pt-10 p-5 space-y-3 relative z-0">
+        <div className="pt-12 p-5 space-y-3 relative z-0">
           {/* Стоимость подарочных процедур */}
           <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
             <div className="text-sm font-medium text-gray-700">Стоимость подарочных процедур</div>
             {packageTypes.map((packageType) => {
-              const giftCost = calculateGiftCost(packageType);
+              const packageData = packages.find(p => p.type === packageType);
+              const giftSessions = packageData?.giftSessions || 0;
+              
+              // Calculate gift cost based on selected services and gift sessions
+              const giftCost = selectedServices.reduce((sum, service) => {
+                const serviceBaseCost = service.pricePerProcedure * service.quantity;
+                return sum + (serviceBaseCost * giftSessions);
+              }, 0);
               
               return (
                 <div key={packageType} className="text-center">
@@ -433,12 +441,15 @@ export default function ThreeBlockComparison({
           <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
             <div className="text-sm font-medium text-gray-700">Стоимость бесплатных зон</div>
             {packageTypes.map((packageType) => {
-              const freeCost = calculation?.freeZonesValue || 800;
+              // Use actual free zones calculation from the original logic
+              const freeZonesCost = freeZones.reduce((sum, zone) => {
+                return sum + (zone.pricePerProcedure * zone.quantity);
+              }, 0) || calculation?.freeZonesValue || 800;
               
               return (
                 <div key={packageType} className="text-center">
                   <span className="text-sm font-semibold text-gray-700">
-                    {formatPrice(freeCost)}
+                    {formatPrice(freeZonesCost)}
                   </span>
                 </div>
               );
@@ -449,7 +460,19 @@ export default function ThreeBlockComparison({
           <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
             <div className="text-sm font-medium text-gray-700">Бонусный счет</div>
             {packageTypes.map((packageType) => {
-              const bonusAmount = calculateBonusAmount(packageType);
+              const packageData = packages.find(p => p.type === packageType);
+              const packageCalcData = getPackageData(packageType);
+              
+              if (!packageData || !packageCalcData) {
+                return (
+                  <div key={packageType} className="text-center">
+                    <span className="text-sm font-semibold text-gray-700">-</span>
+                  </div>
+                );
+              }
+              
+              const bonusPercent = parseFloat(packageData.bonusAccountPercent) || 0;
+              const bonusAmount = packageCalcData.finalCost * bonusPercent;
               
               return (
                 <div key={packageType} className="text-center">
@@ -462,13 +485,29 @@ export default function ThreeBlockComparison({
           </div>
 
           {/* Итого стоимость подарков */}
-          <div className="grid grid-cols-4 gap-4 py-3 border-t-2 border-pink-200 mt-2">
+          <div className="grid grid-cols-4 gap-4 py-3 border-t-2 border-blue-200 mt-2">
             <div className="text-base font-bold text-gray-800">Итого стоимость подарков:</div>
             {packageTypes.map((packageType) => {
-              const giftCost = calculateGiftCost(packageType);
-              const freeCost = calculation?.freeZonesValue || 800;
-              const bonusAmount = calculateBonusAmount(packageType);
-              const totalGifts = giftCost + freeCost + bonusAmount;
+              const packageData = packages.find(p => p.type === packageType);
+              const packageCalcData = getPackageData(packageType);
+              const giftSessions = packageData?.giftSessions || 0;
+              
+              // Gift procedures cost
+              const giftCost = selectedServices.reduce((sum, service) => {
+                const serviceBaseCost = service.pricePerProcedure * service.quantity;
+                return sum + (serviceBaseCost * giftSessions);
+              }, 0);
+              
+              // Free zones cost
+              const freeZonesCost = freeZones.reduce((sum, zone) => {
+                return sum + (zone.pricePerProcedure * zone.quantity);
+              }, 0) || calculation?.freeZonesValue || 800;
+              
+              // Bonus amount
+              const bonusPercent = packageData ? parseFloat(packageData.bonusAccountPercent) || 0 : 0;
+              const bonusAmount = packageCalcData ? packageCalcData.finalCost * bonusPercent : 0;
+              
+              const totalGifts = giftCost + freeZonesCost + bonusAmount;
               
               return (
                 <div key={packageType} className="text-center">
