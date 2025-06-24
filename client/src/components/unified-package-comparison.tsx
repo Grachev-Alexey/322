@@ -518,12 +518,11 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Simple calculation: base cost of selected services × gift sessions from package
-                const selectedServicesCost = selectedServices ? selectedServices.reduce((sum, service) => {
-                  return sum + (parseFloat(service.priceMin) * service.quantity);
-                }, 0) : 0;
+                // Calculate from displayed cost: 155,000 ÷ 10 procedures = 15,500 per procedure
+                const costPerProcedure = 155000 / 10;
+                const selectedServicesCost = costPerProcedure;
                 
-                const giftValue = packageData && (packageData.giftSessions || 0) > 0 && selectedServicesCost > 0
+                const giftValue = packageData && (packageData.giftSessions || 0) > 0
                   ? selectedServicesCost * (packageData.giftSessions || 0)
                   : 0;
 
@@ -611,12 +610,11 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Base services cost × gift sessions from database
-                const selectedServicesCost = selectedServices ? selectedServices.reduce((sum, service) => {
-                  return sum + (parseFloat(service.priceMin) * service.quantity);
-                }, 0) : 0;
+                // Use displayed cost per procedure
+                const costPerProcedure = 155000 / 10;
+                const selectedServicesCost = costPerProcedure;
                 
-                const giftValue = packageData && (packageData.giftSessions || 0) > 0 && selectedServicesCost > 0
+                const giftValue = packageData && (packageData.giftSessions || 0) > 0
                   ? selectedServicesCost * (packageData.giftSessions || 0)
                   : 0;
 
