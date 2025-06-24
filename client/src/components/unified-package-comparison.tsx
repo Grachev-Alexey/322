@@ -528,19 +528,30 @@ export default function UnifiedPackageComparison({
                 let costOfOneVisit = 0;
                 
                 if (selectedServices && selectedServices.length > 0) {
+                  // Debug: log selected services to see what's being passed
+                  console.log('Selected services for gift calculation:', selectedServices);
+                  
                   // Sum of all selected services base prices (this is cost of one visit)
                   costOfOneVisit = selectedServices.reduce((sum, service) => {
-                    return sum + parseFloat(service.priceMin);
+                    const price = parseFloat(service.priceMin);
+                    console.log(`Service: ${service.title}, Price: ${price}`);
+                    return sum + price;
                   }, 0);
+                  
+                  console.log('Total cost of one visit:', costOfOneVisit);
                 } else {
+                  console.log('No selected services, using calculation fallback');
                   // If no specific services selected, use total cost divided by total procedures
                   costOfOneVisit = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
                 }
                 
                 // Gift value = cost of one visit * gift sessions (from admin settings)
-                const giftValue = packageData && (packageData.giftSessions || 0) > 0
-                  ? costOfOneVisit * (packageData.giftSessions || 0)
+                const giftSessions = packageData?.giftSessions || 0;
+                const giftValue = packageData && giftSessions > 0
+                  ? costOfOneVisit * giftSessions
                   : 0;
+                
+                console.log(`Gift sessions: ${giftSessions}, Gift value: ${giftValue}`);
 
                 // Remove debug - gifts are now fixed
 
