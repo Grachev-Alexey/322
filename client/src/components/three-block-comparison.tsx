@@ -196,16 +196,26 @@ export default function ThreeBlockComparison({
               const isSelected = selectedPackage === packageType && selectedPackage !== null;
               
               return (
-                <div key={packageType} className="relative">
+                <div key={packageType} className="relative mx-1">
+                  {/* SVG Border when selected */}
+                  {isSelected && (
+                    <svg 
+                      className="absolute inset-0 w-full h-full pointer-events-none" 
+                      preserveAspectRatio="none"
+                      viewBox="0 0 100 100"
+                    >
+                      <path 
+                        d="M 15,0 L 85,0 Q 100,0 100,15 L 100,85 Q 100,100 85,100 L 15,100 Q 0,100 0,85 L 0,15 Q 0,0 15,0 Z"
+                        fill="none"
+                        stroke="#60a5fa"
+                        strokeWidth="2"
+                        vectorEffect="non-scaling-stroke"
+                      />
+                    </svg>
+                  )}
+                  
                   <div
-                    className={`
-                      text-center cursor-pointer transition-all duration-200 
-                      rounded-lg p-2 mx-1
-                      ${isSelected 
-                        ? "bg-blue-50 shadow-sm ring-2 ring-blue-400 ring-inset" 
-                        : "hover:bg-gray-50 hover:shadow-sm"
-                      }
-                    `}
+                    className="text-center cursor-pointer transition-all duration-200 rounded-lg p-2 relative z-10 hover:bg-gray-50 hover:shadow-sm"
                     onClick={() => onPackageSelect(packageType)}
                   >
                     <div className={`inline-flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-r ${getPackageColor(packageType)} mb-1`}>
