@@ -182,7 +182,7 @@ export default function ThreeBlockComparison({
   }
 
   return (
-    <div className="space-y-1 w-full max-w-4xl p-1">
+    <div className="space-y-5 w-full max-w-4xl p-1">
       {/* Преимущества with curved border */}
       <div
         className="relative overflow-hidden"
@@ -403,7 +403,7 @@ export default function ThreeBlockComparison({
 
       {/* Стоимость with curved border */}
       <div
-        className="relative overflow-hidden mt-3"
+        className="relative overflow-hidden"
         style={{ borderRadius: "4px" }}
       >
         {/* Custom curved border using SVG */}
@@ -554,7 +554,7 @@ export default function ThreeBlockComparison({
 
       {/* Подарки with curved border */}
       <div
-        className="relative overflow-hidden mt-3"
+        className="relative overflow-hidden"
         style={{ borderRadius: "4px" }}
       >
         {/* Custom curved border using SVG */}
@@ -589,7 +589,7 @@ export default function ThreeBlockComparison({
           </div>
         </div>
 
-        <div className="pt-6 p-3 space-y-0.5 relative z-0">
+        <div className="pt-8 p-3 space-y-0.5 relative z-0">
           {/* Gift Procedures Cost Row - using original table logic */}
           <div className="grid grid-cols-4 gap-2.5 py-1 border-b border-gray-100">
             <div className="text-xs font-medium text-gray-700">
