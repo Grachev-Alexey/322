@@ -518,23 +518,21 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // FINAL FIX: Use actual selected services from props, not calculation
-                const actualServicesCost = selectedServices ? selectedServices.reduce((sum, service) => {
-                  return sum + (parseFloat(service.priceMin) * service.quantity);
-                }, 0) : 0;
+                // Calculate based on actual calculation data
+                const costPerProcedure = procedureCount > 0 ? calculation.baseCost / procedureCount : 0;
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 
-                  ? actualServicesCost * (packageData.giftSessions || 0)
+                  ? costPerProcedure * (packageData.giftSessions || 0)
                   : 0;
 
-                // Debug with actual services
+                // Final debug
                 if (packageType === 'vip') {
-                  console.log('GIFT WITH ACTUAL SERVICES:', {
-                    selectedServices,
-                    actualServicesCost,
+                  console.log('FINAL GIFT CALCULATION:', {
+                    baseCost: calculation.baseCost,
+                    procedureCount,
+                    costPerProcedure,
                     giftSessions: packageData?.giftSessions,
-                    giftValue,
-                    expectedFor7000: '7000 * 2 = 14000'
+                    giftValue
                   });
                 }
 
@@ -620,13 +618,11 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Use actual services cost from selected services
-                const actualServicesCost = selectedServices ? selectedServices.reduce((sum, service) => {
-                  return sum + (parseFloat(service.priceMin) * service.quantity);
-                }, 0) : 0;
+                // Use actual calculation baseCost
+                const costPerProcedure = procedureCount > 0 ? calculation.baseCost / procedureCount : 0;
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 
-                  ? actualServicesCost * (packageData.giftSessions || 0)
+                  ? costPerProcedure * (packageData.giftSessions || 0)
                   : 0;
 
 

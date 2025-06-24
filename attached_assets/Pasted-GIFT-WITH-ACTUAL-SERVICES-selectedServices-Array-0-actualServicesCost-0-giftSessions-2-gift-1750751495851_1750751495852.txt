@@ -1,0 +1,13 @@
+GIFT WITH ACTUAL SERVICES: {selectedServices: Array(0), actualServicesCost: 0, giftSessions: 2, giftValue: 0, expectedFor7000: '7000 * 2 = 14000'}actualServicesCost: 0expectedFor7000: "7000 * 2 = 14000"giftSessions: 2giftValue: 0selectedServices: [][[Prototype]]: Object
+unified-package-comparison.tsx:532 GIFT WITH ACTUAL SERVICES: {selectedServices: Array(0), actualServicesCost: 0, giftSessions: 2, giftValue: 0, expectedFor7000: '7000 * 2 = 14000'}actualServicesCost: 0expectedFor7000: "7000 * 2 = 14000"giftSessions: 2giftValue: 0selectedServices: [][[Prototype]]: Object
+unified-package-comparison.tsx:532 GIFT WITH ACTUAL SERVICES: {selectedServices: Array(0), actualServicesCost: 0, giftSessions: 2, giftValue: 0, expectedFor7000: '7000 * 2 = 14000'}
+unified-package-comparison.tsx:532 GIFT WITH ACTUAL SERVICES: {selectedServices: Array(0), actualServicesCost: 0, giftSessions: 2, giftValue: 0, expectedFor7000: '7000 * 2 = 14000'}
+unified-package-comparison.tsx:532 GIFT WITH ACTUAL SERVICES: {selectedServices: Array(0), actualServicesCost: 0, giftSessions: 2, giftValue: 0, expectedFor7000: '7000 * 2 = 14000'}
+unified-package-comparison.tsx:532 GIFT WITH ACTUAL SERVICES: {selectedServices: Array(0), actualServicesCost: 0, giftSessions: 2, giftValue: 0, expectedFor7000: '7000 * 2 = 14000'}
+unified-package-comparison.tsx:532 GIFT WITH ACTUAL SERVICES: {selectedServices: Array(0), actualServicesCost: 0, giftSessions: 2, giftValue: 0, expectedFor7000: '7000 * 2 = 14000'}
+unified-package-comparison.tsx:532 GIFT WITH ACTUAL SERVICES: {selectedServices: Array(0), actualServicesCost: 0, giftSessions: 2, giftValue: 0, expectedFor7000: '7000 * 2 = 14000'}
+unified-package-comparison.tsx:532 GIFT WITH ACTUAL SERVICES: {selectedServices: Array(0), actualServicesCost: 0, giftSessions: 2, giftValue: 0, expectedFor7000: '7000 * 2 = 14000'}
+unified-package-comparison.tsx:532 GIFT WITH ACTUAL SERVICES: {selectedServices: Array(0), actualServicesCost: 0, giftSessions: 2, giftValue: 0, expectedFor7000: '7000 * 2 = 14000'}
+unified-package-comparison.tsx:532 GIFT WITH ACTUAL SERVICES: {selectedServices: Array(0), actualServicesCost: 0, giftSessions: 2, giftValue: 0, expectedFor7000: '7000 * 2 = 14000'}
+unified-package-comparison.tsx:532 GIFT WITH ACTUAL SERVICES: {selectedServices: Array(0), actualServicesCost: 0, giftSessions: 2, giftValue: 0, expectedFor7000: '7000 * 2 = 14000'}
+unified-package-comparison.tsx:532 GIFT WITH ACTUAL SERVICES: {selectedServices: Array(0), actualServicesCost: 0, giftSessions: 2, giftValue: 0, expectedFor7000: '7000 * 2 = 14000'}
