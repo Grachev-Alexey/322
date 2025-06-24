@@ -483,15 +483,36 @@ export default function ThreeBlockComparison({
             const pkg = packages.find(p => p.type === packageType);
             let displayAmount = downPayment;
             
-            // Если пакет не выбран, показываем минимальный взнос для этого пакета
-            if (!selectedPackage && packageData && pkg) {
-              if (packageType === 'vip') {
-                displayAmount = packageData.finalCost; // VIP требует полную оплату
-              } else {
+            // Логика для VIP пакета
+            if (packageType === 'vip') {
+              // Если VIP выбран, показываем значение слайдера (полную стоимость)
+              if (selectedPackage === 'vip') {
+                displayAmount = downPayment; // Для VIP это всегда полная стоимость
+              } 
+              // Если выбран другой пакет (стандарт/эконом) или не выбран - показываем полную стоимость VIP
+              else {
+                displayAmount = packageData?.finalCost || 0;
+              }
+            }
+            // Логика для остальных пакетов
+            else {
+              // Если пакет не выбран, показываем минимальный взнос для этого пакета
+              if (!selectedPackage && packageData && pkg) {
                 // Используем minDownPaymentPercent из настроек пакета
                 const minDownPaymentPercent = parseFloat(pkg.minDownPaymentPercent);
                 const calculatedMinPayment = Math.round(packageData.finalCost * minDownPaymentPercent);
                 // Применяем абсолютный минимум из настроек
+                const absoluteMinimum = calculatorSettings?.minimumDownPayment || 25000;
+                displayAmount = Math.max(calculatedMinPayment, absoluteMinimum);
+              }
+              // Если выбран этот пакет, показываем значение слайдера
+              else if (selectedPackage === packageType) {
+                displayAmount = downPayment;
+              }
+              // Если выбран другой пакет, показываем минимальный взнос для этого пакета
+              else if (selectedPackage && packageData && pkg) {
+                const minDownPaymentPercent = parseFloat(pkg.minDownPaymentPercent);
+                const calculatedMinPayment = Math.round(packageData.finalCost * minDownPaymentPercent);
                 const absoluteMinimum = calculatorSettings?.minimumDownPayment || 25000;
                 displayAmount = Math.max(calculatedMinPayment, absoluteMinimum);
               }
