@@ -522,7 +522,7 @@ export default function UnifiedPackageComparison({
                 const costPerProcedure = procedureCount > 0 ? calculation.baseCost / procedureCount : 0;
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0
-                  ? selectedServicesCost * (packageData.giftSessions || 0)
+                  ? costPerProcedure * (packageData.giftSessions || 0)
                   : 0;
 
                 // Remove debug - gifts are now fixed
@@ -613,7 +613,7 @@ export default function UnifiedPackageComparison({
                 const costPerProcedure = procedureCount > 0 ? calculation.baseCost / procedureCount : 0;
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0
-                  ? selectedServicesCost * (packageData.giftSessions || 0)
+                  ? costPerProcedure * (packageData.giftSessions || 0)
                   : 0;
 
 
