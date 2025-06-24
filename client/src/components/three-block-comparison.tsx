@@ -186,7 +186,7 @@ export default function ThreeBlockComparison({
       {/* Преимущества with curved border */}
       <div
         className="relative overflow-hidden"
-        style={{ borderRadius: "8px" }}
+        style={{ borderRadius: "8px 8px 0 0" }}
       >
         {/* Custom curved border using SVG */}
         <svg
@@ -197,7 +197,7 @@ export default function ThreeBlockComparison({
           <defs>
             <path
               id="curved-border-blue"
-              d="M 8,0 L 92,0 Q 100,0 100,8 L 100,92 Q 100,100 92,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
+              d="M 8,0 L 92,0 Q 100,0 100,8 L 100,100 L 0,100 L 0,8 Q 0,0 8,0 Z"
               fill="none"
               stroke="#ec4899"
               strokeOpacity="0.5"
@@ -404,7 +404,7 @@ export default function ThreeBlockComparison({
       {/* Стоимость with curved border */}
       <div
         className="relative overflow-hidden"
-        style={{ borderRadius: "8px" }}
+        style={{ borderRadius: "8px 8px 0 0" }}
       >
         {/* Custom curved border using SVG */}
         <svg
@@ -415,7 +415,7 @@ export default function ThreeBlockComparison({
           <defs>
             <path
               id="curved-border-green"
-              d="M 8,0 L 92,0 Q 100,0 100,8 L 100,92 Q 100,100 92,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
+              d="M 8,0 L 92,0 Q 100,0 100,8 L 100,100 L 0,100 L 0,8 Q 0,0 8,0 Z"
               fill="none"
               stroke="#ec4899"
               strokeOpacity="0.5"
@@ -507,52 +507,55 @@ export default function ThreeBlockComparison({
             })}
           </div>
 
-          {/* Thin underline after total - with proper margins */}
-          <div className="mx-6 border-t border-pink-300 mt-2"></div>
 
-          {/* Первый взнос */}
+
+        </div>
+      </div>
+
+      {/* Первый взнос и Платеж в месяц - вынесены за пределы блока */}
+      <div className="space-y-2 mt-4">
+        {/* Первый взнос */}
+        <div className="grid grid-cols-4 gap-4 py-2">
+          <div className="text-sm text-gray-600">Первый взнос:</div>
+          {packageTypes.map((packageType) => {
+            return (
+              <div key={packageType} className="text-center">
+                <span className="text-sm text-gray-600">
+                  {formatPrice(downPayment)}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Платеж в месяц */}
+        {installmentMonths > 0 && (
           <div className="grid grid-cols-4 gap-4 py-2">
-            <div className="text-sm text-gray-600">Первый взнос:</div>
+            <div className="text-sm text-gray-600">Платеж в месяц</div>
             {packageTypes.map((packageType) => {
+              const packageData = getPackageData(packageType);
+              const monthlyPayment = packageData?.monthlyPayment || 0;
+
               return (
-                <div key={packageType} className="text-center">
-                  <span className="text-sm text-gray-600">
-                    {formatPrice(downPayment)}
-                  </span>
+                <div key={packageType} className="flex items-center justify-center">
+                  {packageType === 'vip' ? (
+                    <Minus className="w-3 h-3 text-red-500" strokeWidth={1} />
+                  ) : (
+                    <span className="text-sm text-gray-600">
+                      {formatPrice(monthlyPayment)}
+                    </span>
+                  )}
                 </div>
               );
             })}
           </div>
-
-          {/* Платеж в месяц */}
-          {installmentMonths > 0 && (
-            <div className="grid grid-cols-4 gap-4 py-2">
-              <div className="text-sm text-gray-600">Платеж в месяц</div>
-              {packageTypes.map((packageType) => {
-                const packageData = getPackageData(packageType);
-                const monthlyPayment = packageData?.monthlyPayment || 0;
-
-                return (
-                  <div key={packageType} className="flex items-center justify-center">
-                    {packageType === 'vip' ? (
-                      <Minus className="w-3 h-3 text-red-500" strokeWidth={1} />
-                    ) : (
-                      <span className="text-sm text-gray-600">
-                        {formatPrice(monthlyPayment)}
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+        )}
       </div>
 
       {/* Подарки with curved border */}
       <div
         className="relative overflow-hidden"
-        style={{ borderRadius: "8px" }}
+        style={{ borderRadius: "8px 8px 0 0" }}
       >
         {/* Custom curved border using SVG */}
         <svg
@@ -563,7 +566,7 @@ export default function ThreeBlockComparison({
           <defs>
             <path
               id="curved-border"
-              d="M 8,0 L 92,0 Q 100,0 100,8 L 100,92 Q 100,100 92,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
+              d="M 8,0 L 92,0 Q 100,0 100,8 L 100,100 L 0,100 L 0,8 Q 0,0 8,0 Z"
               fill="none"
               stroke="#ec4899"
               strokeOpacity="0.5"
@@ -700,8 +703,7 @@ export default function ThreeBlockComparison({
             })}
           </div>
 
-          {/* Thin underline before total - with proper margins */}
-          <div className="mx-5 border-t border-pink-300 mt-2 mb-2"></div>
+
           
           {/* Total Gifts Value Row */}
           <div className="grid grid-cols-4 gap-4 py-3 mt-2">
