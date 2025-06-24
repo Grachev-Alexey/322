@@ -533,7 +533,7 @@ export default function UnifiedPackageComparison({
                 }
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0
-                  ? fixedServicesCost * (packageData.giftSessions || 0)
+                  ? servicesCost * (packageData.giftSessions || 0)
                   : 0;
 
                 // Remove debug - gifts are now fixed
@@ -631,7 +631,7 @@ export default function UnifiedPackageComparison({
                 }
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0
-                  ? fixedServicesCost * (packageData.giftSessions || 0)
+                  ? servicesCost * (packageData.giftSessions || 0)
                   : 0;
 
 
