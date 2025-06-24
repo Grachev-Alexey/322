@@ -528,19 +528,19 @@ export default function UnifiedPackageComparison({
                 let costOfOneVisit = 0;
                 
                 if (selectedServices && selectedServices.length > 0) {
-                  // Debug: log selected services to see what's being passed
-                  console.log('Selected services for gift calculation:', selectedServices);
-                  
-                  // Sum of all selected services base prices (this is cost of one visit)
+                  // Sum of all selected services base prices
                   costOfOneVisit = selectedServices.reduce((sum, service) => {
-                    const price = parseFloat(service.priceMin);
-                    console.log(`Service: ${service.title}, Price: ${price}`);
-                    return sum + price;
+                    return sum + parseFloat(service.priceMin);
                   }, 0);
                   
-                  console.log('Total cost of one visit:', costOfOneVisit);
+                  // Subtract free zones from cost of one visit
+                  if (freeZones && freeZones.length > 0) {
+                    const freeZonesCost = freeZones.reduce((sum, zone) => {
+                      return sum + zone.pricePerProcedure;
+                    }, 0);
+                    costOfOneVisit = Math.max(0, costOfOneVisit - freeZonesCost);
+                  }
                 } else {
-                  console.log('No selected services, using calculation fallback');
                   // If no specific services selected, use total cost divided by total procedures
                   costOfOneVisit = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
                 }
@@ -552,7 +552,7 @@ export default function UnifiedPackageComparison({
                   : 0;
 
 
-                // Remove debug - gifts are now fixed
+
 
 
 
@@ -634,12 +634,20 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Calculate gift value using cost of one visit (sum of selected services)
+                // Calculate gift value using cost of one visit MINUS free zones
                 let costOfOneVisit = 0;
                 if (selectedServices && selectedServices.length > 0) {
                   costOfOneVisit = selectedServices.reduce((sum, service) => {
                     return sum + parseFloat(service.priceMin);
                   }, 0);
+                  
+                  // Subtract free zones from cost of one visit
+                  if (freeZones && freeZones.length > 0) {
+                    const freeZonesCost = freeZones.reduce((sum, zone) => {
+                      return sum + zone.pricePerProcedure;
+                    }, 0);
+                    costOfOneVisit = Math.max(0, costOfOneVisit - freeZonesCost);
+                  }
                 } else {
                   costOfOneVisit = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
                 }
