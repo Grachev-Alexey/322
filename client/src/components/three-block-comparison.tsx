@@ -1,4 +1,4 @@
-import { Crown, Star, Leaf, Gift } from "lucide-react";
+import { Crown, Star, Leaf, Gift, Check, Minus } from "lucide-react";
 import * as Icons from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatPrice } from "@/lib/utils";
@@ -266,11 +266,7 @@ export default function ThreeBlockComparison({
                   key={perk.id}
                   className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100 last:border-b-0"
                 >
-                  <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                    <IconComponent
-                      className="w-4 h-4"
-                      style={{ color: perk.iconColor || "#666" }}
-                    />
+                  <div className="flex items-center text-sm font-medium text-gray-700">
                     <span>{perk.name}</span>
                   </div>
                   {packageTypes.map((packageType) => {
@@ -279,25 +275,50 @@ export default function ThreeBlockComparison({
                         pv.packageType === packageType && pv.perkId === perk.id,
                     );
 
-                    let displayContent = perkValue?.displayValue || "-";
-                    if (displayContent === "✓") {
+                    let displayContent;
+                    
+                    if (!perkValue) {
+                      displayContent = (
+                        <Minus className="w-3 h-3 text-red-500" strokeWidth={1} />
+                      );
+                    } else if (perkValue.valueType === "boolean") {
+                      displayContent = perkValue.booleanValue ? (
+                        <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                          <Check className="w-3 h-3 text-white" />
+                        </div>
+                      ) : (
+                        <Minus className="w-3 h-3 text-red-500" strokeWidth={1} />
+                      );
+                    } else if (perkValue.displayValue === "Включено") {
                       displayContent = (
                         <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs font-bold">
-                            ✓
-                          </span>
+                          <Check className="w-3 h-3 text-white" />
                         </div>
+                      );
+                    } else if (perkValue.displayValue === "✓") {
+                      displayContent = (
+                        <div className="w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
+                          <Check className="w-3 h-3 text-white" />
+                        </div>
+                      );
+                    } else if (perkValue.displayValue === "-" || !perkValue.displayValue) {
+                      displayContent = (
+                        <Minus className="w-3 h-3 text-red-500" strokeWidth={1} />
+                      );
+                    } else {
+                      displayContent = (
+                        <span className="text-sm font-semibold text-gray-700">
+                          {perkValue.displayValue}
+                        </span>
                       );
                     }
 
                     return (
                       <div
                         key={packageType}
-                        className="text-center flex justify-center"
+                        className="flex items-center justify-center"
                       >
-                        <span className="text-sm font-semibold text-gray-700">
-                          {displayContent}
-                        </span>
+                        {displayContent}
                       </div>
                     );
                   })}
@@ -317,10 +338,14 @@ export default function ThreeBlockComparison({
                 const giftSessions = packageData?.giftSessions || 0;
 
                 return (
-                  <div key={packageType} className="text-center">
-                    <span className="text-sm font-semibold text-gray-700">
-                      {giftSessions > 0 ? giftSessions : "-"}
-                    </span>
+                  <div key={packageType} className="flex items-center justify-center">
+                    {giftSessions > 0 ? (
+                      <span className="text-base font-bold text-gray-800">
+                        {giftSessions}
+                      </span>
+                    ) : (
+                      <Minus className="w-3 h-3 text-red-500" strokeWidth={1} />
+                    )}
                   </div>
                 );
               })}
@@ -333,8 +358,8 @@ export default function ThreeBlockComparison({
                 const finalDiscountPercent = getFinalDiscountPercent(packageType);
 
                 return (
-                  <div key={packageType} className="text-center">
-                    <span className="text-sm font-semibold text-gray-700">
+                  <div key={packageType} className="flex items-center justify-center">
+                    <span className="text-base font-bold text-gray-800">
                       {finalDiscountPercent}%
                     </span>
                   </div>
@@ -358,11 +383,15 @@ export default function ThreeBlockComparison({
                   : 0;
 
                 return (
-                  <div key={packageType} className="text-center">
-                    <div className="text-xs font-semibold text-gray-700">
-                      <div>{bonusPercent}%</div>
-                      <div className="text-xs text-gray-500">от стоимости</div>
-                    </div>
+                  <div key={packageType} className="flex items-center justify-center">
+                    {bonusPercent > 0 ? (
+                      <div className="text-xs font-semibold text-gray-700 text-center">
+                        <div>{bonusPercent}%</div>
+                        <div className="text-xs text-gray-500">от стоимости</div>
+                      </div>
+                    ) : (
+                      <Minus className="w-3 h-3 text-red-500" strokeWidth={1} />
+                    )}
                   </div>
                 );
               })}
@@ -460,7 +489,7 @@ export default function ThreeBlockComparison({
           {/* Итого стоимость курса */}
           <div className="grid grid-cols-4 gap-4 py-3 mt-2">
             <div className="text-base font-bold text-gray-800">
-              Итого стоимость курса:
+              Итого:
             </div>
             {packageTypes.map((packageType) => {
               const packageData = getPackageData(packageType);
@@ -502,10 +531,14 @@ export default function ThreeBlockComparison({
                 const monthlyPayment = packageData?.monthlyPayment || 0;
 
                 return (
-                  <div key={packageType} className="text-center">
-                    <span className="text-sm text-gray-600">
-                      {formatPrice(monthlyPayment)}
-                    </span>
+                  <div key={packageType} className="flex items-center justify-center">
+                    {packageType === 'vip' ? (
+                      <Minus className="w-3 h-3 text-red-500" strokeWidth={1} />
+                    ) : (
+                      <span className="text-sm text-gray-600">
+                        {formatPrice(monthlyPayment)}
+                      </span>
+                    )}
                   </div>
                 );
               })}
@@ -554,7 +587,7 @@ export default function ThreeBlockComparison({
           {/* Gift Procedures Cost Row - using original table logic */}
           <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
             <div className="text-sm font-medium text-gray-700">
-              Стоимость подарочных процедур
+              Подарочные процедуры
             </div>
             {packageTypes.map((packageType) => {
               const packageData = packages.find((p) => p.type === packageType);
@@ -593,10 +626,14 @@ export default function ThreeBlockComparison({
                   : 0;
 
               return (
-                <div key={packageType} className="text-center">
-                  <span className="text-sm font-semibold text-gray-700">
-                    {giftValue > 0 ? formatPrice(giftValue) : "-"}
-                  </span>
+                <div key={packageType} className="flex items-center justify-center">
+                  {giftValue > 0 ? (
+                    <span className="text-sm font-semibold text-gray-700">
+                      {formatPrice(giftValue)}
+                    </span>
+                  ) : (
+                    <Minus className="w-3 h-3 text-red-500" strokeWidth={1} />
+                  )}
                 </div>
               );
             })}
@@ -647,10 +684,14 @@ export default function ThreeBlockComparison({
                   : 0;
 
               return (
-                <div key={packageType} className="text-center">
-                  <span className="text-sm font-semibold text-gray-700">
-                    {bonusAmount > 0 ? formatPrice(bonusAmount) : "-"}
-                  </span>
+                <div key={packageType} className="flex items-center justify-center">
+                  {bonusAmount > 0 ? (
+                    <span className="text-sm font-semibold text-gray-700">
+                      {formatPrice(bonusAmount)}
+                    </span>
+                  ) : (
+                    <Minus className="w-3 h-3 text-red-500" strokeWidth={1} />
+                  )}
                 </div>
               );
             })}
@@ -662,7 +703,7 @@ export default function ThreeBlockComparison({
           {/* Total Gifts Value Row */}
           <div className="grid grid-cols-4 gap-4 py-3 mt-2">
             <div className="text-base font-bold text-gray-800">
-              Итого стоимость подарков:
+              Итого:
             </div>
             {packageTypes.map((packageType) => {
               const packageData = packages.find((p) => p.type === packageType);

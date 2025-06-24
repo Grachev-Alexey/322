@@ -127,18 +127,17 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
       <div className="h-screen flex flex-col lg:flex-row gap-1 lg:gap-3 p-1 lg:p-3 overflow-hidden">
         {/* Left panel - Controls */}
         <div className="w-full lg:w-72 xl:w-80 flex flex-col h-auto lg:h-full order-2 lg:order-1">
-          {/* Hero badge - fixed at top */}
-          <div className="text-center mb-2 lg:mb-3 flex-shrink-0">
-            <Badge className="bg-gradient-to-r from-pink-400 to-orange-400 text-white px-3 lg:px-4 py-1 text-xs font-medium border-0 shadow-none">
-              <Sparkles className="w-3 h-3 mr-1" />
-              Спецпредложение гостевого дня
-            </Badge>
-          </div>
-
           {/* Scrollable content area with custom scrollbar */}
           <div className="flex-1 overflow-y-auto space-y-2 lg:space-y-3 pr-1 custom-left-scrollbar max-h-[40vh] lg:max-h-none">
-            {/* Service selection card */}
+            {/* Service selection card with special offer badge */}
             <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200">
+              {/* Special offer badge inside the card */}
+              <div className="text-center mb-3">
+                <Badge className="bg-gradient-to-r from-pink-400 to-orange-400 text-white px-3 lg:px-4 py-1 text-xs font-medium border-0 shadow-none">
+                  <Sparkles className="w-3 h-3 mr-1" />
+                  Спецпредложение гостевого дня
+                </Badge>
+              </div>
               <h3 className="text-sm lg:text-base font-bold text-gray-900 dark:text-white mb-2">Выбор услуг</h3>
               <ServiceSelector
                 selectedServices={selectedServices}
@@ -146,6 +145,20 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 onAddFreeZone={setFreeZones}
                 freeZones={freeZones}
               />
+              
+              {/* Subscription cost before discounts */}
+              {calculation && calculation.baseCost > 0 && (
+                <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Стоимость абонемента:
+                    </span>
+                    <span className="text-sm font-bold text-gray-900 dark:text-white">
+                      {formatPrice(calculation.baseCost)}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Procedure count - компактный */}
@@ -165,11 +178,10 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
               />
               
               {procedureCount >= (calculatorSettings?.bulkDiscountThreshold || 15) && (
-                <div className="mt-2 p-2 bg-green-50 dark:bg-green-950 rounded-lg border border-green-200 dark:border-green-800">
+                <div className="mt-2 p-2 bg-pink-50 dark:bg-pink-950 rounded-lg border border-pink-200 dark:border-pink-800">
                   <div className="flex items-center justify-center text-xs font-medium">
-                    <div className="flex items-center space-x-1 text-green-600 dark:text-green-400">
-                      <Star className="w-3 h-3" />
-                      <span>🎉 Скидка +{Math.round((calculatorSettings?.bulkDiscountPercentage || 0.025) * 100)}%</span>
+                    <div className="text-pink-600 dark:text-pink-400">
+                      <span>+Бонусная скидка {Math.round((calculatorSettings?.bulkDiscountPercentage || 0.025) * 100)}%</span>
                     </div>
                   </div>
                 </div>
@@ -178,11 +190,9 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
 
             {/* Payment settings - минималистичный дизайн */}
             <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200">
-              <div className="flex items-center justify-center mb-2">
-                <h4 className="font-semibold mb-0 text-sm text-gray-900 dark:text-white">
-                  {selectedPackage === 'vip' ? 'Полная предоплата' : 'Первый взнос'}
-                </h4>
-              </div>
+              <h4 className="font-semibold text-gray-900 dark:text-white text-sm mb-2">
+                {selectedPackage === 'vip' ? 'Полная предоплата' : 'Первый взнос'}
+              </h4>
               
               <div className="text-center mb-2">
                 {selectedPackage === 'vip' ? (

@@ -102,7 +102,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
 
       {/* Main Content with Scroll */}
       <main className="flex-1 overflow-hidden">
-        <div className="h-full overflow-y-auto px-4 sm:px-6 lg:px-8 py-8 pb-16 max-w-7xl mx-auto custom-scrollbar">
+        <div className="h-full overflow-y-auto px-4 sm:px-6 lg:px-5 py-8 pb-16 max-w-7xl mx-auto custom-scrollbar">
 
         
           {/* Hero Section */}
