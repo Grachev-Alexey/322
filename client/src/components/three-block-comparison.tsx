@@ -466,65 +466,76 @@ export default function ThreeBlockComparison({
         </div>
         
         <div className="pt-12 p-5 space-y-3 relative z-0">
-          {/* Стоимость подарочных процедур */}
+          {/* Gift Procedures Cost Row - using original table logic */}
           <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
             <div className="text-sm font-medium text-gray-700">Стоимость подарочных процедур</div>
             {packageTypes.map((packageType) => {
               const packageData = packages.find(p => p.type === packageType);
               const giftSessions = packageData?.giftSessions || 0;
               
-              // Calculate gift cost based on selected services and gift sessions
-              const giftCost = selectedServices.reduce((sum, service) => {
-                const serviceBaseCost = service.pricePerProcedure * service.quantity;
-                return sum + (serviceBaseCost * giftSessions);
-              }, 0);
+              // Calculate cost of one visit using original table logic
+              let costOfOneVisit = 0;
+              if (selectedServices && selectedServices.length > 0) {
+                // Sum of all selected services base prices
+                costOfOneVisit = selectedServices.reduce((sum, service) => {
+                  return sum + parseFloat(service.priceMin || service.pricePerProcedure);
+                }, 0);
+                
+                // Subtract free zones from cost of one visit
+                if (freeZones && freeZones.length > 0) {
+                  const freeZonesCost = freeZones.reduce((sum, zone) => {
+                    return sum + zone.pricePerProcedure;
+                  }, 0);
+                  costOfOneVisit = Math.max(0, costOfOneVisit - freeZonesCost);
+                }
+              } else {
+                // If no specific services selected, use total cost divided by total procedures
+                costOfOneVisit = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
+              }
+              
+              // Gift value = cost of one visit * gift sessions
+              const giftValue = packageData && giftSessions > 0 ? costOfOneVisit * giftSessions : 0;
               
               return (
                 <div key={packageType} className="text-center">
                   <span className="text-sm font-semibold text-gray-700">
-                    {giftCost > 0 ? formatPrice(giftCost) : "-"}
+                    {giftValue > 0 ? formatPrice(giftValue) : "-"}
                   </span>
                 </div>
               );
             })}
           </div>
 
-          {/* Стоимость бесплатных зон */}
-          <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
-            <div className="text-sm font-medium text-gray-700">Стоимость бесплатных зон</div>
-            {packageTypes.map((packageType) => {
-              // Use actual free zones calculation from the original logic
-              const freeZonesCost = freeZones.reduce((sum, zone) => {
-                return sum + (zone.pricePerProcedure * zone.quantity);
-              }, 0) || calculation?.freeZonesValue || 800;
-              
-              return (
-                <div key={packageType} className="text-center">
-                  <span className="text-sm font-semibold text-gray-700">
-                    {formatPrice(freeZonesCost)}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+          {/* Free Zones Cost Rows - Show each free zone separately like in original */}
+          {freeZones && freeZones.length > 0 && freeZones.map((zone, index) => (
+            <div key={`free-zone-${zone.serviceId}-${index}`} className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
+              <div className="text-sm font-medium text-gray-700">
+                {zone.title} {zone.quantity > 1 ? `(${zone.quantity} шт.)` : ''}
+              </div>
+              {packageTypes.map((packageType) => {
+                // Calculate individual zone value: price per procedure * procedure count from slider
+                const zoneValue = zone.pricePerProcedure * procedureCount;
 
-          {/* Бонусный счет */}
+                return (
+                  <div key={packageType} className="text-center">
+                    <span className="text-sm font-semibold text-gray-700">
+                      {zoneValue > 0 ? formatPrice(zoneValue) : "-"}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+
+          {/* Bonus Account Row */}
           <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
             <div className="text-sm font-medium text-gray-700">Бонусный счет</div>
             {packageTypes.map((packageType) => {
               const packageData = packages.find(p => p.type === packageType);
               const packageCalcData = getPackageData(packageType);
               
-              if (!packageData || !packageCalcData) {
-                return (
-                  <div key={packageType} className="text-center">
-                    <span className="text-sm font-semibold text-gray-700">-</span>
-                  </div>
-                );
-              }
-              
-              const bonusPercent = parseFloat(packageData.bonusAccountPercent) || 0;
-              const bonusAmount = packageCalcData.finalCost * bonusPercent;
+              const bonusPercent = packageData ? parseFloat(packageData.bonusAccountPercent) : 0;
+              const bonusAmount = packageCalcData && bonusPercent > 0 ? packageCalcData.finalCost * bonusPercent : 0;
               
               return (
                 <div key={packageType} className="text-center">
@@ -536,7 +547,7 @@ export default function ThreeBlockComparison({
             })}
           </div>
 
-          {/* Итого стоимость подарков */}
+          {/* Total Gifts Value Row */}
           <div className="grid grid-cols-4 gap-4 py-3 border-t-2 border-blue-200 mt-2">
             <div className="text-base font-bold text-gray-800">Итого стоимость подарков:</div>
             {packageTypes.map((packageType) => {
@@ -544,22 +555,35 @@ export default function ThreeBlockComparison({
               const packageCalcData = getPackageData(packageType);
               const giftSessions = packageData?.giftSessions || 0;
               
-              // Gift procedures cost
-              const giftCost = selectedServices.reduce((sum, service) => {
-                const serviceBaseCost = service.pricePerProcedure * service.quantity;
-                return sum + (serviceBaseCost * giftSessions);
-              }, 0);
+              // Calculate gift value using original logic
+              let costOfOneVisit = 0;
+              if (selectedServices && selectedServices.length > 0) {
+                costOfOneVisit = selectedServices.reduce((sum, service) => {
+                  return sum + parseFloat(service.priceMin || service.pricePerProcedure);
+                }, 0);
+                
+                if (freeZones && freeZones.length > 0) {
+                  const freeZonesCost = freeZones.reduce((sum, zone) => {
+                    return sum + zone.pricePerProcedure;
+                  }, 0);
+                  costOfOneVisit = Math.max(0, costOfOneVisit - freeZonesCost);
+                }
+              } else {
+                costOfOneVisit = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
+              }
               
-              // Free zones cost
-              const freeZonesCost = freeZones.reduce((sum, zone) => {
-                return sum + (zone.pricePerProcedure * zone.quantity);
-              }, 0) || calculation?.freeZonesValue || 800;
+              const giftValue = packageData && giftSessions > 0 ? costOfOneVisit * giftSessions : 0;
               
-              // Bonus amount
-              const bonusPercent = packageData ? parseFloat(packageData.bonusAccountPercent) || 0 : 0;
-              const bonusAmount = packageCalcData ? packageCalcData.finalCost * bonusPercent : 0;
+              // Calculate bonus amount
+              const bonusPercent = packageData ? parseFloat(packageData.bonusAccountPercent) : 0;
+              const bonusAmount = packageCalcData && bonusPercent > 0 ? packageCalcData.finalCost * bonusPercent : 0;
               
-              const totalGifts = giftCost + freeZonesCost + bonusAmount;
+              // Calculate free zones value
+              const freeZoneValue = freeZones && freeZones.length > 0
+                ? freeZones.reduce((total, zone) => total + zone.pricePerProcedure * procedureCount, 0)
+                : 0;
+              
+              const totalGifts = giftValue + bonusAmount + freeZoneValue;
               
               return (
                 <div key={packageType} className="text-center">
