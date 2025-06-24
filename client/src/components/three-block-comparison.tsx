@@ -201,7 +201,7 @@ export default function ThreeBlockComparison({
               fill="none"
               stroke="#ec4899"
               strokeOpacity="0.5"
-              strokeWidth="0.8"
+              strokeWidth="1"
               vectorEffect="non-scaling-stroke"
             />
             <mask id="title-mask-blue">
@@ -403,7 +403,7 @@ export default function ThreeBlockComparison({
 
       {/* Стоимость with curved border */}
       <div
-        className="relative overflow-hidden"
+        className="relative overflow-hidden mt-3"
         style={{ borderRadius: "4px" }}
       >
         {/* Custom curved border using SVG */}
@@ -419,7 +419,7 @@ export default function ThreeBlockComparison({
               fill="none"
               stroke="#ec4899"
               strokeOpacity="0.5"
-              strokeWidth="0.8"
+              strokeWidth="1"
               vectorEffect="non-scaling-stroke"
             />
             <mask id="title-mask-green">
@@ -554,7 +554,7 @@ export default function ThreeBlockComparison({
 
       {/* Подарки with curved border */}
       <div
-        className="relative overflow-hidden"
+        className="relative overflow-hidden mt-3"
         style={{ borderRadius: "4px" }}
       >
         {/* Custom curved border using SVG */}
@@ -570,7 +570,7 @@ export default function ThreeBlockComparison({
               fill="none"
               stroke="#ec4899"
               strokeOpacity="0.5"
-              strokeWidth="0.8"
+              strokeWidth="1"
               vectorEffect="non-scaling-stroke"
             />
             <mask id="title-mask">
@@ -589,7 +589,7 @@ export default function ThreeBlockComparison({
           </div>
         </div>
 
-        <div className="pt-4 p-3 space-y-0.5 relative z-0">
+        <div className="pt-6 p-3 space-y-0.5 relative z-0">
           {/* Gift Procedures Cost Row - using original table logic */}
           <div className="grid grid-cols-4 gap-2.5 py-1 border-b border-gray-100">
             <div className="text-xs font-medium text-gray-700">
