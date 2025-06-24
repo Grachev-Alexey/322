@@ -1,0 +1,132 @@
+
+{packageType: 'vip', baseCost: 52500, totalProcedures: 30, giftSessions: 2, giftValue: 3500, …}
+baseCost
+: 
+52500
+giftSessions
+: 
+2
+giftValue
+: 
+3500
+packageType
+: 
+"vip"
+procedureCount
+: 
+15
+totalProcedures
+: 
+30
+[[Prototype]]
+: 
+Object
+unified-package-comparison.tsx:523 🎁 Gift calculation DEBUG: 
+{packageType: 'vip', baseCost: 52500, totalProcedures: 30, giftSessions: 2, costPerProcedure: 1750, …}
+actualSelectedServices
+: 
+{id: 1, type: 'vip', name: 'VIP', discount: '0.25', minCost: '50000.00', …}
+baseCost
+: 
+52500
+costPerProcedure
+: 
+1750
+giftSessions
+: 
+2
+giftValue
+: 
+3500
+packageType
+: 
+"vip"
+procedureCount
+: 
+14
+procedureCountFromSlider
+: 
+14
+totalProcedures
+: 
+30
+[[Prototype]]
+: 
+Object
+unified-package-comparison.tsx:628 🎁 Total gifts calculation DEBUG: 
+{packageType: 'vip', baseCost: 52500, totalProcedures: 30, giftSessions: 2, giftValue: 3500, …}
+baseCost
+: 
+52500
+giftSessions
+: 
+2
+giftValue
+: 
+3500
+packageType
+: 
+"vip"
+procedureCount
+: 
+14
+totalProcedures
+: 
+30
+[[Prototype]]
+: 
+Object
+use-calculator.ts:145 💵 Base cost calculation: 
+{servicesData: Array(2), procedures: 14, baseCost: 49000, serviceMap: Array(10)}
+baseCost
+: 
+49000
+procedures
+: 
+14
+serviceMap
+: 
+(10) [Array(2), Array(2), Array(2), Array(2), Array(2), Array(2), Array(2), Array(2), Array(2), Array(2)]
+servicesData
+: 
+(2) [{…}, {…}]
+[[Prototype]]
+: 
+Object
+use-calculator.ts:176 📦 Package config from DB: 
+{vip: {…}, standard: {…}, economy: {…}}
+economy
+: 
+{discount: 0.1, minCost: 15000, minDownPaymentPercent: 0.7, requiresFullPayment: true, giftSessions: 0, …}
+standard
+: 
+{discount: 0.15, minCost: 30000, minDownPaymentPercent: 0.5, requiresFullPayment: false, giftSessions: 1, …}
+vip
+: 
+{discount: 0.25, minCost: 50000, minDownPaymentPercent: 0.3, requiresFullPayment: false, giftSessions: 2, …}
+[[Prototype]]
+: 
+Object
+calculator.ts:99 💰 Calculator DEBUG: 
+{packageType: 'vip', baseCost: 49000, totalProcedures: 28, originalCostPerProcedure: 1750, giftSessions: 2, …}
+baseCost
+: 
+49000
+giftSessionValue
+: 
+3500
+giftSessions
+: 
+2
+originalCostPerProcedure
+: 
+1750
+packageData
+: 
+{discount: 0.25, minCost: 50000, minDownPaymentPercent: 0.3, requiresFullPayment: false, giftSessions: 2, …}
+packageType
+: 
+"vip"
+totalProcedures
+: 
+28

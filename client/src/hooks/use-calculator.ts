@@ -142,12 +142,7 @@ export function useCalculator() {
         }
       }
       
-      console.log('💵 Base cost calculation:', {
-        servicesData,
-        procedures,
-        baseCost,
-        serviceMap: Array.from(serviceMap.entries())
-      });
+
 
       // Subtract free zones from base cost
       let freeZonesValue = 0;
@@ -173,7 +168,7 @@ export function useCalculator() {
         return acc;
       }, {});
 
-      console.log('📦 Package config from DB:', packageConfig);
+
       
 
 

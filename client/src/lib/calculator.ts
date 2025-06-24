@@ -94,18 +94,7 @@ export function calculatePackagePricing(
     const giftSessions = packageData.giftSessions || 0;
     const giftSessionValue = originalCostPerProcedure * giftSessions;
 
-    // DEBUG LOGGING
-    if (packageType === 'vip') {
-      console.log('💰 Calculator DEBUG:', {
-        packageType,
-        baseCost,
-        totalProcedures,
-        originalCostPerProcedure,
-        giftSessions,
-        giftSessionValue,
-        packageData: packageData
-      });
-    }
+
 
     // Calculate free zones value from params
     const freeZonesValue = params.freeZonesValue || 0;
