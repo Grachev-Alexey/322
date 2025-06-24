@@ -198,11 +198,15 @@ export default function ThreeBlockComparison({
               return (
                 <div
                   key={packageType}
-                  className={`text-center cursor-pointer transition-all duration-200 rounded-lg p-2 w-full mx-1 ${
+                  className={`text-center cursor-pointer transition-all duration-200 rounded-lg p-2 w-full ${
                     isSelected
-                      ? "border-2 border-blue-400 bg-blue-50 shadow-sm"
-                      : "border border-transparent hover:border-gray-300 hover:shadow-sm"
+                      ? "bg-blue-50 shadow-sm"
+                      : "hover:bg-gray-50 hover:shadow-sm"
                   }`}
+                  style={{
+                    outline: isSelected ? '2px solid #60a5fa' : 'none',
+                    outlineOffset: '-2px'
+                  }}
                   onClick={() => onPackageSelect(packageType)}
                 >
                   <div className={`inline-flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-r ${getPackageColor(packageType)} mb-1`}>
