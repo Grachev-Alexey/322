@@ -210,17 +210,22 @@ export default function ThreeBlockComparison({
           <use href="#curved-border-blue" />
         </svg>
 
-        {/* Title and Package Headers grid layout */}
-        <div className="pt-2.5 px-3 mb-2">
-          {/* Title with star icon and package headers in grid */}
+        {/* Title with star icon - with white background */}
+        <div className="absolute -top-1 left-6 px-2 py-1 z-10 bg-white">
+          <div className="flex items-center gap-1.5">
+            <Star className="w-3.5 h-3.5 text-yellow-500" />
+            <span className="font-bold text-gray-800 text-xs">
+              Преимущества
+            </span>
+          </div>
+        </div>
+
+        {/* Package Headers grid layout */}
+        <div className="pt-8 px-3 mb-2">
+          {/* Package headers in grid */}
           <div className="grid grid-cols-4 gap-2.5 items-center p-1">
-            {/* Title with star icon */}
-            <div className="flex items-center gap-1.5">
-              <Star className="w-3.5 h-3.5 text-yellow-500" />
-              <span className="font-bold text-gray-800 text-xs">
-                Преимущества
-              </span>
-            </div>
+            {/* Empty space for title */}
+            <div></div>
 
             {/* Package Headers - contained within grid cells */}
             {packageTypes.map((packageType) => {
