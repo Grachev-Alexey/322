@@ -515,15 +515,12 @@ export default function UnifiedPackageComparison({
                   ? costPerProcedure * (packageData.giftSessions || 0)
                   : 0;
 
-                // Debug for first load only
-                if (packageType === 'vip' && Math.random() < 0.1) {
-                  console.log('🎁 Gift calc:', {
-                    baseCost: calculation.baseCost,
-                    totalProcedures: calculation.totalProcedures,
-                    procedureCount,
-                    costPerProcedure,
+                // Debug logging
+                if (packageType === 'vip') {
+                  console.log('🎁 Package data check:', {
+                    packageData,
                     giftSessions: packageData?.giftSessions,
-                    giftValue
+                    packagesArray: packages
                   });
                 }
 
