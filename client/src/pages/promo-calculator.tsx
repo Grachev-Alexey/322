@@ -49,6 +49,8 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
   const [showClientModal, setShowClientModal] = useState(false);
   const [isEditingPayment, setIsEditingPayment] = useState(false);
   const [tempPaymentValue, setTempPaymentValue] = useState('');
+  const [isEditingCorrection, setIsEditingCorrection] = useState(false);
+  const [tempCorrectionValue, setTempCorrectionValue] = useState('');
   
   const packagePerksQuery = usePackagePerks();
   const packagePerkValues = packagePerksQuery.data || [];
@@ -346,33 +348,46 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             <div className="flex items-center justify-between">
               <div>
                 <h4 className="font-bold text-gray-900 dark:text-white text-sm">Коррекция</h4>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  Дополнительная скидка до 10%
-                </p>
               </div>
               <div className="flex items-center space-x-2">
-                <input
-                  type="number"
-                  min="0"
-                  max="10"
-                  step="0.1"
-                  value={correctionPercent}
-                  onChange={(e) => {
-                    const value = Math.min(10, Math.max(0, parseFloat(e.target.value) || 0));
-                    setCorrectionPercent(value);
-                  }}
-                  className="w-12 text-xs text-center border border-gray-300 dark:border-gray-600 rounded px-1 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                />
+                {isEditingCorrection ? (
+                  <input
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="0.1"
+                    value={tempCorrectionValue}
+                    onChange={(e) => setTempCorrectionValue(e.target.value)}
+                    onBlur={() => {
+                      const value = Math.min(10, Math.max(0, parseFloat(tempCorrectionValue) || 0));
+                      setCorrectionPercent(value);
+                      setIsEditingCorrection(false);
+                    }}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        const value = Math.min(10, Math.max(0, parseFloat(tempCorrectionValue) || 0));
+                        setCorrectionPercent(value);
+                        setIsEditingCorrection(false);
+                      }
+                    }}
+                    autoFocus
+                    onFocus={(e) => e.target.select()}
+                    className="w-12 text-xs text-center border border-gray-300 dark:border-gray-600 rounded px-1 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                ) : (
+                  <div
+                    onClick={() => {
+                      setTempCorrectionValue(correctionPercent.toString());
+                      setIsEditingCorrection(true);
+                    }}
+                    className="w-12 text-xs text-center cursor-pointer hover:bg-pink-50 dark:hover:bg-pink-900/20 rounded px-1 py-1 transition-colors font-bold text-premium"
+                  >
+                    {correctionPercent}
+                  </div>
+                )}
                 <span className="text-xs text-gray-500 dark:text-gray-400">%</span>
               </div>
             </div>
-            {correctionPercent > 0 && (
-              <div className="mt-1 text-xs text-center">
-                <span className="text-green-600 dark:text-green-400">
-                  -{correctionPercent}% скидка применена
-                </span>
-              </div>
-            )}
           </div>
 
           {/* Order button - fixed at bottom */}

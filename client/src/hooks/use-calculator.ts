@@ -193,14 +193,12 @@ export function useCalculator() {
       };
 
       // Use the centralized calculation function with calculator settings
-
-      
       const result = calculatePackagePricing(baseCost, calculationParams, calculatorSettings || {});
       
 
       setCalculation(result);
     },
-    [services, packages, calculatorSettings]
+    [services, packages, calculatorSettings, correctionPercent]
   );
 
   // Debounced calculation trigger
