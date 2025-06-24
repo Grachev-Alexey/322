@@ -518,17 +518,22 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Emergency fix: if selectedServices is empty, calculate from visible data
-                let baseServicesCost = 0;
+                // Calculate from selectedServices if available, otherwise from calculation
+                let servicesCost = 0;
+                
                 if (selectedServices && selectedServices.length > 0) {
-                  baseServicesCost = selectedServices.reduce((sum, service) => sum + parseFloat(service.priceMin) * service.quantity, 0);
+                  // Use actual selected services
+                  servicesCost = selectedServices.reduce((sum, service) => {
+                    return sum + (parseFloat(service.priceMin) * service.quantity);
+                  }, 0);
                 } else {
-                  // Fallback: extract from calculation if available
-                  baseServicesCost = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
+                  // Extract base cost per procedure from calculation
+                  // calculation.baseCost is total for all procedures, divide by procedureCount to get per procedure
+                  servicesCost = procedureCount > 0 ? calculation.baseCost / procedureCount : 0;
                 }
                 
-                const giftValue = packageData && (packageData.giftSessions || 0) > 0 && baseServicesCost > 0
-                  ? baseServicesCost * (packageData.giftSessions || 0)
+                const giftValue = packageData && (packageData.giftSessions || 0) > 0
+                  ? fixedServicesCost * (packageData.giftSessions || 0)
                   : 0;
 
                 // Remove debug - gifts are now fixed
@@ -615,16 +620,18 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Fallback calculation
-                let baseServicesCost = 0;
+                // Calculate services cost dynamically
+                let servicesCost = 0;
                 if (selectedServices && selectedServices.length > 0) {
-                  baseServicesCost = selectedServices.reduce((sum, service) => sum + parseFloat(service.priceMin) * service.quantity, 0);
+                  servicesCost = selectedServices.reduce((sum, service) => {
+                    return sum + (parseFloat(service.priceMin) * service.quantity);
+                  }, 0);
                 } else {
-                  baseServicesCost = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
+                  servicesCost = procedureCount > 0 ? calculation.baseCost / procedureCount : 0;
                 }
                 
-                const giftValue = packageData && (packageData.giftSessions || 0) > 0 && baseServicesCost > 0
-                  ? baseServicesCost * (packageData.giftSessions || 0)
+                const giftValue = packageData && (packageData.giftSessions || 0) > 0
+                  ? fixedServicesCost * (packageData.giftSessions || 0)
                   : 0;
 
 
