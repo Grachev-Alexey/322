@@ -151,7 +151,7 @@ export default function ThreeBlockComparison({
   }
 
   return (
-    <div className="space-y-4 w-full max-w-5xl mx-auto p-4">
+    <div className="space-y-4 w-full max-w-4xl p-4">
       {/* Package Headers */}
       <div className="grid grid-cols-4 gap-4 mb-6">
         <div></div>
@@ -181,7 +181,7 @@ export default function ThreeBlockComparison({
       </div>
 
       {/* Преимущества with curved border */}
-      <div className="relative bg-white overflow-hidden" style={{ borderRadius: '24px' }}>
+      <div className="relative bg-white overflow-hidden" style={{ borderRadius: '32px' }}>
         {/* Custom curved border using SVG */}
         <svg 
           className="absolute inset-0 w-full h-full pointer-events-none" 
@@ -191,29 +191,29 @@ export default function ThreeBlockComparison({
           <defs>
             <path 
               id="curved-border-blue" 
-              d="M 8,0 L 88,0 Q 96,0 96,8 L 96,92 Q 96,100 88,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
+              d="M 12,0 L 85,0 Q 97,0 97,12 L 97,88 Q 97,100 85,100 L 12,100 Q 0,100 0,88 L 0,12 Q 0,0 12,0 Z"
               fill="none"
-              stroke="#93c5fd"
-              strokeWidth="0.4"
+              stroke="#60a5fa"
+              strokeWidth="0.8"
               vectorEffect="non-scaling-stroke"
             />
             <mask id="title-mask-blue">
               <rect width="100%" height="100%" fill="white"/>
-              <rect x="12%" y="-2%" width="28%" height="8%" fill="black"/>
+              <rect x="10%" y="-3%" width="32%" height="10%" fill="black"/>
             </mask>
           </defs>
           <use href="#curved-border-blue" mask="url(#title-mask-blue)"/>
         </svg>
         
-        {/* Title with star icon */}
-        <div className="absolute -top-0.5 left-6 bg-white px-4 py-1 z-10">
-          <div className="flex items-center gap-2">
-            <Star className="w-4 h-4 text-yellow-500" />
-            <span className="font-bold text-gray-800">Преимущества</span>
+        {/* Title with star icon - emerging from block */}
+        <div className="absolute -top-1 left-8 bg-white px-6 py-2 z-10 rounded-lg shadow-sm">
+          <div className="flex items-center gap-3">
+            <Star className="w-5 h-5 text-yellow-500" />
+            <span className="font-bold text-gray-800 text-lg">Преимущества</span>
           </div>
         </div>
         
-        <div className="pt-8 p-6 relative z-0">
+        <div className="pt-10 p-5 relative z-0">
           <div className="space-y-3">
             {uniquePerks.map((perk) => {
               const IconComponent = (Icons as any)[perk.icon] || Star;
@@ -252,7 +252,7 @@ export default function ThreeBlockComparison({
       </div>
 
       {/* Стоимость with curved border */}
-      <div className="relative bg-white overflow-hidden" style={{ borderRadius: '24px' }}>
+      <div className="relative bg-white overflow-hidden" style={{ borderRadius: '32px' }}>
         {/* Custom curved border using SVG */}
         <svg 
           className="absolute inset-0 w-full h-full pointer-events-none" 
@@ -262,25 +262,25 @@ export default function ThreeBlockComparison({
           <defs>
             <path 
               id="curved-border-green" 
-              d="M 8,0 L 88,0 Q 96,0 96,8 L 96,92 Q 96,100 88,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
+              d="M 12,0 L 85,0 Q 97,0 97,12 L 97,88 Q 97,100 85,100 L 12,100 Q 0,100 0,88 L 0,12 Q 0,0 12,0 Z"
               fill="none"
-              stroke="#86efac"
-              strokeWidth="0.4"
+              stroke="#60a5fa"
+              strokeWidth="0.8"
               vectorEffect="non-scaling-stroke"
             />
             <mask id="title-mask-green">
               <rect width="100%" height="100%" fill="white"/>
-              <rect x="12%" y="-2%" width="22%" height="8%" fill="black"/>
+              <rect x="10%" y="-3%" width="26%" height="10%" fill="black"/>
             </mask>
           </defs>
           <use href="#curved-border-green" mask="url(#title-mask-green)"/>
         </svg>
         
-        {/* Title with money icon */}
-        <div className="absolute -top-0.5 left-6 bg-white px-4 py-1 z-10">
-          <div className="flex items-center gap-2">
-            <span className="text-lg">💰</span>
-            <span className="font-bold text-gray-800">Стоимость</span>
+        {/* Title with money icon - emerging from block */}
+        <div className="absolute -top-1 left-8 bg-white px-6 py-2 z-10 rounded-lg shadow-sm">
+          <div className="flex items-center gap-3">
+            <span className="text-xl">💰</span>
+            <span className="font-bold text-gray-800 text-lg">Стоимость</span>
           </div>
         </div>
         
@@ -380,7 +380,7 @@ export default function ThreeBlockComparison({
       </div>
 
       {/* Подарки with curved border */}
-      <div className="relative bg-white overflow-hidden" style={{ borderRadius: '24px' }}>
+      <div className="relative bg-white overflow-hidden" style={{ borderRadius: '32px' }}>
         {/* Custom curved border using SVG */}
         <svg 
           className="absolute inset-0 w-full h-full pointer-events-none" 
@@ -390,29 +390,29 @@ export default function ThreeBlockComparison({
           <defs>
             <path 
               id="curved-border" 
-              d="M 8,0 L 88,0 Q 96,0 96,8 L 96,92 Q 96,100 88,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
+              d="M 12,0 L 85,0 Q 97,0 97,12 L 97,88 Q 97,100 85,100 L 12,100 Q 0,100 0,88 L 0,12 Q 0,0 12,0 Z"
               fill="none"
-              stroke="#f9a8d4"
-              strokeWidth="0.4"
+              stroke="#60a5fa"
+              strokeWidth="0.8"
               vectorEffect="non-scaling-stroke"
             />
             <mask id="title-mask">
               <rect width="100%" height="100%" fill="white"/>
-              <rect x="12%" y="-2%" width="25%" height="8%" fill="black"/>
+              <rect x="10%" y="-3%" width="25%" height="10%" fill="black"/>
             </mask>
           </defs>
           <use href="#curved-border" mask="url(#title-mask)"/>
         </svg>
         
-        {/* Title with gift icon */}
-        <div className="absolute -top-0.5 left-6 bg-white px-4 py-1 z-10">
-          <div className="flex items-center gap-2">
-            <Gift className="w-4 h-4 text-pink-500" />
-            <span className="font-bold text-gray-800">Подарки</span>
+        {/* Title with gift box icon - emerging from block */}
+        <div className="absolute -top-1 left-8 bg-white px-6 py-2 z-10 rounded-lg shadow-sm">
+          <div className="flex items-center gap-3">
+            <span className="text-xl">🎁</span>
+            <span className="font-bold text-gray-800 text-lg">Подарки</span>
           </div>
         </div>
         
-        <div className="pt-8 p-6 space-y-3 relative z-0">
+        <div className="pt-10 p-5 space-y-3 relative z-0">
           {/* Стоимость подарочных процедур */}
           <div className="grid grid-cols-4 gap-4 py-2 border-b border-gray-100">
             <div className="text-sm font-medium text-gray-700">Стоимость подарочных процедур</div>
