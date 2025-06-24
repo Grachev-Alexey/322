@@ -477,10 +477,28 @@ export default function ThreeBlockComparison({
         <div className="grid grid-cols-4 gap-2.5 py-1">
           <div className="text-xs text-gray-600">Первый взнос:</div>
           {packageTypes.map((packageType) => {
+            const packageData = getPackageData(packageType);
+            const pkg = packages.find(p => p.type === packageType);
+            let displayAmount = downPayment;
+            
+            // Если пакет не выбран, показываем минимальный взнос для этого пакета
+            if (!selectedPackage && packageData && pkg) {
+              if (packageType === 'vip') {
+                displayAmount = packageData.finalCost; // VIP требует полную оплату
+              } else {
+                // Используем minDownPaymentPercent из настроек пакета
+                const minDownPaymentPercent = parseFloat(pkg.minDownPaymentPercent);
+                const calculatedMinPayment = Math.round(packageData.finalCost * minDownPaymentPercent);
+                // Применяем абсолютный минимум из настроек
+                const absoluteMinimum = calculatorSettings?.minimumDownPayment || 25000;
+                displayAmount = Math.max(calculatedMinPayment, absoluteMinimum);
+              }
+            }
+            
             return (
               <div key={packageType} className="text-center">
                 <span className="text-xs text-gray-600">
-                  {formatPrice(downPayment)}
+                  {formatPrice(displayAmount)}
                 </span>
               </div>
             );
@@ -493,7 +511,19 @@ export default function ThreeBlockComparison({
             <div className="text-xs text-gray-600">Платеж в месяц</div>
             {packageTypes.map((packageType) => {
               const packageData = getPackageData(packageType);
-              const monthlyPayment = packageData?.monthlyPayment || 0;
+              const pkg = packages.find(p => p.type === packageType);
+              let monthlyPayment = packageData?.monthlyPayment || 0;
+              
+              // Если пакет не выбран, рассчитываем ежемесячный платеж для показа
+              if (!selectedPackage && packageData && pkg && packageType !== 'vip') {
+                const minDownPaymentPercent = parseFloat(pkg.minDownPaymentPercent);
+                const calculatedMinPayment = Math.round(packageData.finalCost * minDownPaymentPercent);
+                const absoluteMinimum = calculatorSettings?.minimumDownPayment || 25000;
+                const minDownPayment = Math.max(calculatedMinPayment, absoluteMinimum);
+                const remainingCost = packageData.finalCost - minDownPayment;
+                const maxInstallmentMonths = Math.max(...(calculatorSettings?.installmentMonthsOptions || [6]));
+                monthlyPayment = Math.round(remainingCost / maxInstallmentMonths);
+              }
 
               return (
                 <div key={packageType} className="flex items-center justify-center">

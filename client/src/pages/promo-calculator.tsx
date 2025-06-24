@@ -281,7 +281,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 ) : !selectedPackage && calculation && packages.length > 0 ? (
                   <div className="space-y-0.5">
                     {packages.filter(pkg => pkg.type !== 'vip').map(pkg => {
-                      const minDownPaymentPercent = parseFloat(pkg.minDownPaymentPercent) / 100;
+                      const minDownPaymentPercent = parseFloat(pkg.minDownPaymentPercent);
                       const minDownPayment = Math.round(calculation.baseCost * minDownPaymentPercent);
                       const remainingCost = calculation.baseCost - minDownPayment;
                       const monthlyPayment = Math.round(remainingCost / (calculatorSettings?.installmentMonthsOptions?.[calculatorSettings.installmentMonthsOptions.length - 1] || 6));
