@@ -643,7 +643,7 @@ export default function ThreeBlockComparison({
           </div>
 
           {/* Total Gifts Value Row */}
-          <div className="grid grid-cols-4 gap-4 py-3 mt-2">
+          <div className="grid grid-cols-4 gap-4 py-3 border-t border-blue-300 mt-2">
             <div className="text-base font-bold text-gray-800">
               Итого стоимость подарков:
             </div>
