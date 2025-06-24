@@ -17,6 +17,7 @@ export interface CalculationParams {
   procedureCount?: number;
   freeZonesValue?: number;
   totalProcedures?: number;
+  correctionPercent?: number;
 }
 
 export interface PackageData {
@@ -46,7 +47,7 @@ export function calculatePackagePricing(
 ): CalculationResult {
 
   
-  const { packageConfig, freeZones } = params;
+  const { packageConfig, freeZones, correctionPercent = 0 } = params;
   
   // Use package configuration from database - no defaults
   const packages = packageConfig;
@@ -81,6 +82,9 @@ export function calculatePackagePricing(
     const qualifiesForBulkDiscount = sliderProcedureCount >= bulkThreshold;
     const additionalDiscount = qualifiesForBulkDiscount ? baseCost * bulkDiscountPercent : 0;
     
+    // Calculate correction discount (master adjustment, max 10%)
+    const correctionDiscount = Math.min(correctionPercent, 10) * baseCost * 0.01;
+    
 
     
 
@@ -100,7 +104,7 @@ export function calculatePackagePricing(
     const freeZonesValue = params.freeZonesValue || 0;
     
     // Total savings - exclude free zones from discounts, they are gifts not discounts
-    const actualDiscounts = packageDiscount + certificateDiscount + additionalDiscount;
+    const actualDiscounts = packageDiscount + certificateDiscount + additionalDiscount + correctionDiscount;
     const totalSavings = actualDiscounts; // Only actual discounts, not gifts
     const finalCost = baseCost - actualDiscounts; // Actual cost without gift sessions (free zones already subtracted from baseCost)
 
@@ -128,7 +132,7 @@ export function calculatePackagePricing(
         { type: 'package', amount: packageDiscount },
         ...(qualifiesForBulkDiscount && additionalDiscount > 0 ? [{ type: 'bulk', amount: additionalDiscount }] : []),
         ...(certificateDiscount > 0 ? [{ type: 'certificate', amount: certificateDiscount }] : []),
-
+        ...(correctionDiscount > 0 ? [{ type: 'correction', amount: correctionDiscount }] : []),
         ...(giftSessionValue > 0 ? [{ type: 'gift_sessions', amount: giftSessionValue }] : [])
       ]
     };

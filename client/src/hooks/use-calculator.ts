@@ -60,6 +60,7 @@ export function useCalculator() {
   const [usedCertificate, setUsedCertificate] = useState(false);
   const [freeZones, setFreeZones] = useState<FreeZone[]>([]);
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
+  const [correctionPercent, setCorrectionPercent] = useState(0);
   const [calculation, setCalculation] = useState<Calculation | null>(null);
   
   // Debounce refs
@@ -187,7 +188,8 @@ export function useCalculator() {
         packageConfig,
         procedureCount: procedures,
         freeZonesValue,
-        totalProcedures: servicesData.reduce((sum, s) => sum + s.quantity, 0) * procedures
+        totalProcedures: servicesData.reduce((sum, s) => sum + s.quantity, 0) * procedures,
+        correctionPercent: correctionPercent
       };
 
       // Use the centralized calculation function with calculator settings
@@ -217,7 +219,7 @@ export function useCalculator() {
         freeZones
       );
     }, isUserDragging.current ? 100 : 0); // Shorter debounce when dragging
-  }, [selectedServices, procedureCount, downPayment, installmentMonths, usedCertificate, freeZones, calculateInstantly]);
+  }, [selectedServices, procedureCount, downPayment, installmentMonths, usedCertificate, freeZones, correctionPercent, calculateInstantly]);
 
   // Initialize default installment months based on settings - set to minimum available
   useEffect(() => {
@@ -246,6 +248,7 @@ export function useCalculator() {
     packages,
     totalProcedures,
     calculatorSettings,
+    correctionPercent,
     setSelectedServices,
     setProcedureCount,
     setDownPayment: useCallback((value: number) => {
@@ -259,6 +262,7 @@ export function useCalculator() {
     setInstallmentMonths,
     setUsedCertificate,
     setFreeZones,
+    setCorrectionPercent,
     setSelectedPackage: useCallback((packageType: string | null) => {
       setSelectedPackage(packageType);
       

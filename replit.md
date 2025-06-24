@@ -4,6 +4,7 @@
 ViVi-Calc is a comprehensive sales calculation tool designed for beauty salons. It helps calculate package deals, discounts, installment payments, and manages client data with different subscription types.
 
 ## Recent Changes
+- **2024-12-27**: Added master correction feature allowing up to 10% additional discount on all packages
 - **2024-12-27**: Fixed down payment display to show same value across Standard/Economy packages when one is selected
 - **2024-12-27**: Added text selection when editing down payment amount for better UX
 - **2024-12-27**: Fixed VIP down payment display to show VIP package cost when other packages are selected

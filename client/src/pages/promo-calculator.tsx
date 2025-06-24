@@ -64,12 +64,14 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
     selectedPackage,
     packages,
     calculatorSettings,
+    correctionPercent,
     setSelectedServices,
     setProcedureCount,
     setDownPayment,
     setInstallmentMonths,
     setUsedCertificate,
     setFreeZones,
+    setCorrectionPercent,
     setSelectedPackage,
     isLoading,
     getMinDownPayment,
@@ -337,6 +339,40 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 </p>
               ) : null}
             </div>
+          </div>
+
+          {/* Correction block - компактный */}
+          <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-bold text-gray-900 dark:text-white text-sm">Коррекция</h4>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Дополнительная скидка до 10%
+                </p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="number"
+                  min="0"
+                  max="10"
+                  step="0.1"
+                  value={correctionPercent}
+                  onChange={(e) => {
+                    const value = Math.min(10, Math.max(0, parseFloat(e.target.value) || 0));
+                    setCorrectionPercent(value);
+                  }}
+                  className="w-12 text-xs text-center border border-gray-300 dark:border-gray-600 rounded px-1 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+                />
+                <span className="text-xs text-gray-500 dark:text-gray-400">%</span>
+              </div>
+            </div>
+            {correctionPercent > 0 && (
+              <div className="mt-1 text-xs text-center">
+                <span className="text-green-600 dark:text-green-400">
+                  -{correctionPercent}% скидка применена
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Order button - fixed at bottom */}
