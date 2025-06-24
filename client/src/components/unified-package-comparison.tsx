@@ -518,24 +518,22 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // FIXED: Use totalProcedures from calculation, not procedureCount from slider
-                const selectedServicesTotalCost = calculation.totalProcedures > 0 
-                  ? calculation.baseCost / calculation.totalProcedures // Cost per procedure
-                  : 0;
+                // FINAL CORRECT: Gift = cost of selected services × gift sessions
+                // Independent of procedure count slider
+                const selectedServicesCost = calculation.freeZonesValue || 0; // Cost of selected services for 1 procedure
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 
-                  ? selectedServicesTotalCost * (packageData.giftSessions || 0)
+                  ? selectedServicesCost * (packageData.giftSessions || 0)
                   : 0;
 
-                // Debug the FINAL FIXED calculation
+                // Debug the SIMPLE calculation
                 if (packageType === 'vip') {
-                  console.log('FINAL FIXED CALCULATION:', {
-                    baseCost: calculation.baseCost,
-                    totalProcedures: calculation.totalProcedures,
-                    costPerProcedure: selectedServicesTotalCost,
+                  console.log('SIMPLE GIFT CALCULATION:', {
+                    selectedServicesCost,
+                    freeZonesValue: calculation.freeZonesValue,
                     giftSessions: packageData?.giftSessions,
                     giftValue,
-                    formula: 'baseCost / totalProcedures * giftSessions'
+                    formula: 'selectedServicesCost * giftSessions'
                   });
                 }
 
@@ -621,13 +619,11 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // FIXED: Use totalProcedures from calculation
-                const selectedServicesTotalCost = calculation.totalProcedures > 0 
-                  ? calculation.baseCost / calculation.totalProcedures
-                  : 0;
+                // FINAL: Gift calculation using selected services cost
+                const selectedServicesCost = calculation.freeZonesValue || 0;
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 
-                  ? selectedServicesTotalCost * (packageData.giftSessions || 0)
+                  ? selectedServicesCost * (packageData.giftSessions || 0)
                   : 0;
 
 
