@@ -359,6 +359,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 packagePerkValues={packagePerkValues}
                 usedCertificate={usedCertificate}
                 freeZones={freeZones}
+                selectedServices={selectedServices}
               />
             </div>
           )}

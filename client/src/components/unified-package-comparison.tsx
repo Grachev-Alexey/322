@@ -550,8 +550,7 @@ export default function UnifiedPackageComparison({
                 const giftValue = packageData && giftSessions > 0
                   ? costOfOneVisit * giftSessions
                   : 0;
-                
-                console.log(`Gift sessions: ${giftSessions}, Gift value: ${giftValue}`);
+
 
                 // Remove debug - gifts are now fixed
 
