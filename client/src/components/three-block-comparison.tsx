@@ -186,7 +186,6 @@ export default function ThreeBlockComparison({
       {/* Преимущества with curved border */}
       <div
         className="relative overflow-hidden"
-        style={{ borderRadius: "8px" }}
       >
         {/* Custom curved border using SVG */}
         <svg
@@ -197,7 +196,7 @@ export default function ThreeBlockComparison({
           <defs>
             <path
               id="curved-border-blue"
-              d="M 8,0 L 92,0 Q 100,0 100,8 L 100,92 Q 100,100 92,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
+              d="M 0,0 L 100,0 L 100,100 L 0,100 Z"
               fill="none"
               stroke="#ec4899"
               strokeOpacity="0.5"
@@ -213,13 +212,13 @@ export default function ThreeBlockComparison({
         </svg>
 
         {/* Title and Package Headers grid layout */}
-        <div className="pt-2 px-3 mb-2">
+        <div className="pt-3 px-4 mb-3">
           {/* Title with star icon and package headers in grid */}
-          <div className="grid grid-cols-4 gap-2 items-center p-1">
+          <div className="grid grid-cols-4 gap-3 items-center p-1">
             {/* Title with star icon */}
-            <div className="flex items-center gap-1">
-              <Star className="w-3 h-3 text-yellow-500" />
-              <span className="font-bold text-gray-800 text-xs">
+            <div className="flex items-center gap-2">
+              <Star className="w-4 h-4 text-yellow-500" />
+              <span className="font-bold text-gray-800 text-sm">
                 Преимущества
               </span>
             </div>
@@ -233,13 +232,13 @@ export default function ThreeBlockComparison({
               return (
                 <div key={packageType} className="text-center">
                   <div
-                    className="cursor-pointer transition-all duration-200 rounded-lg p-1"
+                    className="cursor-pointer transition-all duration-200 p-1"
                     onClick={() => onPackageSelect(packageType)}
                   >
                     <div
-                      className={`inline-flex items-center justify-center w-3 h-3 rounded-full bg-gradient-to-r ${getPackageColor(packageType)} mb-0.5`}
+                      className={`inline-flex items-center justify-center w-4 h-4 bg-gradient-to-r ${getPackageColor(packageType)} mb-1`}
                     >
-                      <Icon className="h-2 w-2 text-white" />
+                      <Icon className="h-2.5 w-2.5 text-white" />
                     </div>
                     <div className="font-bold text-gray-800 text-xs">
                       {getPackageName(packageType)}
@@ -257,15 +256,15 @@ export default function ThreeBlockComparison({
           </div>
         </div>
 
-        <div className="px-3 pb-2 relative z-0">
-          <div className="space-y-0.5">
+        <div className="px-4 pb-3 relative z-0">
+          <div className="space-y-1">
             {uniquePerks.map((perk) => {
               const IconComponent = (Icons as any)[perk.icon] || Star;
 
               return (
                 <div
                   key={perk.id}
-                  className="grid grid-cols-4 gap-2 py-1 border-b border-gray-100 last:border-b-0"
+                  className="grid grid-cols-4 gap-3 py-1.5 border-b border-gray-100 last:border-b-0"
                 >
                   <div className="flex items-center text-xs font-medium text-gray-700">
                     <span>{perk.name}</span>
@@ -328,7 +327,7 @@ export default function ThreeBlockComparison({
             })}
 
             {/* Free Sessions Row */}
-            <div className="grid grid-cols-4 gap-2 py-1 border-b border-gray-100">
+            <div className="grid grid-cols-4 gap-3 py-1.5 border-b border-gray-100">
               <div className="text-xs font-medium text-gray-700">
                 Сеансы в подарок
               </div>
@@ -353,7 +352,7 @@ export default function ThreeBlockComparison({
             </div>
 
             {/* Discount Row */}
-            <div className="grid grid-cols-4 gap-2 py-1 border-b border-gray-100">
+            <div className="grid grid-cols-4 gap-3 py-1.5 border-b border-gray-100">
               <div className="text-xs font-medium text-gray-700">Скидка</div>
               {packageTypes.map((packageType) => {
                 const finalDiscountPercent = getFinalDiscountPercent(packageType);
@@ -369,7 +368,7 @@ export default function ThreeBlockComparison({
             </div>
 
             {/* Bonus Account Row */}
-            <div className="grid grid-cols-4 gap-2 py-1 border-b border-gray-100 last:border-b-0">
+            <div className="grid grid-cols-4 gap-3 py-1.5 border-b border-gray-100 last:border-b-0">
               <div className="text-xs font-medium text-gray-700">
                 Бонусный счет
               </div>
@@ -404,7 +403,6 @@ export default function ThreeBlockComparison({
       {/* Стоимость with curved border */}
       <div
         className="relative overflow-hidden"
-        style={{ borderRadius: "8px" }}
       >
         {/* Custom curved border using SVG */}
         <svg
@@ -415,7 +413,7 @@ export default function ThreeBlockComparison({
           <defs>
             <path
               id="curved-border-green"
-              d="M 8,0 L 92,0 Q 100,0 100,8 L 100,92 Q 100,100 92,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
+              d="M 0,0 L 100,0 L 100,100 L 0,100 Z"
               fill="none"
               stroke="#ec4899"
               strokeOpacity="0.5"
@@ -432,15 +430,15 @@ export default function ThreeBlockComparison({
 
         {/* Title with money icon - no background */}
         <div className="absolute -top-1 left-6 px-2 py-1 z-10">
-          <div className="flex items-center gap-1">
-            <span className="text-sm">💰</span>
-            <span className="font-bold text-gray-800 text-xs">Стоимость</span>
+          <div className="flex items-center gap-2">
+            <span className="text-base">💰</span>
+            <span className="font-bold text-gray-800 text-sm">Стоимость</span>
           </div>
         </div>
 
-        <div className="pt-4 p-3 space-y-0.5">
+        <div className="pt-5 p-4 space-y-1">
           {/* Первоначальная стоимость */}
-          <div className="grid grid-cols-4 gap-2 py-1 border-b border-gray-100">
+          <div className="grid grid-cols-4 gap-3 py-1.5 border-b border-gray-100">
             <div className="text-xs font-medium text-gray-700">
               Первоначальная
             </div>
@@ -454,7 +452,7 @@ export default function ThreeBlockComparison({
           </div>
 
           {/* Скидка */}
-          <div className="grid grid-cols-4 gap-2 py-1 border-b border-gray-100">
+          <div className="grid grid-cols-4 gap-3 py-1.5 border-b border-gray-100">
             <div className="text-xs font-medium text-gray-700">Скидка</div>
             {packageTypes.map((packageType) => {
               const packageData = getPackageData(packageType);
@@ -474,7 +472,7 @@ export default function ThreeBlockComparison({
 
           {/* Сертификат */}
           {usedCertificate && (
-            <div className="grid grid-cols-4 gap-2 py-1 border-b border-gray-100">
+            <div className="grid grid-cols-4 gap-3 py-1.5 border-b border-gray-100">
               <div className="text-xs font-medium text-gray-700">
                 Сертификат
               </div>
@@ -489,8 +487,8 @@ export default function ThreeBlockComparison({
           )}
 
           {/* Итого стоимость курса */}
-          <div className="grid grid-cols-4 gap-2 py-1.5 mt-1">
-            <div className="text-xs font-bold text-gray-800">
+          <div className="grid grid-cols-4 gap-3 py-2 mt-1">
+            <div className="text-sm font-bold text-gray-800">
               Итого:
             </div>
             {packageTypes.map((packageType) => {
@@ -499,7 +497,7 @@ export default function ThreeBlockComparison({
 
               return (
                 <div key={packageType} className="text-center">
-                  <span className="text-xs font-bold text-pink-400">
+                  <span className="text-sm font-bold text-pink-400">
                     {formatPrice(finalCost)}
                   </span>
                 </div>
@@ -513,9 +511,9 @@ export default function ThreeBlockComparison({
       </div>
 
       {/* Первый взнос и Платеж в месяц - вынесены за пределы блока */}
-      <div className="space-y-0.5 mt-1">
+      <div className="space-y-1 mt-2">
         {/* Первый взнос */}
-        <div className="grid grid-cols-4 gap-2 py-1">
+        <div className="grid grid-cols-4 gap-3 py-1.5">
           <div className="text-xs text-gray-600">Первый взнос:</div>
           {packageTypes.map((packageType) => {
             return (
@@ -530,7 +528,7 @@ export default function ThreeBlockComparison({
 
         {/* Платеж в месяц */}
         {installmentMonths > 0 && (
-          <div className="grid grid-cols-4 gap-2 py-1">
+          <div className="grid grid-cols-4 gap-3 py-1.5">
             <div className="text-xs text-gray-600">Платеж в месяц</div>
             {packageTypes.map((packageType) => {
               const packageData = getPackageData(packageType);
@@ -555,7 +553,6 @@ export default function ThreeBlockComparison({
       {/* Подарки with curved border */}
       <div
         className="relative overflow-hidden"
-        style={{ borderRadius: "8px" }}
       >
         {/* Custom curved border using SVG */}
         <svg
@@ -566,7 +563,7 @@ export default function ThreeBlockComparison({
           <defs>
             <path
               id="curved-border"
-              d="M 8,0 L 92,0 Q 100,0 100,8 L 100,92 Q 100,100 92,100 L 8,100 Q 0,100 0,92 L 0,8 Q 0,0 8,0 Z"
+              d="M 0,0 L 100,0 L 100,100 L 0,100 Z"
               fill="none"
               stroke="#ec4899"
               strokeOpacity="0.5"
@@ -583,15 +580,15 @@ export default function ThreeBlockComparison({
 
         {/* Title with gift box icon - no background */}
         <div className="absolute -top-1 left-6 px-2 py-1 z-10">
-          <div className="flex items-center gap-1">
-            <span className="text-sm">🎁</span>
-            <span className="font-bold text-gray-800 text-xs">Подарки</span>
+          <div className="flex items-center gap-2">
+            <span className="text-base">🎁</span>
+            <span className="font-bold text-gray-800 text-sm">Подарки</span>
           </div>
         </div>
 
-        <div className="pt-4 p-3 space-y-0.5 relative z-0">
+        <div className="pt-5 p-4 space-y-1 relative z-0">
           {/* Gift Procedures Cost Row - using original table logic */}
-          <div className="grid grid-cols-4 gap-2 py-1 border-b border-gray-100">
+          <div className="grid grid-cols-4 gap-3 py-1.5 border-b border-gray-100">
             <div className="text-xs font-medium text-gray-700">
               Подарочные процедуры
             </div>
@@ -651,7 +648,7 @@ export default function ThreeBlockComparison({
             freeZones.map((zone, index) => (
               <div
                 key={`free-zone-${zone.serviceId}-${index}`}
-                className="grid grid-cols-4 gap-2 py-1 border-b border-gray-100"
+                className="grid grid-cols-4 gap-3 py-1.5 border-b border-gray-100"
               >
                 <div className="text-xs font-medium text-gray-700">
                   {zone.title}{" "}
@@ -673,7 +670,7 @@ export default function ThreeBlockComparison({
             ))}
 
           {/* Bonus Account Row */}
-          <div className="grid grid-cols-4 gap-2 py-1 border-b border-gray-100">
+          <div className="grid grid-cols-4 gap-3 py-1.5 border-b border-gray-100">
             <div className="text-xs font-medium text-gray-700">
               Бонусный счет
             </div>
@@ -706,8 +703,8 @@ export default function ThreeBlockComparison({
 
           
           {/* Total Gifts Value Row */}
-          <div className="grid grid-cols-4 gap-2 py-1.5 mt-1">
-            <div className="text-xs font-bold text-gray-800">
+          <div className="grid grid-cols-4 gap-3 py-2 mt-1">
+            <div className="text-sm font-bold text-gray-800">
               Итого:
             </div>
             {packageTypes.map((packageType) => {
@@ -766,7 +763,7 @@ export default function ThreeBlockComparison({
 
               return (
                 <div key={packageType} className="text-center">
-                  <span className="text-xs font-bold text-pink-400">
+                  <span className="text-sm font-bold text-pink-400">
                     {formatPrice(totalGifts)}
                   </span>
                 </div>
