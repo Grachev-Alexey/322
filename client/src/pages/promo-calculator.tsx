@@ -278,10 +278,19 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
               <div className="text-xs mt-1 text-center text-gray-500">
                 {selectedPackage && selectedPackage !== 'vip' ? (
                   `${formatPrice(getMinDownPayment())} - ${formatPrice(getMaxDownPayment())}`
-                ) : !selectedPackage && calculation ? (
+                ) : !selectedPackage && calculation && packages.length > 0 ? (
                   <div className="space-y-0.5">
-                    <div>Мин. платеж: {formatPrice(Math.round(calculation.baseCost * 0.3))}</div>
-                    <div>В месяц: {formatPrice(Math.round((calculation.baseCost - calculation.baseCost * 0.3) / 6))}</div>
+                    {packages.filter(pkg => pkg.type !== 'vip').map(pkg => {
+                      const minDownPaymentPercent = parseFloat(pkg.minDownPaymentPercent) / 100;
+                      const minDownPayment = Math.round(calculation.baseCost * minDownPaymentPercent);
+                      const remainingCost = calculation.baseCost - minDownPayment;
+                      const monthlyPayment = Math.round(remainingCost / (calculatorSettings?.installmentMonthsOptions?.[calculatorSettings.installmentMonthsOptions.length - 1] || 6));
+                      return (
+                        <div key={pkg.type}>
+                          {pkg.name}: {formatPrice(minDownPayment)} / мес: {formatPrice(monthlyPayment)}
+                        </div>
+                      );
+                    })}
                   </div>
                 ) : !selectedPackage ? (
                   'Выберите пакет'
