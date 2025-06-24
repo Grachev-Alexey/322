@@ -386,15 +386,18 @@ export default function ThreeBlockComparison({
       >
 
 
-        {/* Title with money icon */}
-        <div className="absolute -top-1 left-6 px-2 py-1 z-10">
-          <div className="flex items-center gap-1.5">
-            <span className="text-sm">💰</span>
-            <span className="font-bold text-gray-800 text-xs">Стоимость</span>
+        <div className="pt-2.5 px-3 space-y-0.5">
+          {/* Title with money icon */}
+          <div className="grid grid-cols-4 gap-2.5 items-center p-1 mb-2">
+            <div className="flex items-center gap-1.5">
+              <span className="text-sm">💰</span>
+              <span className="font-bold text-gray-800 text-xs">Стоимость</span>
+            </div>
+            <div></div>
+            <div></div>
+            <div></div>
           </div>
-        </div>
 
-        <div className="pt-8 p-3 space-y-0.5">
           {/* Первоначальная стоимость */}
           <div className="grid grid-cols-4 gap-2.5 py-1 border-b border-gray-100">
             <div className="text-xs font-medium text-gray-700">
@@ -469,7 +472,7 @@ export default function ThreeBlockComparison({
       </div>
 
       {/* Первый взнос и Платеж в месяц - вынесены за пределы блока */}
-      <div className="space-y-0.5 -mt-8">
+      <div className="space-y-0.5" style={{ marginTop: "-32px" }}>
         {/* Первый взнос */}
         <div className="grid grid-cols-4 gap-2.5 py-1">
           <div className="text-xs text-gray-600">Первый взнос:</div>
@@ -515,15 +518,18 @@ export default function ThreeBlockComparison({
       >
 
 
-        {/* Title with gift box icon */}
-        <div className="absolute -top-1 left-6 px-2 py-1 z-10">
-          <div className="flex items-center gap-1.5">
-            <span className="text-sm">🎁</span>
-            <span className="font-bold text-gray-800 text-xs">Подарки</span>
+        <div className="pt-2.5 px-3 space-y-0.5 relative z-0">
+          {/* Title with gift box icon */}
+          <div className="grid grid-cols-4 gap-2.5 items-center p-1 mb-2">
+            <div className="flex items-center gap-1.5">
+              <span className="text-sm">🎁</span>
+              <span className="font-bold text-gray-800 text-xs">Подарки</span>
+            </div>
+            <div></div>
+            <div></div>
+            <div></div>
           </div>
-        </div>
 
-        <div className="pt-8 p-3 space-y-0.5 relative z-0">
           {/* Gift Procedures Cost Row - using original table logic */}
           <div className="grid grid-cols-4 gap-2.5 py-1 border-b border-gray-100">
             <div className="text-xs font-medium text-gray-700">
