@@ -183,37 +183,37 @@ export default function ThreeBlockComparison({
         {/* Title and Package Headers grid layout */}
         <div className="pt-4 px-5 mb-6">
           {/* Title with star icon and package headers in grid */}
-          <div className="grid grid-cols-4 gap-4 items-center">
+          <div className="grid grid-cols-4 gap-4 items-center p-2">
             {/* Title with star icon */}
             <div className="flex items-center gap-3">
               <Star className="w-5 h-5 text-yellow-500" />
               <span className="font-bold text-gray-800 text-lg">Преимущества</span>
             </div>
             
-            {/* Package Headers - aligned with columns */}
+            {/* Package Headers - contained within grid cells */}
             {packageTypes.map((packageType) => {
               const Icon = getPackageIcon(packageType);
               const isSelected = selectedPackage === packageType && selectedPackage !== null;
               
               return (
-                <div
-                  key={packageType}
-                  className={`text-center cursor-pointer transition-all duration-200 rounded-lg p-2 w-full ${
-                    isSelected
-                      ? "bg-blue-50 shadow-sm"
-                      : "hover:bg-gray-50 hover:shadow-sm"
-                  }`}
-                  style={{
-                    outline: isSelected ? '2px solid #60a5fa' : 'none',
-                    outlineOffset: '-2px'
-                  }}
-                  onClick={() => onPackageSelect(packageType)}
-                >
-                  <div className={`inline-flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-r ${getPackageColor(packageType)} mb-1`}>
-                    <Icon className="h-3 w-3 text-white" />
-                  </div>
-                  <div className="font-bold text-gray-800 text-xs">
-                    {getPackageName(packageType)}
+                <div key={packageType} className="relative">
+                  <div
+                    className={`
+                      text-center cursor-pointer transition-all duration-200 
+                      rounded-lg p-2 mx-1
+                      ${isSelected 
+                        ? "bg-blue-50 shadow-sm ring-2 ring-blue-400 ring-inset" 
+                        : "hover:bg-gray-50 hover:shadow-sm"
+                      }
+                    `}
+                    onClick={() => onPackageSelect(packageType)}
+                  >
+                    <div className={`inline-flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-r ${getPackageColor(packageType)} mb-1`}>
+                      <Icon className="h-3 w-3 text-white" />
+                    </div>
+                    <div className="font-bold text-gray-800 text-xs">
+                      {getPackageName(packageType)}
+                    </div>
                   </div>
                 </div>
               );
