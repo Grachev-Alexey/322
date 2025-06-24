@@ -210,8 +210,8 @@ export default function ThreeBlockComparison({
           <use href="#curved-border-blue" />
         </svg>
 
-        {/* Title with star icon - with white background */}
-        <div className="absolute -top-1 left-6 px-2 py-1 z-10 bg-white">
+        {/* Title with star icon */}
+        <div className="absolute -top-1 left-6 px-2 py-1 z-10">
           <div className="flex items-center gap-1.5">
             <Star className="w-3.5 h-3.5 text-yellow-500" />
             <span className="font-bold text-gray-800 text-xs">
@@ -431,8 +431,8 @@ export default function ThreeBlockComparison({
           <use href="#curved-border-green" />
         </svg>
 
-        {/* Title with money icon - with white background */}
-        <div className="absolute -top-1 left-6 px-2 py-1 z-10 bg-white">
+        {/* Title with money icon */}
+        <div className="absolute -top-1 left-6 px-2 py-1 z-10">
           <div className="flex items-center gap-1.5">
             <span className="text-sm">💰</span>
             <span className="font-bold text-gray-800 text-xs">Стоимость</span>
@@ -580,8 +580,8 @@ export default function ThreeBlockComparison({
           <use href="#curved-border" />
         </svg>
 
-        {/* Title with gift box icon - with white background */}
-        <div className="absolute -top-1 left-6 px-2 py-1 z-10 bg-white">
+        {/* Title with gift box icon */}
+        <div className="absolute -top-1 left-6 px-2 py-1 z-10">
           <div className="flex items-center gap-1.5">
             <span className="text-sm">🎁</span>
             <span className="font-bold text-gray-800 text-xs">Подарки</span>
