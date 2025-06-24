@@ -494,7 +494,7 @@ export default function ThreeBlockComparison({
                 displayAmount = packageData?.finalCost || 0;
               }
             }
-            // Логика для остальных пакетов
+            // Логика для остальных пакетов (стандарт и эконом)
             else {
               // Если пакет не выбран, показываем минимальный взнос для этого пакета
               if (!selectedPackage && packageData && pkg) {
@@ -505,12 +505,12 @@ export default function ThreeBlockComparison({
                 const absoluteMinimum = calculatorSettings?.minimumDownPayment || 25000;
                 displayAmount = Math.max(calculatedMinPayment, absoluteMinimum);
               }
-              // Если выбран этот пакет, показываем значение слайдера
-              else if (selectedPackage === packageType) {
+              // Если выбран любой пакет (стандарт или эконом), показываем значение слайдера во всех невип пакетах
+              else if (selectedPackage && (selectedPackage === 'standard' || selectedPackage === 'economy')) {
                 displayAmount = downPayment;
               }
-              // Если выбран другой пакет, показываем минимальный взнос для этого пакета
-              else if (selectedPackage && packageData && pkg) {
+              // Если выбран VIP, показываем минимальный взнос для этого пакета
+              else if (selectedPackage === 'vip' && packageData && pkg) {
                 const minDownPaymentPercent = parseFloat(pkg.minDownPaymentPercent);
                 const calculatedMinPayment = Math.round(packageData.finalCost * minDownPaymentPercent);
                 const absoluteMinimum = calculatorSettings?.minimumDownPayment || 25000;
