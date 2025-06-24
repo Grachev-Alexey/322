@@ -527,7 +527,9 @@ export default function UnifiedPackageComparison({
                     giftSessions: packageData?.giftSessions,
                     costPerProcedure: calculation.baseCost / calculation.totalProcedures,
                     giftValue,
-                    procedureCount
+                    procedureCount,
+                    actualSelectedServices: packageData,
+                    procedureCountFromSlider: procedureCount
                   });
                 }
 

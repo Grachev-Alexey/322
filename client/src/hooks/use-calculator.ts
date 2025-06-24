@@ -141,6 +141,13 @@ export function useCalculator() {
           baseCost += parseFloat(service.priceMin) * selectedService.quantity * procedures;
         }
       }
+      
+      console.log('💵 Base cost calculation:', {
+        servicesData,
+        procedures,
+        baseCost,
+        serviceMap: Array.from(serviceMap.entries())
+      });
 
       // Subtract free zones from base cost
       let freeZonesValue = 0;
@@ -152,17 +159,21 @@ export function useCalculator() {
       baseCost = Math.max(0, baseCost - freeZonesValue);
 
 
-      // Convert packages array to config object  
+      // Convert packages array to config object with ALL database fields
       const packageConfig = packages.reduce((acc: any, pkg: Package) => {
         acc[pkg.type] = {
           discount: parseFloat(pkg.discount.toString()),
           minCost: parseFloat(pkg.minCost.toString()),
           minDownPaymentPercent: parseFloat(pkg.minDownPaymentPercent.toString()),
           requiresFullPayment: pkg.requiresFullPayment,
-          giftSessions: pkg.giftSessions || 0
+          giftSessions: pkg.giftSessions || 0,
+          bonusAccountPercent: parseFloat(pkg.bonusAccountPercent.toString()),
+          minDownPayment: 0 // Will be calculated
         };
         return acc;
       }, {});
+
+      console.log('📦 Package config from DB:', packageConfig);
       
 
 
