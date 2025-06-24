@@ -176,6 +176,7 @@ export default function CalculatorPage({ user, onLogout }: CalculatorPageProps) 
             selectedServices={selectedServices}
             bulkDiscountThreshold={calculatorSettings?.bulkDiscountThreshold || 15}
             bulkDiscountPercentage={calculatorSettings?.bulkDiscountPercentage || 0.025}
+            correctionPercent={correctionPercent}
           />
         )}
 

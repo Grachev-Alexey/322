@@ -427,6 +427,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 selectedServices={selectedServices}
                 bulkDiscountThreshold={calculatorSettings?.bulkDiscountThreshold || 15}
                 bulkDiscountPercentage={calculatorSettings?.bulkDiscountPercentage || 0.025}
+                correctionPercent={correctionPercent}
               />
             </div>
           )}

@@ -57,6 +57,7 @@ interface ThreeBlockComparisonProps {
   selectedServices?: SelectedService[];
   bulkDiscountThreshold?: number;
   bulkDiscountPercentage?: number;
+  correctionPercent?: number;
 }
 
 export default function ThreeBlockComparison({
@@ -74,6 +75,7 @@ export default function ThreeBlockComparison({
   selectedServices = [],
   bulkDiscountThreshold = 15,
   bulkDiscountPercentage = 0.025,
+  correctionPercent = 0,
 }: ThreeBlockComparisonProps) {
   const packageTypes = ["vip", "standard", "economy"];
   const hasValidCalculation = calculation && calculation.baseCost > 0;
@@ -107,6 +109,9 @@ export default function ThreeBlockComparison({
     if (procedureCount >= bulkDiscountThreshold) {
       baseDiscountPercent += bulkDiscountPercentage * 100;
     }
+    
+    // Add correction percentage (master adjustment)
+    baseDiscountPercent += correctionPercent;
     
     return Math.round(baseDiscountPercent);
   };
