@@ -518,29 +518,26 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Calculate gift using actual selected services and current slider value
-                // If selectedServices is empty, fall back to calculation data
-                const servicesPriceSum = selectedServices && selectedServices.length > 0 
-                  ? selectedServices.reduce((sum, service) => {
-                      return sum + (parseFloat(service.priceMin) * service.quantity);
-                    }, 0)
-                  : calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
+                // CORRECT CALCULATION: Gift = total cost of selected services × gift sessions
+                // NOT per procedure, but the TOTAL cost of all selected services
+                const selectedServicesTotalCost = calculation.totalProcedures > 0 
+                  ? calculation.baseCost / procedureCount // Total cost of selected services for 1 procedure
+                  : 0;
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 
-                  ? servicesPriceSum * (packageData.giftSessions || 0)
+                  ? selectedServicesTotalCost * (packageData.giftSessions || 0)
                   : 0;
 
-                // Debug the calculation issue
+                // Debug the CORRECTED calculation
                 if (packageType === 'vip') {
-                  console.log('GIFT CALCULATION DEBUG:', {
-                    hasSelectedServices: selectedServices && selectedServices.length > 0,
-                    selectedServicesCount: selectedServices ? selectedServices.length : 0,
-                    servicesPriceSum,
+                  console.log('CORRECTED GIFT CALCULATION:', {
+                    baseCost: calculation.baseCost,
+                    procedureCount,
+                    totalProcedures: calculation.totalProcedures,
+                    selectedServicesTotalCost,
                     giftSessions: packageData?.giftSessions,
                     giftValue,
-                    fallbackUsed: !selectedServices || selectedServices.length === 0,
-                    baseCost: calculation.baseCost,
-                    totalProcedures: calculation.totalProcedures
+                    formula: 'baseCost / procedureCount * giftSessions'
                   });
                 }
 
@@ -626,15 +623,13 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Calculate total gifts using actual selected services or fallback
-                const servicesPriceSum = selectedServices && selectedServices.length > 0 
-                  ? selectedServices.reduce((sum, service) => {
-                      return sum + (parseFloat(service.priceMin) * service.quantity);
-                    }, 0)
-                  : calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
+                // CORRECT: Total cost of selected services for gift calculation
+                const selectedServicesTotalCost = calculation.totalProcedures > 0 
+                  ? calculation.baseCost / procedureCount
+                  : 0;
                 
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0 
-                  ? servicesPriceSum * (packageData.giftSessions || 0)
+                  ? selectedServicesTotalCost * (packageData.giftSessions || 0)
                   : 0;
 
 
