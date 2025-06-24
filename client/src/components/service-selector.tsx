@@ -276,15 +276,15 @@ export default function ServiceSelector({
       {freeZones.length > 0 && (
         <div className="mt-3 lg:mt-4">
           <div className="flex items-center gap-2 mb-2">
-            <Gift className="w-3 h-3 lg:w-4 lg:h-4 text-green-600" />
-            <span className="text-xs lg:text-sm font-medium text-green-700">Бесплатные зоны</span>
+            <Gift className="w-3 h-3 lg:w-4 lg:h-4 text-pink-500" />
+            <span className="text-xs lg:text-sm font-medium text-pink-600">Бесплатные зоны</span>
           </div>
           
           <div className="space-y-1 lg:space-y-2">
             {freeZones.map((zone) => (
               <div
                 key={zone.serviceId}
-                className="flex items-center justify-between bg-green-50 rounded-lg p-2 border border-green-200"
+                className="flex items-center justify-between bg-pink-50 rounded-lg p-2 border border-pink-200"
               >
                 <div className="flex items-center min-w-0 flex-1">
                   <span className="text-xs lg:text-sm font-medium truncate">{zone.title}</span>
