@@ -138,7 +138,7 @@ export default function ServiceSelector({
 
   return (
     <div>
-      <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-1">Зоны для процедур</label>
+      <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Зоны для процедур</label>
       
       {/* Service Selection */}
       <div className="relative mb-2 z-50" ref={dropdownRef}>
@@ -277,7 +277,7 @@ export default function ServiceSelector({
         <div className="mt-2">
           <div className="flex items-center gap-1.5 mb-1.5">
             <Gift className="w-3 h-3 text-pink-500" />
-            <span className="text-xs font-bold text-pink-600">Бесплатные зоны</span>
+            <span className="text-sm font-bold text-pink-600">Бесплатные зоны</span>
           </div>
           
           <div className="space-y-1">
