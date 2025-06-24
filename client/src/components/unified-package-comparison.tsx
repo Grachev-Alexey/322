@@ -523,7 +523,8 @@ export default function UnifiedPackageComparison({
                   (p: Package) => p.type === packageType,
                 );
 
-                // Calculate gift value based on slider procedure count * cost per procedure * gift sessions
+                // Calculate gift value for "Стоимость подарочных процедур" 
+                // This should be cost per procedure * gift sessions (NOT multiplied by slider count)
                 let costPerProcedure = 0;
                 
                 if (selectedServices && selectedServices.length > 0) {
@@ -538,9 +539,9 @@ export default function UnifiedPackageComparison({
                   costPerProcedure = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
                 }
                 
-                // Gift value = cost per procedure * procedure count from slider * gift sessions
-                const giftValue = packageData && (packageData.giftSessions || 0) > 0 && procedureCount > 0
-                  ? costPerProcedure * procedureCount * (packageData.giftSessions || 0)
+                // Gift value = cost per procedure * gift sessions (from admin settings)
+                const giftValue = packageData && (packageData.giftSessions || 0) > 0
+                  ? costPerProcedure * (packageData.giftSessions || 0)
                   : 0;
 
                 // Remove debug - gifts are now fixed
