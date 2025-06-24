@@ -198,10 +198,10 @@ export default function ThreeBlockComparison({
               return (
                 <div
                   key={packageType}
-                  className={`text-center cursor-pointer transition-all duration-200 rounded-lg p-1 w-full ${
+                  className={`text-center cursor-pointer transition-all duration-200 rounded-lg p-2 w-full mx-1 ${
                     isSelected
-                      ? "transform scale-105 border-2 border-blue-300 bg-blue-50"
-                      : "hover:scale-105"
+                      ? "border-2 border-blue-400 bg-blue-50 shadow-sm"
+                      : "border border-transparent hover:border-gray-300 hover:shadow-sm"
                   }`}
                   onClick={() => onPackageSelect(packageType)}
                 >
