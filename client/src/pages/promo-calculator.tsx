@@ -341,50 +341,51 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 </p>
               ) : null}
             </div>
+          </div>
 
-            {/* Correction block - компактный */}
-            <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200 mt-2">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="font-bold text-gray-900 dark:text-white text-sm">Коррекция</h4>
-                </div>
-                <div className="flex items-center space-x-2">
-                  {isEditingCorrection ? (
-                    <input
-                      type="number"
-                      min="0"
-                      max="10"
-                      step="1"
-                      value={tempCorrectionValue}
-                      onChange={(e) => setTempCorrectionValue(e.target.value)}
-                      onBlur={() => {
-                        const value = Math.min(10, Math.max(0, parseInt(tempCorrectionValue) || 0));
+          {/* Correction block - компактный */}
+          <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-bold text-gray-900 dark:text-white text-sm">Коррекция</h4>
+              </div>
+              <div className="flex items-center space-x-2">
+                {isEditingCorrection ? (
+                  <input
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="0.1"
+                    value={tempCorrectionValue}
+                    onChange={(e) => setTempCorrectionValue(e.target.value)}
+                    onBlur={() => {
+                      const value = Math.min(10, Math.max(0, parseFloat(tempCorrectionValue) || 0));
+                      setCorrectionPercent(value);
+                      setIsEditingCorrection(false);
+                    }}
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        const value = Math.min(10, Math.max(0, parseFloat(tempCorrectionValue) || 0));
                         setCorrectionPercent(value);
                         setIsEditingCorrection(false);
-                      }}
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          const value = Math.min(10, Math.max(0, parseInt(tempCorrectionValue) || 0));
-                          setCorrectionPercent(value);
-                          setIsEditingCorrection(false);
-                        }
-                      }}
-                      autoFocus
-                      onFocus={(e) => e.target.select()}
-                      className="w-12 text-xs text-center border border-gray-300 dark:border-gray-600 rounded px-1 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
-                    />
-                  ) : (
-                    <div
-                      onClick={() => {
-                        setTempCorrectionValue(correctionPercent.toString());
-                        setIsEditingCorrection(true);
-                      }}
-                      className="text-xs cursor-pointer hover:bg-pink-50 dark:hover:bg-pink-900/20 rounded px-2 py-1 transition-colors font-bold text-premium"
-                    >
-                      {correctionPercent}%
-                    </div>
-                  )}
-                </div>
+                      }
+                    }}
+                    autoFocus
+                    onFocus={(e) => e.target.select()}
+                    className="w-12 text-xs text-center border border-gray-300 dark:border-gray-600 rounded px-1 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                ) : (
+                  <div
+                    onClick={() => {
+                      setTempCorrectionValue(correctionPercent.toString());
+                      setIsEditingCorrection(true);
+                    }}
+                    className="w-12 text-xs text-center cursor-pointer hover:bg-pink-50 dark:hover:bg-pink-900/20 rounded px-1 py-1 transition-colors font-bold text-premium"
+                  >
+                    {correctionPercent}
+                  </div>
+                )}
+                <span className="text-xs text-gray-500 dark:text-gray-400">%</span>
               </div>
             </div>
           </div>

@@ -57,7 +57,6 @@ interface ThreeBlockComparisonProps {
   selectedServices?: SelectedService[];
   bulkDiscountThreshold?: number;
   bulkDiscountPercentage?: number;
-  correctionPercent?: number;
 }
 
 export default function ThreeBlockComparison({
@@ -75,7 +74,6 @@ export default function ThreeBlockComparison({
   selectedServices = [],
   bulkDiscountThreshold = 15,
   bulkDiscountPercentage = 0.025,
-  correctionPercent = 0,
 }: ThreeBlockComparisonProps) {
   const packageTypes = ["vip", "standard", "economy"];
   const hasValidCalculation = calculation && calculation.baseCost > 0;
@@ -338,14 +336,12 @@ export default function ThreeBlockComparison({
             <div className="grid grid-cols-4 gap-2.5 py-1 border-b border-gray-100">
               <div className="text-xs font-medium text-gray-700">Скидка</div>
               {packageTypes.map((packageType) => {
-                const packageData = packages.find((p) => p.type === packageType);
-                const baseDiscountPercent = packageData ? parseFloat(packageData.discount) : 0;
-                const totalDiscountPercent = baseDiscountPercent + correctionPercent;
+                const finalDiscountPercent = getFinalDiscountPercent(packageType);
 
                 return (
                   <div key={packageType} className="flex items-center justify-center">
                     <span className="text-xs font-bold text-gray-800">
-                      {totalDiscountPercent}%
+                      {finalDiscountPercent}%
                     </span>
                   </div>
                 );
