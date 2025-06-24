@@ -524,24 +524,22 @@ export default function UnifiedPackageComparison({
                 );
 
                 // Calculate gift value for "Стоимость подарочных процедур" 
-                // This should be cost per procedure * gift sessions (NOT multiplied by slider count)
-                let costPerProcedure = 0;
+                // Cost of one visit = sum of selected services prices (without discounts)
+                let costOfOneVisit = 0;
                 
                 if (selectedServices && selectedServices.length > 0) {
-                  // Use actual selected services total cost divided by total quantity
-                  const totalServicesCost = selectedServices.reduce((sum, service) => {
-                    return sum + (parseFloat(service.priceMin) * service.quantity);
+                  // Sum of all selected services base prices (this is cost of one visit)
+                  costOfOneVisit = selectedServices.reduce((sum, service) => {
+                    return sum + parseFloat(service.priceMin);
                   }, 0);
-                  const totalServicesQuantity = selectedServices.reduce((sum, service) => sum + service.quantity, 0);
-                  costPerProcedure = totalServicesQuantity > 0 ? totalServicesCost / totalServicesQuantity : 0;
                 } else {
-                  // Extract cost per procedure from calculation using total procedures
-                  costPerProcedure = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
+                  // If no specific services selected, use total cost divided by total procedures
+                  costOfOneVisit = calculation.totalProcedures > 0 ? calculation.baseCost / calculation.totalProcedures : 0;
                 }
                 
-                // Gift value = cost per procedure * gift sessions (from admin settings)
+                // Gift value = cost of one visit * gift sessions (from admin settings)
                 const giftValue = packageData && (packageData.giftSessions || 0) > 0
-                  ? costPerProcedure * (packageData.giftSessions || 0)
+                  ? costOfOneVisit * (packageData.giftSessions || 0)
                   : 0;
 
                 // Remove debug - gifts are now fixed
