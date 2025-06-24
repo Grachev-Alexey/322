@@ -147,7 +147,7 @@ export default function ServiceSelector({
             <Input
               ref={inputRef}
               type="text"
-              placeholder="Поиск и выбор услуг..."
+              placeholder="Поиск услуг..."
               value={searchTerm}
               onChange={(e) => {
                 setSearchTerm(e.target.value);

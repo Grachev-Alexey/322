@@ -132,7 +132,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             {/* Service selection card with special offer badge */}
             <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
               {/* Special offer badge inside the card */}
-              <div className="text-center mb-2">
+              <div className="text-center mb-3">
                 <Badge className="bg-gradient-to-r from-pink-400 to-orange-400 text-white px-3 lg:px-4 py-1 text-xs font-medium border-0 shadow-none">
                   <Sparkles className="w-3 h-3 mr-1" />
                   Спецпредложение гостевого дня
