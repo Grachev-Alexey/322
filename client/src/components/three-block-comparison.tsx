@@ -196,33 +196,35 @@ export default function ThreeBlockComparison({
               const isSelected = selectedPackage === packageType && selectedPackage !== null;
               
               return (
-                <div key={packageType} className="relative mx-1">
-                  {/* SVG Border when selected */}
-                  {isSelected && (
-                    <svg 
-                      className="absolute inset-0 w-full h-full pointer-events-none" 
-                      preserveAspectRatio="none"
-                      viewBox="0 0 100 100"
+                <div key={packageType} className="flex justify-center">
+                  <div className="relative p-1">
+                    {/* SVG Border when selected - with larger radius */}
+                    {isSelected && (
+                      <svg 
+                        className="absolute inset-0 w-full h-full pointer-events-none" 
+                        preserveAspectRatio="none"
+                        viewBox="0 0 100 100"
+                      >
+                        <path 
+                          d="M 25,0 L 75,0 Q 100,0 100,25 L 100,75 Q 100,100 75,100 L 25,100 Q 0,100 0,75 L 0,25 Q 0,0 25,0 Z"
+                          fill="none"
+                          stroke="#60a5fa"
+                          strokeWidth="2.5"
+                          vectorEffect="non-scaling-stroke"
+                        />
+                      </svg>
+                    )}
+                    
+                    <div
+                      className="text-center cursor-pointer transition-all duration-200 rounded-2xl px-3 py-2 relative z-10"
+                      onClick={() => onPackageSelect(packageType)}
                     >
-                      <path 
-                        d="M 15,0 L 85,0 Q 100,0 100,15 L 100,85 Q 100,100 85,100 L 15,100 Q 0,100 0,85 L 0,15 Q 0,0 15,0 Z"
-                        fill="none"
-                        stroke="#60a5fa"
-                        strokeWidth="2"
-                        vectorEffect="non-scaling-stroke"
-                      />
-                    </svg>
-                  )}
-                  
-                  <div
-                    className="text-center cursor-pointer transition-all duration-200 rounded-lg p-2 relative z-10 hover:bg-gray-50 hover:shadow-sm"
-                    onClick={() => onPackageSelect(packageType)}
-                  >
-                    <div className={`inline-flex items-center justify-center w-5 h-5 rounded-full bg-gradient-to-r ${getPackageColor(packageType)} mb-1`}>
-                      <Icon className="h-3 w-3 text-white" />
-                    </div>
-                    <div className="font-bold text-gray-800 text-xs">
-                      {getPackageName(packageType)}
+                      <div className={`inline-flex items-center justify-center w-4 h-4 rounded-full bg-gradient-to-r ${getPackageColor(packageType)} mb-1`}>
+                        <Icon className="h-2.5 w-2.5 text-white" />
+                      </div>
+                      <div className="font-bold text-gray-800 text-xs whitespace-nowrap">
+                        {getPackageName(packageType)}
+                      </div>
                     </div>
                   </div>
                 </div>
