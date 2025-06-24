@@ -462,8 +462,8 @@ export default function ThreeBlockComparison({
             })}
           </div>
 
-          {/* Thin underline after total */}
-          <div className="border-t border-blue-300 mt-2"></div>
+          {/* Thin underline after total - with proper margins */}
+          <div className="mx-6 border-t border-blue-300 mt-2"></div>
 
           {/* Первый взнос */}
           <div className="grid grid-cols-4 gap-4 py-2">
@@ -641,8 +641,10 @@ export default function ThreeBlockComparison({
               );
             })}
           </div>
-          {/* Thin underline after total */}
-          <div className="border-t border-blue-300 mt-2"></div>
+
+          {/* Thin underline before total - with proper margins */}
+          <div className="mx-5 border-t border-blue-300 mt-2 mb-2"></div>
+          
           {/* Total Gifts Value Row */}
           <div className="grid grid-cols-4 gap-4 py-3 mt-2">
             <div className="text-base font-bold text-gray-800">
