@@ -733,7 +733,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const offerId = parseInt(req.params.id);
-      const { emailConfig } = req.body;
 
       // Get offer
       const offers = await storage.getOffersByMaster(req.session.userId);
@@ -746,6 +745,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (!offer.clientEmail) {
         return res.status(400).json({ message: "Email клиента не указан" });
       }
+
+      // Get email configuration from database
+      const emailSettings = await storage.getConfig('email_settings');
+      if (!emailSettings || !emailSettings.value) {
+        return res.status(400).json({ message: "Настройки email не настроены" });
+      }
+
+      const emailConfig = emailSettings.value as any;
 
       // Generate PDF
       const pdfBuffer = await pdfGenerator.generateOfferPDF(offer);
@@ -874,7 +881,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const settings = await storage.getConfig('email_settings');
-      res.json(settings ? JSON.parse(settings.value as string) : null);
+      res.json(settings ? settings.value : null);
     } catch (error) {
       console.error('Ошибка получения настроек email:', error);
       res.status(500).json({ message: "Ошибка получения настроек email" });
@@ -888,7 +895,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       const emailSettings = req.body;
-      await storage.setConfig('email_settings', JSON.stringify(emailSettings));
+      await storage.setConfig('email_settings', emailSettings);
       
       res.json({ success: true, message: "Настройки email сохранены" });
     } catch (error) {
