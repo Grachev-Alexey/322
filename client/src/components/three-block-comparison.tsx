@@ -181,14 +181,12 @@ export default function ThreeBlockComparison({
   }
 
   return (
-    <div className="space-y-3 w-full max-w-4xl p-1">
+    <div className="space-y-3 w-full max-w-4xl">
       {/* Преимущества with curved border */}
       <div
         className="relative overflow-hidden border border-pink-300/50"
         style={{ borderRadius: "6px" }}
       >
-
-
         {/* Title and Package Headers grid layout */}
         <div className="pt-2.5 px-3 mb-2">
           {/* Title with star icon and package headers in grid */}

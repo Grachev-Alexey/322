@@ -133,18 +133,6 @@ export default function PromoCalculatorPage({
         </Button>
       </div>
 
-      {/* Theme toggle */}
-      <div className="absolute top-2 right-12 z-50">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={toggleDarkMode}
-          className="opacity-30 hover:opacity-100 transition-opacity duration-200 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 p-1"
-        >
-          {darkMode ? <Sun size={14} /> : <Moon size={14} />}
-        </Button>
-      </div>
-
       {/* Main content - адаптивная сетка */}
       <div className="h-screen flex flex-col lg:flex-row gap-1 lg:gap-3 p-1 lg:p-3 overflow-hidden">
         {/* Left panel - Controls */}
