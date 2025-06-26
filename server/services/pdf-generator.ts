@@ -2,6 +2,7 @@ import puppeteer from 'puppeteer';
 import { Offer } from '@shared/schema';
 import { format } from 'date-fns';
 import { ru } from 'date-fns/locale';
+import { execSync } from 'child_process';
 
 interface PaymentScheduleItem {
   date: string;
@@ -11,9 +12,30 @@ interface PaymentScheduleItem {
 
 export class PDFGenerator {
   async generateOfferPDF(offer: Offer): Promise<Buffer> {
+    let executablePath;
+    try {
+      executablePath = execSync('which chromium', { encoding: 'utf8' }).trim();
+    } catch (error) {
+      console.log('Chromium not found, using default');
+      executablePath = undefined;
+    }
+
     const browser = await puppeteer.launch({
       headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
+      executablePath,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--disable-web-security',
+        '--disable-features=VizDisplayCompositor',
+        '--run-all-compositor-stages-before-draw',
+        '--disable-background-timer-throttling',
+        '--disable-renderer-backgrounding',
+        '--disable-backgrounding-occluded-windows',
+        '--disable-ipc-flooding-protection'
+      ]
     });
 
     try {
