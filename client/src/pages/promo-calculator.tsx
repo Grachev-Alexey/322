@@ -550,28 +550,61 @@ export default function PromoCalculatorPage({
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden order-1 lg:order-2">
           {/* Three Block Comparison - теперь занимает оставшееся место */}
           {calculation && (
-            <div className="flex-1 overflow-auto">
-              <ThreeBlockComparison
-                calculation={calculation}
-                packages={packages}
-                selectedPackage={selectedPackage}
-                onPackageSelect={setSelectedPackage}
-                downPayment={downPayment}
-                installmentMonths={installmentMonths}
-                procedureCount={procedureCount}
-                packagePerkValues={packagePerkValues}
-                usedCertificate={usedCertificate}
-                calculatorSettings={calculatorSettings}
-                freeZones={freeZones}
-                selectedServices={selectedServices}
-                bulkDiscountThreshold={
-                  calculatorSettings?.bulkDiscountThreshold || 15
-                }
-                bulkDiscountPercentage={
-                  calculatorSettings?.bulkDiscountPercentage || 0.025
-                }
-                correctionPercent={correctionPercent}
-              />
+            <div className="flex gap-3 h-full">
+              <div className="flex-1 overflow-auto">
+                <ThreeBlockComparison
+                  calculation={calculation}
+                  packages={packages}
+                  selectedPackage={selectedPackage}
+                  onPackageSelect={setSelectedPackage}
+                  downPayment={downPayment}
+                  installmentMonths={installmentMonths}
+                  procedureCount={procedureCount}
+                  packagePerkValues={packagePerkValues}
+                  usedCertificate={usedCertificate}
+                  calculatorSettings={calculatorSettings}
+                  freeZones={freeZones}
+                  selectedServices={selectedServices}
+                  bulkDiscountThreshold={
+                    calculatorSettings?.bulkDiscountThreshold || 15
+                  }
+                  bulkDiscountPercentage={
+                    calculatorSettings?.bulkDiscountPercentage || 0.025
+                  }
+                  correctionPercent={correctionPercent}
+                />
+              </div>
+              
+              {/* Блок "Бесплатные зоны" */}
+              <div className="w-48 flex-shrink-0">
+                <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200 h-fit">
+                  <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3 text-center">
+                    Бесплатные зоны
+                  </h3>
+                  
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between p-2 bg-pink-50 dark:bg-pink-950 rounded border border-pink-200 dark:border-pink-800">
+                      <span className="text-xs text-gray-700 dark:text-gray-300">За подруг</span>
+                      <span className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-2 bg-pink-50 dark:bg-pink-950 rounded border border-pink-200 dark:border-pink-800">
+                      <span className="text-xs text-gray-700 dark:text-gray-300">За отзыв в Яндекс Картах</span>
+                      <span className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-2 bg-pink-50 dark:bg-pink-950 rounded border border-pink-200 dark:border-pink-800">
+                      <span className="text-xs text-gray-700 dark:text-gray-300">За отзыв в 2ГИС</span>
+                      <span className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</span>
+                    </div>
+                    
+                    <div className="flex items-center justify-between p-2 bg-pink-50 dark:bg-pink-950 rounded border border-pink-200 dark:border-pink-800">
+                      <span className="text-xs text-gray-700 dark:text-gray-300">За отметку в соцсетях</span>
+                      <span className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
         </div>
