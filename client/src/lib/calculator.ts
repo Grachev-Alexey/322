@@ -120,7 +120,8 @@ export function calculatePackagePricing(
 
     // Check if package meets minimum cost requirement
     const isAvailable = baseCost >= packageData.minCost;
-    const unavailableReason = !isAvailable ? `Минимальная стоимость курса: ${packageData.minCost.toLocaleString()} ₽` : '';
+    const shortage = packageData.minCost - baseCost;
+    const unavailableReason = !isAvailable ? `Не хватает ${shortage.toLocaleString()} ₽ (минимум: ${packageData.minCost.toLocaleString()} ₽)` : '';
 
     results[packageType] = {
       isAvailable,

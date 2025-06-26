@@ -216,28 +216,19 @@ export default function ThreeBlockComparison({
                     className={`transition-all duration-200 p-1 ${
                       isAvailable 
                         ? 'cursor-pointer hover:opacity-80' 
-                        : 'cursor-not-allowed opacity-50'
+                        : 'cursor-not-allowed'
                     }`}
                     onClick={() => isAvailable && onPackageSelect(packageType)}
                     title={!isAvailable ? unavailableReason : ''}
                   >
                     <div
-                      className={`inline-flex items-center justify-center w-3.5 h-3.5 rounded bg-gradient-to-r ${getPackageColor(packageType)} mb-0.5 ${
-                        !isAvailable ? 'grayscale' : ''
-                      }`}
+                      className={`inline-flex items-center justify-center w-3.5 h-3.5 rounded bg-gradient-to-r ${getPackageColor(packageType)} mb-0.5`}
                     >
                       <Icon className="h-2 w-2 text-white" />
                     </div>
-                    <div className={`font-bold text-xs ${
-                      isAvailable ? 'text-gray-800' : 'text-gray-400'
-                    }`}>
+                    <div className="font-bold text-gray-800 text-xs">
                       {getPackageName(packageType)}
                     </div>
-                    {!isAvailable && (
-                      <div className="text-xs text-red-500 mt-0.5 leading-tight">
-                        Недоступен
-                      </div>
-                    )}
                     {/* Dot indicator under selected package */}
                     {isSelected && isAvailable && (
                       <div className="flex justify-center mt-1">
@@ -308,6 +299,23 @@ export default function ThreeBlockComparison({
                       );
                     }
 
+                    const packageData = getPackageData(packageType);
+                    const isAvailable = packageData?.isAvailable !== false;
+                    const unavailableReason = packageData?.unavailableReason || '';
+
+                    if (!isAvailable) {
+                      return (
+                        <div key={packageType} className="flex items-center justify-center">
+                          <span 
+                            className="text-xs text-red-500 cursor-help"
+                            title={unavailableReason}
+                          >
+                            Недоступен
+                          </span>
+                        </div>
+                      );
+                    }
+
                     return (
                       <div
                         key={packageType}
@@ -327,6 +335,23 @@ export default function ThreeBlockComparison({
                 Сеансы в подарок
               </div>
               {packageTypes.map((packageType) => {
+                const packageCalcData = getPackageData(packageType);
+                const isAvailable = packageCalcData?.isAvailable !== false;
+                const unavailableReason = packageCalcData?.unavailableReason || '';
+                
+                if (!isAvailable) {
+                  return (
+                    <div key={packageType} className="flex items-center justify-center">
+                      <span 
+                        className="text-xs text-red-500 cursor-help"
+                        title={unavailableReason}
+                      >
+                        Недоступен
+                      </span>
+                    </div>
+                  );
+                }
+
                 const packageData = packages.find(
                   (p) => p.type === packageType,
                 );
@@ -350,6 +375,23 @@ export default function ThreeBlockComparison({
             <div className="grid grid-cols-4 gap-2.5 py-1 border-b border-gray-100">
               <div className="text-xs font-medium text-gray-700">Скидка</div>
               {packageTypes.map((packageType) => {
+                const packageData = getPackageData(packageType);
+                const isAvailable = packageData?.isAvailable !== false;
+                const unavailableReason = packageData?.unavailableReason || '';
+                
+                if (!isAvailable) {
+                  return (
+                    <div key={packageType} className="flex items-center justify-center">
+                      <span 
+                        className="text-xs text-red-500 cursor-help"
+                        title={unavailableReason}
+                      >
+                        Недоступен
+                      </span>
+                    </div>
+                  );
+                }
+
                 const finalDiscountPercent = getFinalDiscountPercent(packageType);
 
                 return (
@@ -368,6 +410,23 @@ export default function ThreeBlockComparison({
                 Бонусный счет
               </div>
               {packageTypes.map((packageType) => {
+                const packageCalcData = getPackageData(packageType);
+                const isAvailable = packageCalcData?.isAvailable !== false;
+                const unavailableReason = packageCalcData?.unavailableReason || '';
+                
+                if (!isAvailable) {
+                  return (
+                    <div key={packageType} className="flex items-center justify-center">
+                      <span 
+                        className="text-xs text-red-500 cursor-help"
+                        title={unavailableReason}
+                      >
+                        Недоступен
+                      </span>
+                    </div>
+                  );
+                }
+
                 const packageData = packages.find(
                   (p) => p.type === packageType,
                 );
@@ -471,15 +530,23 @@ export default function ThreeBlockComparison({
             {packageTypes.map((packageType) => {
               const packageData = getPackageData(packageType);
               const isAvailable = packageData?.isAvailable !== false;
+              const unavailableReason = packageData?.unavailableReason || '';
               const finalCost = packageData?.finalCost || 0;
 
               return (
                 <div key={packageType} className="text-center">
-                  <span className={`text-sm font-bold ${
-                    isAvailable ? 'text-pink-400' : 'text-gray-400'
-                  }`}>
-                    {isAvailable ? formatPrice(finalCost) : 'Недоступен'}
-                  </span>
+                  {isAvailable ? (
+                    <span className="text-sm font-bold text-pink-400">
+                      {formatPrice(finalCost)}
+                    </span>
+                  ) : (
+                    <span 
+                      className="text-xs text-red-500 cursor-help"
+                      title={unavailableReason}
+                    >
+                      Недоступен
+                    </span>
+                  )}
                 </div>
               );
             })}
