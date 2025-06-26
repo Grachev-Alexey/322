@@ -61,11 +61,68 @@ export class PDFGenerator {
     }
   }
 
+  private getServiceNames(selectedServices: any[]): string {
+    return selectedServices.map(service => service.name).join(', ');
+  }
+
+  private getTotalSessions(selectedServices: any[]): number {
+    return selectedServices.reduce((total, service) => total + service.quantity, 0);
+  }
+
+  private getPackageDiscount(packageType: string): number {
+    switch (packageType) {
+      case 'vip': return 50;
+      case 'standard': return 30;
+      case 'economy': return 20;
+      default: return 0;
+    }
+  }
+
+  private getPackagePerks(packageType: string): any {
+    switch (packageType) {
+      case 'vip':
+        return {
+          massage: 'Курс массажа вокруг глаз на аппарате Bork D617 - 10 сеансов',
+          card: 'Золотая карта',
+          cardDiscount: '35',
+          giftSessions: '3',
+          freezeOption: 'Бессрочно',
+          bonusPercent: '20'
+        };
+      case 'standard':
+        return {
+          massage: 'Курс массажа вокруг глаз на аппарате Bork D617 - 5 сеансов',
+          card: 'Серебряная карта',
+          cardDiscount: '30',
+          giftSessions: '1',
+          freezeOption: '6 мес',
+          bonusPercent: '10'
+        };
+      case 'economy':
+        return {
+          massage: 'Курс массажа вокруг глаз на аппарате Bork D617 - 3 сеанса',
+          card: 'Бронзовая карта',
+          cardDiscount: '25',
+          giftSessions: '0',
+          freezeOption: '3 мес',
+          bonusPercent: '0'
+        };
+      default:
+        return {
+          massage: 'Курс массажа вокруг глаз на аппарате Bork D617 - 3 сеанса',
+          card: 'Бронзовая карта',
+          cardDiscount: '25',
+          giftSessions: '0',
+          freezeOption: '3 мес',
+          bonusPercent: '0'
+        };
+    }
+  }
+
   private generateOfferHTML(offer: Offer): string {
-    const paymentSchedule = offer.paymentSchedule as PaymentScheduleItem[];
     const selectedServices = offer.selectedServices as any[];
-    const freeZones = (offer.freeZones as any[]) || [];
-    const appliedDiscounts = (offer.appliedDiscounts as any[]) || [];
+    const packagePerks = this.getPackagePerks(offer.selectedPackage);
+    const discountPercentage = this.getPackageDiscount(offer.selectedPackage);
 
     return `
 <!DOCTYPE html>
@@ -75,218 +132,123 @@ export class PDFGenerator {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Приложение №1 к договору-оферте</title>
     <style>
+        @page { 
+            margin: 20mm; 
+            size: A4; 
+        }
         body {
             font-family: 'Times New Roman', serif;
             font-size: 12pt;
-            line-height: 1.4;
+            line-height: 1.6;
             margin: 0;
-            padding: 0;
+            padding: 20mm;
             color: #000;
         }
-        .header {
+        .title {
             text-align: center;
-            margin-bottom: 30px;
+            font-size: 14pt;
             font-weight: bold;
+            margin-bottom: 30px;
+        }
+        .subtitle {
+            text-align: center;
+            font-size: 12pt;
+            font-weight: bold;
+            margin-bottom: 25px;
         }
         .section {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
-        .section-title {
+        .service-name {
             font-weight: bold;
             margin-bottom: 10px;
-            text-decoration: underline;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 10px 0;
+        .details {
+            margin-bottom: 15px;
         }
-        th, td {
-            border: 1px solid #000;
-            padding: 8px;
-            text-align: left;
-            vertical-align: top;
+        .perks-list {
+            margin-left: 20px;
+            margin-bottom: 10px;
         }
-        th {
-            background-color: #f0f0f0;
-            font-weight: bold;
-        }
-        .amount {
-            text-align: right;
-        }
-        .total {
-            font-weight: bold;
-            background-color: #f9f9f9;
-        }
-        .signature-section {
-            margin-top: 40px;
-            display: flex;
-            justify-content: space-between;
-        }
-        .signature-block {
-            width: 45%;
-        }
-        .signature-line {
-            border-bottom: 1px solid #000;
-            margin: 20px 0 5px 0;
-            height: 20px;
-        }
-        .footer {
+        .cost-section {
             margin-top: 30px;
-            font-size: 10pt;
-            color: #666;
+            margin-bottom: 20px;
+        }
+        .cost-item {
+            margin-bottom: 5px;
+        }
+        .footer-note {
+            margin-top: 40px;
+            font-size: 11pt;
+            text-align: center;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>ПРИЛОЖЕНИЕ №1</h1>
-        <h2>к договору-оферте на оказание услуг по системе абонементов<br>
-        в студиях аппаратной косметологии «Виви»</h2>
-        <p><strong>№ ${offer.offerNumber}</strong></p>
-        <p>от ${format(new Date(offer.createdAt!), 'dd MMMM yyyy', { locale: ru })} г.</p>
+    <div class="title">
+        Приложение № 1 к договору-оферте на оказание услуг по системе абонементов в студиях аппаратной косметологии «Виви» (Текст договора-оферты размещен на vivilaser.ru)
+    </div>
+
+    <div class="subtitle">
+        Стороны договорились о следующих услугах, входящих в Абонемент
     </div>
 
     <div class="section">
-        <div class="section-title">1. ИНФОРМАЦИЯ О КЛИЕНТЕ</div>
-        <p><strong>Клиент:</strong> ${offer.clientName || 'Не указано'}</p>
-        <p><strong>Телефон:</strong> ${offer.clientPhone}</p>
-        <p><strong>Email:</strong> ${offer.clientEmail || 'Не указан'}</p>
+        <div class="service-name">1. Наименование услуги "${this.getServiceNames(selectedServices)}"</div>
     </div>
 
     <div class="section">
-        <div class="section-title">2. ВЫБРАННЫЙ ПАКЕТ УСЛУГ</div>
-        <p><strong>Тип пакета:</strong> ${this.getPackageName(offer.selectedPackage)}</p>
-        <p><strong>Общая стоимость услуг без скидки:</strong> ${this.formatAmount(offer.baseCost)} руб.</p>
-        <p><strong>Итоговая стоимость со скидкой:</strong> ${this.formatAmount(offer.finalCost)} руб.</p>
-        <p><strong>Размер экономии:</strong> ${this.formatAmount(offer.totalSavings)} руб.</p>
+        <div class="details">2. Количество сеансов: ${this.getTotalSessions(selectedServices)}</div>
     </div>
 
     <div class="section">
-        <div class="section-title">3. СОСТАВ ПАКЕТА УСЛУГ</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>№</th>
-                    <th>Наименование услуги</th>
-                    <th>Количество процедур</th>
-                    <th>Стоимость за процедуру</th>
-                    <th>Общая стоимость</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${selectedServices.map((service, index) => `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${service.title}</td>
-                        <td class="amount">${service.quantity}</td>
-                        <td class="amount">${this.formatAmount(service.pricePerProcedure || service.priceMin)} руб.</td>
-                        <td class="amount">${this.formatAmount((service.pricePerProcedure || service.priceMin) * service.quantity)} руб.</td>
-                    </tr>
-                `).join('')}
-                ${freeZones.length > 0 ? freeZones.map((zone, index) => `
-                    <tr style="background-color: #e8f5e8;">
-                        <td>${selectedServices.length + index + 1}</td>
-                        <td>${zone.title} (ПОДАРОК)</td>
-                        <td class="amount">${zone.quantity}</td>
-                        <td class="amount">0 руб.</td>
-                        <td class="amount">0 руб.</td>
-                    </tr>
-                `).join('') : ''}
-            </tbody>
-        </table>
+        <div class="details">2. Индивидуальная скидка от стоимости прайса-листа: ${discountPercentage}%</div>
     </div>
 
-    ${appliedDiscounts.length > 0 ? `
     <div class="section">
-        <div class="section-title">4. ПРИМЕНЁННЫЕ СКИДКИ</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Вид скидки</th>
-                    <th>Размер скидки</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${appliedDiscounts.map(discount => `
-                    <tr>
-                        <td>${discount.type}</td>
-                        <td class="amount">${this.formatAmount(discount.amount)} руб.</td>
-                    </tr>
-                `).join('')}
-            </tbody>
-        </table>
+        <div class="details">3. Право на подарки:</div>
+        <div class="perks-list">
+            <p>за приглашение подруг - 1 зона за каждую подругу;</p>
+            <p>отзывы на Яндекс.Карты и 2ГИС - 1 зона за каждый честный отзыв;</p>
+            <p>за рекомендации в соцсетях - 1 зона за упоминание в соцсетях.</p>
+        </div>
     </div>
-    ` : ''}
 
     <div class="section">
-        <div class="section-title">5. УСЛОВИЯ ОПЛАТЫ</div>
-        <p><strong>Первоначальный взнос:</strong> ${this.formatAmount(offer.downPayment)} руб.</p>
+        <div class="details">4. ${packagePerks.massage}</div>
+    </div>
+
+    <div class="section">
+        <div class="details">5. ${packagePerks.card}, дающая скидку навсегда в размере ${packagePerks.cardDiscount}% на</div>
+        <div class="perks-list">
+            <p>поддерживающие процедуры выбранных зон во всех студиях сети «Виви»</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="details">6. Количество дополнительных подарочных сеансов: ${packagePerks.giftSessions}</div>
+    </div>
+
+    <div class="section">
+        <div class="details">7. Возможность заморозки карты: ${packagePerks.freezeOption}</div>
+    </div>
+
+    <div class="section">
+        <div class="details">8. Начисление на бонусный счет: ${packagePerks.bonusPercent}% от стоимости абонемента</div>
+    </div>
+
+    <div class="cost-section">
+        <div class="cost-item">Стоимость абонемента: ${this.formatAmount(offer.finalCost)} руб.</div>
+        <div class="cost-item">Первоначальный взнос: ${this.formatAmount(offer.downPayment)} руб.</div>
         ${offer.installmentMonths && offer.installmentMonths > 1 ? `
-        <p><strong>Рассрочка:</strong> ${offer.installmentMonths} месяцев</p>
-        <p><strong>Ежемесячный платеж:</strong> ${this.formatAmount(offer.monthlyPayment || 0)} руб.</p>
-        ` : '<p><strong>Оплата:</strong> Полная оплата при заключении договора</p>'}
-        ${offer.usedCertificate ? '<p><strong>Применён сертификат:</strong> Да</p>' : ''}
+            <div class="cost-item">Размер платежа: ${this.formatAmount(offer.monthlyPayment || 0)} руб.</div>
+            <div class="cost-item">Количество платежей: ${offer.installmentMonths}</div>
+        ` : ''}
     </div>
 
-    <div class="section">
-        <div class="section-title">6. ГРАФИК ПЛАТЕЖЕЙ</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>№</th>
-                    <th>Дата платежа</th>
-                    <th>Сумма платежа</th>
-                    <th>Описание</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${paymentSchedule.map((payment, index) => `
-                    <tr>
-                        <td>${index + 1}</td>
-                        <td>${payment.date}</td>
-                        <td class="amount">${this.formatAmount(payment.amount)} руб.</td>
-                        <td>${payment.description}</td>
-                    </tr>
-                `).join('')}
-                <tr class="total">
-                    <td colspan="2"><strong>ИТОГО:</strong></td>
-                    <td class="amount"><strong>${this.formatAmount(offer.finalCost)} руб.</strong></td>
-                    <td></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="section">
-        <div class="section-title">7. ДОПОЛНИТЕЛЬНЫЕ УСЛОВИЯ</div>
-        <p>• Срок действия абонемента: 12 месяцев с момента заключения договора</p>
-        <p>• Услуги предоставляются по предварительной записи</p>
-        <p>• Абонемент не подлежит передаче третьим лицам</p>
-        <p>• При досрочном расторжении договора возврат денежных средств не производится</p>
-        ${offer.selectedPackage === 'vip' ? '<p>• Возможность заморозки абонемента без ограничений</p>' : ''}
-        ${offer.selectedPackage === 'standard' ? '<p>• Возможность заморозки абонемента до 3 месяцев</p>' : ''}
-    </div>
-
-    <div class="signature-section">
-        <div class="signature-block">
-            <p><strong>ИСПОЛНИТЕЛЬ:</strong></p>
-            <p>ИП Шейкина Л.С.</p>
-            <div class="signature-line"></div>
-            <p style="font-size: 10pt;">подпись</p>
-        </div>
-        <div class="signature-block">
-            <p><strong>КЛИЕНТ:</strong></p>
-            <p>${offer.clientName || '____________________'}</p>
-            <div class="signature-line"></div>
-            <p style="font-size: 10pt;">подпись</p>
-        </div>
-    </div>
-
-    <div class="footer">
-        <p>Настоящее Приложение №1 является неотъемлемой частью договора-оферты на оказание услуг по системе абонементов в студиях аппаратной косметологии «Виви».</p>
-        <p>Полный текст договора-оферты размещён на сайте: <strong>vivilaser.ru</strong></p>
-        <p>Контакты для связи: +7 (969) 777-14-85, WhatsApp: +7 (999) 626-34-75</p>
+    <div class="footer-note">
+        Условия действуют только при своевременной оплате. При просрочке платежа более чем на 5 дней стоимость посещения пересчитывается по стандартному прайсу и дополнительные условия (скидки, пакеты, бонусы и привилегии) аннулируются.
     </div>
 </body>
 </html>
