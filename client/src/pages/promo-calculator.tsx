@@ -258,18 +258,21 @@ export default function PromoCalculatorPage({
                     onChange={(e) => setTempPaymentValue(e.target.value)}
                     onBlur={() => {
                       const numericValue = parseInt(tempPaymentValue) || 0;
-                      const minPayment = getMinDownPayment();
-                      const maxPayment = getMaxDownPayment();
-                      const constrainedValue = Math.max(
-                        minPayment,
-                        Math.min(maxPayment, numericValue),
-                      );
-                      setDownPayment(constrainedValue);
-                      setIsEditingPayment(false);
-                    }}
-                    onKeyPress={(e) => {
-                      if (e.key === "Enter") {
-                        const numericValue = parseInt(tempPaymentValue) || 0;
+                      
+                      // Если сумма меньше минимального платежа для эконом пакета,
+                      // позволяем мастеру указать любую сумму
+                      const economyMinPayment = calculation?.packages?.economy?.isAvailable 
+                        ? Math.max(
+                            calculation.packages.economy.finalCost * 0.3, // минимальный процент для эконом пакета
+                            calculatorSettings?.minimumDownPayment || 5000
+                          )
+                        : calculatorSettings?.minimumDownPayment || 5000;
+                      
+                      if (numericValue < economyMinPayment && numericValue > 0) {
+                        // Разрешаем любую положительную сумму если она меньше минимума эконом пакета
+                        setDownPayment(numericValue);
+                      } else {
+                        // Обычная логика с ограничениями
                         const minPayment = getMinDownPayment();
                         const maxPayment = getMaxDownPayment();
                         const constrainedValue = Math.max(
@@ -277,6 +280,35 @@ export default function PromoCalculatorPage({
                           Math.min(maxPayment, numericValue),
                         );
                         setDownPayment(constrainedValue);
+                      }
+                      setIsEditingPayment(false);
+                    }}
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") {
+                        const numericValue = parseInt(tempPaymentValue) || 0;
+                        
+                        // Если сумма меньше минимального платежа для эконом пакета,
+                        // позволяем мастеру указать любую сумму
+                        const economyMinPayment = calculation?.packages?.economy?.isAvailable 
+                          ? Math.max(
+                              calculation.packages.economy.finalCost * 0.3, // минимальный процент для эконом пакета
+                              calculatorSettings?.minimumDownPayment || 5000
+                            )
+                          : calculatorSettings?.minimumDownPayment || 5000;
+                        
+                        if (numericValue < economyMinPayment && numericValue > 0) {
+                          // Разрешаем любую положительную сумму если она меньше минимума эконом пакета
+                          setDownPayment(numericValue);
+                        } else {
+                          // Обычная логика с ограничениями
+                          const minPayment = getMinDownPayment();
+                          const maxPayment = getMaxDownPayment();
+                          const constrainedValue = Math.max(
+                            minPayment,
+                            Math.min(maxPayment, numericValue),
+                          );
+                          setDownPayment(constrainedValue);
+                        }
                         setIsEditingPayment(false);
                       }
                     }}
