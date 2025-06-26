@@ -176,8 +176,8 @@ export class DatabaseStorage implements IStorage {
     console.log(`Found ${subscriptionTypes.length} existing subscription types`);
     
     const foundSubscription = subscriptionTypes.find(st => {
-      // Check cost match first (within 1 unit tolerance)
-      const costMatch = Math.abs(parseFloat(st.cost.toString()) - cost) < 1;
+      // Check cost match first (exact match)
+      const costMatch = parseFloat(st.cost.toString()) === cost;
       
       console.log(`Checking subscription "${st.title}" (ID: ${st.id}), cost: ${st.cost}, match: ${costMatch}`);
       
@@ -195,6 +195,9 @@ export class DatabaseStorage implements IStorage {
         .map((link: any) => `${link.service?.id || link.service_id}:${link.count}`)
         .sort()
         .join('|');
+      
+      console.log(`  Existing subscription service key: ${stServiceKey}`);
+      console.log(`  Looking for service key: ${serviceKey}`);
       
       console.log(`  Service key: ${stServiceKey}, target: ${serviceKey}, match: ${stServiceKey === serviceKey}`);
       

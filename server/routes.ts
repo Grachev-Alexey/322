@@ -572,8 +572,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       calculation.services = servicesWithTitles;
 
       // Try to find existing subscription type
-      console.log('Searching for existing subscription with services:', calculation.services.map(s => ({ id: s.id, count: s.quantity || s.count || 1 })));
+      console.log('=== DUPLICATE CHECK START ===');
+      console.log('Searching for existing subscription with services:', calculation.services.map((s: any) => ({ id: s.id, count: s.quantity || s.count || 1 })));
       console.log('Target cost:', calculation.finalCost);
+      console.log('Package type:', calculation.packageType);
       
       let subscriptionType = await storage.findSubscriptionType(
         calculation.services, 
@@ -582,10 +584,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       );
       
       if (subscriptionType) {
-        console.log('Found existing subscription type:', subscriptionType.title, 'ID:', subscriptionType.id);
+        console.log('🟢 FOUND EXISTING SUBSCRIPTION:', subscriptionType.title, 'ID:', subscriptionType.id);
       } else {
-        console.log('No existing subscription type found, will create new one');
+        console.log('🔴 NO EXISTING SUBSCRIPTION FOUND - WILL CREATE NEW');
       }
+      console.log('=== DUPLICATE CHECK END ===');
 
       if (!subscriptionType) {
         // Create new subscription type in Yclients
