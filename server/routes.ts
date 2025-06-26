@@ -866,6 +866,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Email settings endpoints
+  app.get("/api/admin/email-settings", async (req, res) => {
+    try {
+      if (!req.session.userId || req.session.userRole !== 'admin') {
+        return res.status(403).json({ message: "Нет доступа" });
+      }
+
+      const settings = await storage.getConfig('email_settings');
+      res.json(settings ? JSON.parse(settings.value as string) : null);
+    } catch (error) {
+      console.error('Ошибка получения настроек email:', error);
+      res.status(500).json({ message: "Ошибка получения настроек email" });
+    }
+  });
+
+  app.post("/api/admin/email-settings", async (req, res) => {
+    try {
+      if (!req.session.userId || req.session.userRole !== 'admin') {
+        return res.status(403).json({ message: "Нет доступа" });
+      }
+
+      const emailSettings = req.body;
+      await storage.setConfig('email_settings', JSON.stringify(emailSettings));
+      
+      res.json({ success: true, message: "Настройки email сохранены" });
+    } catch (error) {
+      console.error('Ошибка сохранения настроек email:', error);
+      res.status(500).json({ message: "Ошибка сохранения настроек email" });
+    }
+  });
+
+  app.post("/api/admin/test-email", async (req, res) => {
+    try {
+      if (!req.session.userId || req.session.userRole !== 'admin') {
+        return res.status(403).json({ message: "Нет доступа" });
+      }
+
+      const { provider, email, password, host, port, secure, fromName } = req.body;
+      
+      let emailService;
+      
+      switch (provider) {
+        case 'gmail':
+          emailService = EmailServiceFactory.createGmailService(email, password);
+          break;
+        case 'yandex':
+          emailService = EmailServiceFactory.createYandexService(email, password);
+          break;
+        case 'mailru':
+          emailService = EmailServiceFactory.createMailRuService(email, password);
+          break;
+        case 'custom':
+          const customConfig = {
+            host,
+            port,
+            secure,
+            auth: { user: email, pass: password },
+            from: email
+          };
+          emailService = new (await import("./services/email-service")).EmailService(customConfig);
+          break;
+        default:
+          return res.status(400).json({ success: false, error: "Неподдерживаемый провайдер" });
+      }
+
+      const testResult = await emailService.testConnection();
+      
+      if (testResult) {
+        res.json({ success: true, message: "Подключение успешно" });
+      } else {
+        res.json({ success: false, error: "Ошибка подключения к почтовому серверу" });
+      }
+    } catch (error: any) {
+      console.error('Ошибка тестирования email:', error);
+      res.json({ success: false, error: error.message || "Ошибка тестирования подключения" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

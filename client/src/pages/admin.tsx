@@ -12,6 +12,7 @@ import { Settings, Users, Database, Package, LogOut, Calculator, TrendingUp } fr
 import AdminDashboard from "@/components/admin-dashboard";
 import AdminPerks from "@/components/admin-perks";
 import AdminSales from "@/components/admin-sales";
+import AdminEmailSettings from "@/components/admin-email-settings";
 
 interface User {
   id: number;
@@ -482,7 +483,7 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
       <main className="flex-1 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-full">
           <Tabs defaultValue="dashboard" className="h-full flex flex-col">
-            <TabsList className="grid w-full grid-cols-9 flex-shrink-0">
+            <TabsList className="grid w-full grid-cols-10 flex-shrink-0">
               <TabsTrigger value="dashboard">Обзор</TabsTrigger>
               <TabsTrigger value="sales">Продажи</TabsTrigger>
               <TabsTrigger value="users">Пользователи</TabsTrigger>
@@ -491,6 +492,7 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
               <TabsTrigger value="packages">Пакеты</TabsTrigger>
               <TabsTrigger value="perks">Преимущества</TabsTrigger>
               <TabsTrigger value="calculator">Настройки</TabsTrigger>
+              <TabsTrigger value="email">Почта</TabsTrigger>
               <TabsTrigger value="yclients">API</TabsTrigger>
             </TabsList>
 
@@ -576,6 +578,12 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
 
               <TabsContent value="calculator">
                 <CalculatorSettings loading={loading} setLoading={setLoading} />
+              </TabsContent>
+
+              <TabsContent value="email">
+                <div className="max-h-[calc(100vh-250px)] overflow-y-auto">
+                  <AdminEmailSettings />
+                </div>
               </TabsContent>
 
               <TabsContent value="yclients">

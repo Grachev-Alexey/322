@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, TestTube, Save, AlertCircle } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface EmailSettings {
   provider: string;
@@ -35,14 +34,16 @@ export default function AdminEmailSettings() {
 
   const [isTestingConnection, setIsTestingConnection] = useState(false);
 
-  const { data: currentSettings, isLoading } = useQuery({
-    queryKey: ['/api/admin/email-settings'],
-    onSuccess: (data: EmailSettings) => {
-      if (data) {
-        setSettings(data);
-      }
-    }
+  const { data: currentSettings, isLoading } = useQuery<EmailSettings>({
+    queryKey: ['/api/admin/email-settings']
   });
+
+  // Update settings when data is loaded
+  useEffect(() => {
+    if (currentSettings) {
+      setSettings(currentSettings);
+    }
+  }, [currentSettings]);
 
   const saveEmailSettings = useMutation({
     mutationFn: async (emailSettings: EmailSettings) => {
@@ -142,12 +143,12 @@ export default function AdminEmailSettings() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
-        <Alert>
-          <AlertCircle className="h-4 w-4" />
-          <AlertDescription>
+        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg flex items-start gap-3">
+          <AlertCircle className="h-4 w-4 text-blue-600 mt-0.5" />
+          <div className="text-sm text-blue-800">
             Для Gmail используйте пароль приложения, а не основной пароль аккаунта
-          </AlertDescription>
-        </Alert>
+          </div>
+        </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
