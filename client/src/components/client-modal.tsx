@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { User, Loader2, Copy, CheckCircle, FileText } from "lucide-react";
 import { formatPhoneNumber, validatePhoneNumber } from "@/lib/utils";
 import PhoneInput from "./ui/phone-input";
-import OfferModal from "./offer-modal";
+import OfferModal from "./offer-modal-simple";
 
 interface ClientModalProps {
   isOpen: boolean;
@@ -36,6 +36,7 @@ export default function ClientModal({
 }: ClientModalProps) {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [clientName, setClientName] = useState("");
   const [loading, setLoading] = useState(false);
   const [subscriptionTitle, setSubscriptionTitle] = useState("");
   const [isCompleted, setIsCompleted] = useState(false);
@@ -199,6 +200,20 @@ export default function ClientModal({
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
+              <Label htmlFor="clientName" className="block text-sm font-medium text-gray-700 mb-2">
+                ФИО клиента *
+              </Label>
+              <Input
+                id="clientName"
+                value={clientName}
+                onChange={(e) => setClientName(e.target.value)}
+                className="input-premium"
+                placeholder="Иванов Иван Иванович"
+                required
+              />
+            </div>
+            
+            <div>
               <Label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
                 Номер телефона *
               </Label>
@@ -213,7 +228,7 @@ export default function ClientModal({
             
             <div>
               <Label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                Email (опционально)
+                Email клиента *
               </Label>
               <Input
                 id="email"
@@ -222,6 +237,7 @@ export default function ClientModal({
                 onChange={(e) => setEmail(e.target.value)}
                 className="input-premium"
                 placeholder="client@example.com"
+                required
               />
             </div>
             
@@ -274,6 +290,9 @@ export default function ClientModal({
         installmentMonths={installmentMonths}
         usedCertificate={usedCertificate}
         freeZones={freeZones}
+        clientName={clientName}
+        clientPhone={phone}
+        clientEmail={email}
       />
     </Dialog>
   );

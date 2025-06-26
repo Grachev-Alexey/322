@@ -661,17 +661,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(401).json({ message: "Не авторизован" });
       }
 
-      const offerData = offerSchema.parse(req.body);
+      // Generate payment schedule first
+      const paymentSchedule = generatePaymentSchedule(
+        req.body.downPayment,
+        req.body.finalCost,
+        req.body.installmentMonths
+      );
+      
+      // Add payment schedule to request body for validation
+      const requestWithSchedule = {
+        ...req.body,
+        paymentSchedule,
+        appliedDiscounts: req.body.appliedDiscounts || [],
+        freeZones: req.body.freeZones || []
+      };
+      
+      const offerData = offerSchema.parse(requestWithSchedule);
       
       // Generate unique offer number
       const offerNumber = await generateUniqueOfferNumber();
-      
-      // Generate payment schedule
-      const paymentSchedule = generatePaymentSchedule(
-        offerData.downPayment,
-        offerData.finalCost,
-        offerData.installmentMonths
-      );
 
       // Create or find client
       let client = await storage.getClientByPhone(offerData.clientPhone);
@@ -699,9 +707,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         downPayment: offerData.downPayment.toString(),
         installmentMonths: offerData.installmentMonths,
         monthlyPayment: offerData.monthlyPayment?.toString(),
-        paymentSchedule,
-        appliedDiscounts: offerData.appliedDiscounts,
-        freeZones: offerData.freeZones,
+        paymentSchedule: offerData.paymentSchedule,
+        appliedDiscounts: offerData.appliedDiscounts || [],
+        freeZones: offerData.freeZones || [],
         usedCertificate: offerData.usedCertificate,
         clientName: offerData.clientName,
         clientPhone: offerData.clientPhone,

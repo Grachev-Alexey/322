@@ -19,6 +19,9 @@ interface OfferModalProps {
   installmentMonths: number;
   usedCertificate: boolean;
   freeZones: any[];
+  clientName: string;
+  clientPhone: string;
+  clientEmail: string;
 }
 
 export default function OfferModal({
@@ -30,28 +33,19 @@ export default function OfferModal({
   downPayment,
   installmentMonths,
   usedCertificate,
-  freeZones
+  freeZones,
+  clientName,
+  clientPhone,
+  clientEmail
 }: OfferModalProps) {
-  const [clientData, setClientData] = useState({
-    name: '',
-    phone: '',
-    email: ''
-  });
-  
-  const [emailConfig, setEmailConfig] = useState({
-    provider: 'gmail',
-    email: '',
-    password: ''
-  });
-  
   const [isCreating, setIsCreating] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [createdOffer, setCreatedOffer] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState('client');
+  const [activeTab, setActiveTab] = useState('preview');
 
-  const handleCreateOffer = async () => {
-    if (!clientData.name || !clientData.phone || !clientData.email) {
-      alert('Заполните все поля клиента');
+  const handleCreateAndSendOffer = async () => {
+    if (!clientName || !clientPhone || !clientEmail) {
+      alert('Заполните все данные клиента');
       return;
     }
 
@@ -65,9 +59,9 @@ export default function OfferModal({
       const packageData = calculation.packages[selectedPackage];
       
       const offerData = {
-        clientName: clientData.name,
-        clientPhone: clientData.phone,
-        clientEmail: clientData.email,
+        clientName,
+        clientPhone,
+        clientEmail,
         selectedServices: selectedServices.map(service => ({
           ...service,
           pricePerProcedure: parseFloat(service.priceMin)
@@ -84,6 +78,7 @@ export default function OfferModal({
         usedCertificate
       };
 
+      // Создаем оферту
       const response = await fetch('/api/offers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -93,7 +88,30 @@ export default function OfferModal({
       if (response.ok) {
         const offer = await response.json();
         setCreatedOffer(offer);
-        setActiveTab('email');
+        
+        // Сразу отправляем email с настройками Yandex
+        setIsSending(true);
+        const sendResponse = await fetch(`/api/offers/${offer.id}/send`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            emailConfig: {
+              provider: 'yandex',
+              email: 'vivilaser@yandex.ru', // Ваша почта Yandex
+              password: 'your_yandex_password' // Ваш пароль от Yandex
+            }
+          })
+        });
+
+        if (sendResponse.ok) {
+          alert('Договор-оферта успешно создан и отправлен клиенту!');
+          onClose();
+          setCreatedOffer(null);
+          setActiveTab('preview');
+        } else {
+          const error = await sendResponse.json();
+          alert(`Оферта создана, но не отправлена: ${error.message}`);
+        }
       } else {
         const error = await response.json();
         alert(error.message || 'Ошибка создания оферты');
@@ -103,44 +121,11 @@ export default function OfferModal({
       alert('Ошибка создания оферты');
     } finally {
       setIsCreating(false);
-    }
-  };
-
-  const handleSendOffer = async () => {
-    if (!createdOffer) return;
-    
-    if (!emailConfig.email || !emailConfig.password) {
-      alert('Заполните настройки email');
-      return;
-    }
-
-    setIsSending(true);
-    try {
-      const response = await fetch(`/api/offers/${createdOffer.id}/send`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ emailConfig })
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        alert('Оферта успешно отправлена клиенту!');
-        onClose();
-        setCreatedOffer(null);
-        setActiveTab('client');
-        setClientData({ name: '', phone: '', email: '' });
-        setEmailConfig({ provider: 'gmail', email: '', password: '' });
-      } else {
-        const error = await response.json();
-        alert(error.message || 'Ошибка отправки оферты');
-      }
-    } catch (error) {
-      console.error('Ошибка:', error);
-      alert('Ошибка отправки оферты');
-    } finally {
       setIsSending(false);
     }
   };
+
+
 
   const formatAmount = (amount: number) => {
     return new Intl.NumberFormat('ru-RU').format(amount);
