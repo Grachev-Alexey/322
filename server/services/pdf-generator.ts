@@ -1,153 +1,187 @@
-import puppeteer from 'puppeteer';
-import { Offer } from '@shared/schema';
-import { format } from 'date-fns';
-import { ru } from 'date-fns/locale';
-import { execSync } from 'child_process';
+import puppeteer from "puppeteer";
+import { Offer } from "@shared/schema";
+import { format } from "date-fns";
+import { ru } from "date-fns/locale";
+import { execSync } from "child_process";
 
 interface PaymentScheduleItem {
-  date: string;
-  amount: number;
-  description: string;
+    date: string;
+    amount: number;
+    description: string;
 }
 
 export class PDFGenerator {
-  constructor(private storage?: any) {}
+    constructor(private storage?: any) {}
 
-  async generateOfferPDF(offer: Offer, packageData?: any): Promise<Buffer> {
-    let executablePath;
-    try {
-      executablePath = execSync('which chromium', { encoding: 'utf8' }).trim();
-    } catch (error) {
-      console.log('Chromium not found, using default');
-      executablePath = undefined;
-    }
-
-    const browser = await puppeteer.launch({
-      headless: true,
-      executablePath,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu',
-        '--disable-web-security',
-        '--disable-features=VizDisplayCompositor',
-        '--run-all-compositor-stages-before-draw',
-        '--disable-background-timer-throttling',
-        '--disable-renderer-backgrounding',
-        '--disable-backgrounding-occluded-windows',
-        '--disable-ipc-flooding-protection'
-      ]
-    });
-
-    try {
-      const page = await browser.newPage();
-      
-      const htmlContent = await this.generateOfferHTML(offer, packageData);
-      await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-      
-      const pdfBuffer = await page.pdf({
-        format: 'A4',
-        printBackground: true,
-        margin: {
-          top: '20mm',
-          bottom: '20mm',
-          left: '15mm',
-          right: '15mm'
+    async generateOfferPDF(offer: Offer, packageData?: any): Promise<Buffer> {
+        let executablePath;
+        try {
+            executablePath = execSync("which chromium", {
+                encoding: "utf8",
+            }).trim();
+        } catch (error) {
+            console.log("Chromium not found, using default");
+            executablePath = undefined;
         }
-      });
 
-      return Buffer.from(pdfBuffer);
-    } finally {
-      await browser.close();
+        const browser = await puppeteer.launch({
+            headless: true,
+            executablePath,
+            args: [
+                "--no-sandbox",
+                "--disable-setuid-sandbox",
+                "--disable-dev-shm-usage",
+                "--disable-gpu",
+                "--disable-web-security",
+                "--disable-features=VizDisplayCompositor",
+                "--run-all-compositor-stages-before-draw",
+                "--disable-background-timer-throttling",
+                "--disable-renderer-backgrounding",
+                "--disable-backgrounding-occluded-windows",
+                "--disable-ipc-flooding-protection",
+            ],
+        });
+
+        try {
+            const page = await browser.newPage();
+
+            const htmlContent = await this.generateOfferHTML(
+                offer,
+                packageData,
+            );
+            await page.setContent(htmlContent, { waitUntil: "networkidle0" });
+
+            const pdfBuffer = await page.pdf({
+                format: "A4",
+                printBackground: true,
+                margin: {
+                    top: "20mm",
+                    bottom: "20mm",
+                    left: "15mm",
+                    right: "15mm",
+                },
+            });
+
+            return Buffer.from(pdfBuffer);
+        } finally {
+            await browser.close();
+        }
     }
-  }
 
-  private getServiceNames(selectedServices: any[]): string {
-    return selectedServices.map(service => service.title || service.name).join(', ');
-  }
-
-  private getTotalSessions(selectedServices: any[]): number {
-    // Берем количество процедур из первой услуги (так как все услуги имеют одинаковое количество)
-    if (selectedServices.length > 0) {
-      return selectedServices[0].count || selectedServices[0].quantity || 1;
+    private getServiceNames(selectedServices: any[]): string {
+        return selectedServices
+            .map((service) => service.title || service.name)
+            .join(", ");
     }
-    return 0;
-  }
 
-  private getGiftSessions(packageType: string): number {
-    switch (packageType) {
-      case 'vip': return 2;
-      case 'standard': return 1;
-      case 'economy': return 0;
-      default: return 0;
+    private getTotalSessions(selectedServices: any[]): number {
+        // Берем количество процедур из первой услуги (так как все услуги имеют одинаковое количество)
+        if (selectedServices.length > 0) {
+            return (
+                selectedServices[0].count || selectedServices[0].quantity || 1
+            );
+        }
+        return 0;
     }
-  }
 
-  private getBonusPercent(packageType: string): number {
-    switch (packageType) {
-      case 'vip': return 0;
-      case 'standard': return 0;
-      case 'economy': return 0;
-      default: return 0;
+    private getGiftSessions(packageType: string): number {
+        switch (packageType) {
+            case "vip":
+                return 2;
+            case "standard":
+                return 1;
+            case "economy":
+                return 0;
+            default:
+                return 0;
+        }
     }
-  }
 
-  private getPackageDiscount(packageType: string): number {
-    switch (packageType) {
-      case 'vip': return 30;
-      case 'standard': return 25; 
-      case 'economy': return 20;
-      default: return 0;
+    private getBonusPercent(packageType: string): number {
+        switch (packageType) {
+            case "vip":
+                return 0;
+            case "standard":
+                return 0;
+            case "economy":
+                return 0;
+            default:
+                return 0;
+        }
     }
-  }
 
-  private getPackagePerks(packageType: string): any {
-    switch (packageType) {
-      case 'vip':
-        return {
-          massage: 'Курс массажа вокруг глаз на аппарате Bork D617 - 10 сеансов',
-          hasCard: true,
-          card: 'Золотая карта',
-          cardDiscount: '35',
-          freezeOption: 'Бессрочно'
-        };
-      case 'standard':
-        return {
-          massage: 'Курс массажа вокруг глаз на аппарате Bork D617 - 5 сеансов',
-          hasCard: true,
-          card: 'Серебряная карта',
-          cardDiscount: '30',
-          freezeOption: '6 мес'
-        };
-      case 'economy':
-        return {
-          massage: 'Курс массажа вокруг глаз на аппарате Bork D617 - 3 сеанса',
-          hasCard: false,
-          card: '',
-          cardDiscount: '',
-          freezeOption: '3 мес'
-        };
-      default:
-        return {
-          massage: 'Курс массажа вокруг глаз на аппарате Bork D617 - 3 сеанса',
-          hasCard: false,
-          card: '',
-          cardDiscount: '',
-          freezeOption: '3 мес'
-        };
+    private getPackageDiscount(packageType: string): number {
+        switch (packageType) {
+            case "vip":
+                return 30;
+            case "standard":
+                return 25;
+            case "economy":
+                return 20;
+            default:
+                return 0;
+        }
     }
-  }
 
-  private async generateOfferHTML(offer: Offer, packageData?: any): Promise<string> {
-    const selectedServices = offer.selectedServices as any[];
-    const packagePerks = this.getPackagePerks(offer.selectedPackage);
-    const discountPercentage = packageData ? Math.round(packageData.discount * 100) : this.getPackageDiscount(offer.selectedPackage);
-    const giftSessions = packageData ? packageData.gift_sessions : this.getGiftSessions(offer.selectedPackage);
-    const bonusPercent = packageData ? Math.round(packageData.bonus_account_percent * 100) : this.getBonusPercent(offer.selectedPackage);
-    const paymentSchedule = offer.paymentSchedule as PaymentScheduleItem[];
+    private getPackagePerks(packageType: string): any {
+        switch (packageType) {
+            case "vip":
+                return {
+                    massage:
+                        "Курс массажа вокруг глаз на аппарате Bork D617 - 10 сеансов",
+                    hasCard: true,
+                    card: "Золотая карта",
+                    cardDiscount: "35",
+                    freezeOption: "Бессрочно",
+                };
+            case "standard":
+                return {
+                    massage:
+                        "Курс массажа вокруг глаз на аппарате Bork D617 - 5 сеансов",
+                    hasCard: true,
+                    card: "Серебряная карта",
+                    cardDiscount: "30",
+                    freezeOption: "6 мес",
+                };
+            case "economy":
+                return {
+                    massage:
+                        "Курс массажа вокруг глаз на аппарате Bork D617 - 3 сеанса",
+                    hasCard: false,
+                    card: "",
+                    cardDiscount: "",
+                    freezeOption: "3 мес",
+                };
+            default:
+                return {
+                    massage:
+                        "Курс массажа вокруг глаз на аппарате Bork D617 - 3 сеанса",
+                    hasCard: false,
+                    card: "",
+                    cardDiscount: "",
+                    freezeOption: "3 мес",
+                };
+        }
+    }
 
-    return `
+    private async generateOfferHTML(
+        offer: Offer,
+        packageData?: any,
+    ): Promise<string> {
+        const selectedServices = offer.selectedServices as any[];
+        const packagePerks = this.getPackagePerks(offer.selectedPackage);
+        const discountPercentage = packageData
+            ? Math.round(packageData.discount * 100)
+            : this.getPackageDiscount(offer.selectedPackage);
+        const giftSessions = packageData
+            ? packageData.gift_sessions
+            : this.getGiftSessions(offer.selectedPackage);
+        const bonusPercent = packageData
+            ? Math.round(packageData.bonus_account_percent * 100)
+            : this.getBonusPercent(offer.selectedPackage);
+        const paymentSchedule = offer.paymentSchedule as PaymentScheduleItem[];
+
+        return `
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -182,7 +216,6 @@ export class PDFGenerator {
             margin-bottom: 12px;
         }
         .service-name {
-            color: #4472C4;
             font-weight: bold;
             margin-bottom: 8px;
         }
@@ -273,37 +306,47 @@ export class PDFGenerator {
         <div class="details">4. ${packagePerks.massage}</div>
     </div>
 
-    ${packagePerks.hasCard ? `
+    ${
+        packagePerks.hasCard
+            ? `
     <div class="section">
         <div class="details">5. <span class="card-info">${packagePerks.card}</span>, дающая скидку навсегда в размере <span class="highlight">${packagePerks.cardDiscount}%</span> на</div>
         <ul class="perks-list">
             <li>поддерживающие процедуры выбранных зон во всех студиях сети «Виви»</li>
         </ul>
     </div>
-    ` : ''}
+    `
+            : ""
+    }
 
     <div class="section">
-        <div class="details">${packagePerks.hasCard ? '6' : '5'}. Количество дополнительных подарочных сеансов: <span class="highlight">${giftSessions}</span></div>
+        <div class="details">${packagePerks.hasCard ? "6" : "5"}. Количество дополнительных подарочных сеансов: <span class="highlight">${giftSessions}</span></div>
     </div>
 
     <div class="section">
-        <div class="details">${packagePerks.hasCard ? '7' : '6'}. Возможность заморозки карты: <span class="highlight">${packagePerks.freezeOption}</span></div>
+        <div class="details">${packagePerks.hasCard ? "7" : "6"}. Возможность заморозки карты: <span class="highlight">${packagePerks.freezeOption}</span></div>
     </div>
 
     <div class="section">
-        <div class="details">${packagePerks.hasCard ? '8' : '7'}. Начисление на бонусный счет: <span class="highlight">${bonusPercent}%</span> от стоимости абонемента</div>
+        <div class="details">${packagePerks.hasCard ? "8" : "7"}. Начисление на бонусный счет: <span class="highlight">${bonusPercent}%</span> от стоимости абонемента</div>
     </div>
 
     <div class="cost-section">
         <div class="cost-item">Стоимость абонемента: <span class="highlight">${this.formatAmount(offer.finalCost)} руб.</span></div>
         <div class="cost-item">Первоначальный взнос: <span class="highlight">${this.formatAmount(offer.downPayment)} руб.</span></div>
-        ${offer.installmentMonths && offer.installmentMonths > 1 ? `
+        ${
+            offer.installmentMonths && offer.installmentMonths > 1
+                ? `
             <div class="cost-item">Размер платежа: <span class="highlight">${this.formatAmount(offer.monthlyPayment || 0)} руб.</span></div>
             <div class="cost-item">Количество платежей: <span class="highlight">${offer.installmentMonths}</span></div>
-        ` : ''}
+        `
+                : ""
+        }
     </div>
 
-    ${paymentSchedule && paymentSchedule.length > 0 ? `
+    ${
+        paymentSchedule && paymentSchedule.length > 0
+            ? `
     <div class="payment-schedule-title">График платежей</div>
     <table class="payment-table">
         <thead>
@@ -313,15 +356,21 @@ export class PDFGenerator {
             </tr>
         </thead>
         <tbody>
-            ${paymentSchedule.map(payment => `
+            ${paymentSchedule
+                .map(
+                    (payment) => `
                 <tr>
                     <td>${payment.date}</td>
                     <td>${this.formatAmount(payment.amount)} руб.</td>
                 </tr>
-            `).join('')}
+            `,
+                )
+                .join("")}
         </tbody>
     </table>
-    ` : ''}
+    `
+            : ""
+    }
 
     <div class="footer-note">
         Условия действуют только при своевременной оплате. При просрочке платежа более чем на 5 дней стоимость посещения пересчитывается по стандартному прайсу и дополнительные условия (скидки, пакеты, бонусы и привилегии) аннулируются.
@@ -329,21 +378,25 @@ export class PDFGenerator {
 </body>
 </html>
     `;
-  }
-
-  private getPackageName(packageType: string): string {
-    switch (packageType) {
-      case 'vip': return 'VIP (максимальная скидка)';
-      case 'standard': return 'Стандарт (средняя скидка)';
-      case 'economy': return 'Эконом (базовая скидка)';
-      default: return packageType;
     }
-  }
 
-  private formatAmount(amount: string | number): string {
-    const num = typeof amount === 'string' ? parseFloat(amount) : amount;
-    return new Intl.NumberFormat('ru-RU').format(num);
-  }
+    private getPackageName(packageType: string): string {
+        switch (packageType) {
+            case "vip":
+                return "VIP (максимальная скидка)";
+            case "standard":
+                return "Стандарт (средняя скидка)";
+            case "economy":
+                return "Эконом (базовая скидка)";
+            default:
+                return packageType;
+        }
+    }
+
+    private formatAmount(amount: string | number): string {
+        const num = typeof amount === "string" ? parseFloat(amount) : amount;
+        return new Intl.NumberFormat("ru-RU").format(num);
+    }
 }
 
 export const pdfGenerator = new PDFGenerator();

@@ -418,11 +418,11 @@ export class DatabaseStorage implements IStorage {
       await this.upsertPackage({
         type: "vip",
         name: "VIP",
-        discount: "0.25",
-        minCost: "50000",
-        minDownPaymentPercent: "0.30",
-        requiresFullPayment: false,
-        giftSessions: 2,
+        discount: "0.30",
+        minCost: "25000",
+        minDownPaymentPercent: "1.00",
+        requiresFullPayment: true,
+        giftSessions: 3,
         isActive: true
       });
 
@@ -430,7 +430,7 @@ export class DatabaseStorage implements IStorage {
       await this.upsertPackage({
         type: "standard",
         name: "Стандарт",
-        discount: "0.15",
+        discount: "0.25",
         minCost: "30000",
         minDownPaymentPercent: "0.50",
         requiresFullPayment: false,
@@ -442,15 +442,14 @@ export class DatabaseStorage implements IStorage {
       await this.upsertPackage({
         type: "economy",
         name: "Эконом",
-        discount: "0.10",
-        minCost: "15000",
-        minDownPaymentPercent: "0.70",
-        requiresFullPayment: true,
+        discount: "0.20",
+        minCost: "10000",
+        minDownPaymentPercent: "0.01",
+        requiresFullPayment: false,
         giftSessions: 0,
         isActive: true
       });
 
-      // Default perks and values are now created via SQL inserts above
     }
   }
 
