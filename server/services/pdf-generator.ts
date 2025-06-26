@@ -62,17 +62,21 @@ export class PDFGenerator {
   }
 
   private getServiceNames(selectedServices: any[]): string {
-    return selectedServices.map(service => service.name).join(', ');
+    return selectedServices.map(service => service.title || service.name).join(', ');
   }
 
   private getTotalSessions(selectedServices: any[]): number {
-    return selectedServices.reduce((total, service) => total + service.quantity, 0);
+    // Правильно считаем общее количество сеансов из каждой услуги
+    return selectedServices.reduce((total, service) => {
+      const count = service.count || service.quantity || 1;
+      return total + count;
+    }, 0);
   }
 
   private getPackageDiscount(packageType: string): number {
     switch (packageType) {
-      case 'vip': return 50;
-      case 'standard': return 30;
+      case 'vip': return 30;
+      case 'standard': return 25; 
       case 'economy': return 20;
       default: return 0;
     }
@@ -83,38 +87,42 @@ export class PDFGenerator {
       case 'vip':
         return {
           massage: 'Курс массажа вокруг глаз на аппарате Bork D617 - 10 сеансов',
+          hasCard: true,
           card: 'Золотая карта',
           cardDiscount: '35',
-          giftSessions: '3',
+          giftSessions: '3/0',
           freezeOption: 'Бессрочно',
-          bonusPercent: '20'
+          bonusPercent: '20%/10%'
         };
       case 'standard':
         return {
           massage: 'Курс массажа вокруг глаз на аппарате Bork D617 - 5 сеансов',
+          hasCard: true,
           card: 'Серебряная карта',
           cardDiscount: '30',
-          giftSessions: '1',
-          freezeOption: '6 мес',
-          bonusPercent: '10'
+          giftSessions: '1/0',
+          freezeOption: '6 мес/3 мес',
+          bonusPercent: '10%/0%'
         };
       case 'economy':
         return {
           massage: 'Курс массажа вокруг глаз на аппарате Bork D617 - 3 сеанса',
-          card: 'Бронзовая карта',
-          cardDiscount: '25',
+          hasCard: false,
+          card: '',
+          cardDiscount: '',
           giftSessions: '0',
           freezeOption: '3 мес',
-          bonusPercent: '0'
+          bonusPercent: '0%'
         };
       default:
         return {
           massage: 'Курс массажа вокруг глаз на аппарате Bork D617 - 3 сеанса',
-          card: 'Бронзовая карта',
-          cardDiscount: '25',
+          hasCard: false,
+          card: '',
+          cardDiscount: '',
           giftSessions: '0',
           freezeOption: '3 мес',
-          bonusPercent: '0'
+          bonusPercent: '0%'
         };
     }
   }
@@ -123,6 +131,7 @@ export class PDFGenerator {
     const selectedServices = offer.selectedServices as any[];
     const packagePerks = this.getPackagePerks(offer.selectedPackage);
     const discountPercentage = this.getPackageDiscount(offer.selectedPackage);
+    const paymentSchedule = offer.paymentSchedule as PaymentScheduleItem[];
 
     return `
 <!DOCTYPE html>
@@ -133,54 +142,85 @@ export class PDFGenerator {
     <title>Приложение №1 к договору-оферте</title>
     <style>
         @page { 
-            margin: 20mm; 
+            margin: 15mm; 
             size: A4; 
         }
         body {
-            font-family: 'Times New Roman', serif;
-            font-size: 12pt;
-            line-height: 1.6;
+            font-family: Arial, sans-serif;
+            font-size: 11pt;
+            line-height: 1.4;
             margin: 0;
-            padding: 20mm;
+            padding: 10mm;
             color: #000;
         }
         .title {
             text-align: center;
-            font-size: 14pt;
+            font-size: 13pt;
             font-weight: bold;
-            margin-bottom: 30px;
-        }
-        .subtitle {
-            text-align: center;
-            font-size: 12pt;
-            font-weight: bold;
-            margin-bottom: 25px;
-        }
-        .section {
-            margin-bottom: 15px;
-        }
-        .service-name {
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .details {
-            margin-bottom: 15px;
-        }
-        .perks-list {
-            margin-left: 20px;
-            margin-bottom: 10px;
-        }
-        .cost-section {
-            margin-top: 30px;
             margin-bottom: 20px;
         }
+        .subtitle {
+            font-size: 11pt;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .section {
+            margin-bottom: 12px;
+        }
+        .service-name {
+            color: #4472C4;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .details {
+            margin-bottom: 8px;
+        }
+        .perks-list {
+            margin-left: 15px;
+            margin-bottom: 8px;
+        }
+        .perks-list li {
+            margin-bottom: 3px;
+        }
+        .cost-section {
+            margin-top: 20px;
+            margin-bottom: 15px;
+        }
         .cost-item {
-            margin-bottom: 5px;
+            margin-bottom: 4px;
+        }
+        .payment-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            background-color: #FFE6E6;
+        }
+        .payment-table th,
+        .payment-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: center;
+        }
+        .payment-table th {
+            background-color: #FFB3B3;
+            font-weight: bold;
+        }
+        .payment-schedule-title {
+            text-align: center;
+            font-weight: bold;
+            margin: 20px 0 10px 0;
         }
         .footer-note {
-            margin-top: 40px;
-            font-size: 11pt;
-            text-align: center;
+            margin-top: 25px;
+            font-size: 10pt;
+            font-weight: bold;
+        }
+        .highlight {
+            color: #4472C4;
+            font-weight: bold;
+        }
+        .card-info {
+            color: #4472C4;
             font-weight: bold;
         }
     </style>
@@ -195,57 +235,79 @@ export class PDFGenerator {
     </div>
 
     <div class="section">
-        <div class="service-name">1. Наименование услуги "${this.getServiceNames(selectedServices)}"</div>
+        <div class="service-name">1. Наименование услуги <span class="highlight">"${this.getServiceNames(selectedServices)}"</span></div>
     </div>
 
     <div class="section">
-        <div class="details">2. Количество сеансов: ${this.getTotalSessions(selectedServices)}</div>
+        <div class="details">2. Количество сеансов: <span class="highlight">${this.getTotalSessions(selectedServices)}</span></div>
     </div>
 
     <div class="section">
-        <div class="details">2. Индивидуальная скидка от стоимости прайса-листа: ${discountPercentage}%</div>
+        <div class="details">2. Индивидуальная скидка от стоимости прайса-листа: <span class="highlight">${discountPercentage}%</span></div>
     </div>
 
     <div class="section">
         <div class="details">3. Право на подарки:</div>
-        <div class="perks-list">
-            <p>за приглашение подруг - 1 зона за каждую подругу;</p>
-            <p>отзывы на Яндекс.Карты и 2ГИС - 1 зона за каждый честный отзыв;</p>
-            <p>за рекомендации в соцсетях - 1 зона за упоминание в соцсетях.</p>
-        </div>
+        <ul class="perks-list">
+            <li>за приглашение подруг - 1 зона за каждую подругу;</li>
+            <li>отзывы на Яндекс.Карты и 2ГИС - 1 зона за каждый честный отзыв;</li>
+            <li>за рекомендации в соцсетях - 1 зона за упоминание в соцсетях.</li>
+        </ul>
     </div>
 
     <div class="section">
         <div class="details">4. ${packagePerks.massage}</div>
     </div>
 
+    ${packagePerks.hasCard ? `
     <div class="section">
-        <div class="details">5. ${packagePerks.card}, дающая скидку навсегда в размере ${packagePerks.cardDiscount}% на</div>
-        <div class="perks-list">
-            <p>поддерживающие процедуры выбранных зон во всех студиях сети «Виви»</p>
-        </div>
+        <div class="details">5. <span class="card-info">${packagePerks.card}</span>, дающая скидку навсегда в размере <span class="highlight">${packagePerks.cardDiscount}%</span> на</div>
+        <ul class="perks-list">
+            <li>поддерживающие процедуры выбранных зон во всех студиях сети «Виви»</li>
+        </ul>
+    </div>
+    ` : ''}
+
+    <div class="section">
+        <div class="details">${packagePerks.hasCard ? '6' : '5'}. Количество дополнительных подарочных сеансов: <span class="highlight">${packagePerks.giftSessions}</span></div>
     </div>
 
     <div class="section">
-        <div class="details">6. Количество дополнительных подарочных сеансов: ${packagePerks.giftSessions}</div>
+        <div class="details">${packagePerks.hasCard ? '7' : '6'}. Возможность заморозки карты: <span class="highlight">${packagePerks.freezeOption}</span></div>
     </div>
 
     <div class="section">
-        <div class="details">7. Возможность заморозки карты: ${packagePerks.freezeOption}</div>
-    </div>
-
-    <div class="section">
-        <div class="details">8. Начисление на бонусный счет: ${packagePerks.bonusPercent}% от стоимости абонемента</div>
+        <div class="details">${packagePerks.hasCard ? '8' : '7'}. Начисление на бонусный счет: <span class="highlight">${packagePerks.bonusPercent}%</span> от стоимости абонемента</div>
     </div>
 
     <div class="cost-section">
-        <div class="cost-item">Стоимость абонемента: ${this.formatAmount(offer.finalCost)} руб.</div>
-        <div class="cost-item">Первоначальный взнос: ${this.formatAmount(offer.downPayment)} руб.</div>
+        <div class="cost-item">Стоимость абонемента: <span class="highlight">${this.formatAmount(offer.finalCost)} руб.</span></div>
+        <div class="cost-item">Первоначальный взнос: <span class="highlight">${this.formatAmount(offer.downPayment)} руб.</span></div>
         ${offer.installmentMonths && offer.installmentMonths > 1 ? `
-            <div class="cost-item">Размер платежа: ${this.formatAmount(offer.monthlyPayment || 0)} руб.</div>
-            <div class="cost-item">Количество платежей: ${offer.installmentMonths}</div>
+            <div class="cost-item">Размер платежа: <span class="highlight">${this.formatAmount(offer.monthlyPayment || 0)} руб.</span></div>
+            <div class="cost-item">Количество платежей: <span class="highlight">${offer.installmentMonths}</span></div>
         ` : ''}
     </div>
+
+    ${paymentSchedule && paymentSchedule.length > 0 ? `
+    <div class="payment-schedule-title">График платежей</div>
+    <table class="payment-table">
+        <thead>
+            <tr>
+                <th>Дата платежа</th>
+                <th>Сумма платежа</th>
+            </tr>
+        </thead>
+        <tbody>
+            ${paymentSchedule.map(payment => `
+                <tr>
+                    <td>${payment.date}</td>
+                    <td>${this.formatAmount(payment.amount)} руб.</td>
+                </tr>
+            `).join('')}
+        </tbody>
+    </table>
+    ` : ''}
 
     <div class="footer-note">
         Условия действуют только при своевременной оплате. При просрочке платежа более чем на 5 дней стоимость посещения пересчитывается по стандартному прайсу и дополнительные условия (скидки, пакеты, бонусы и привилегии) аннулируются.
