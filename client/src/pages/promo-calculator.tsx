@@ -577,28 +577,28 @@ export default function PromoCalculatorPage({
               
               {/* Блок "Бесплатные зоны" */}
               <div className="w-48 flex-shrink-0">
-                <div className="bg-white dark:bg-gray-900 rounded-lg p-3 border border-gray-200 h-fit">
+                <div className="bg-white dark:bg-gray-900 p-3 border border-pink-300/50 h-fit" style={{ borderRadius: "6px" }}>
                   <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3 text-center">
                     Бесплатные зоны
                   </h3>
                   
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between p-2 bg-pink-50 dark:bg-pink-950 rounded border border-pink-200 dark:border-pink-800">
+                    <div className="flex items-center justify-between p-2 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
                       <span className="text-xs text-gray-700 dark:text-gray-300">За подруг</span>
                       <span className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</span>
                     </div>
                     
-                    <div className="flex items-center justify-between p-2 bg-pink-50 dark:bg-pink-950 rounded border border-pink-200 dark:border-pink-800">
+                    <div className="flex items-center justify-between p-2 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
                       <span className="text-xs text-gray-700 dark:text-gray-300">За отзыв в Яндекс Картах</span>
                       <span className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</span>
                     </div>
                     
-                    <div className="flex items-center justify-between p-2 bg-pink-50 dark:bg-pink-950 rounded border border-pink-200 dark:border-pink-800">
+                    <div className="flex items-center justify-between p-2 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
                       <span className="text-xs text-gray-700 dark:text-gray-300">За отзыв в 2ГИС</span>
                       <span className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</span>
                     </div>
                     
-                    <div className="flex items-center justify-between p-2 bg-pink-50 dark:bg-pink-950 rounded border border-pink-200 dark:border-pink-800">
+                    <div className="flex items-center justify-between p-2 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
                       <span className="text-xs text-gray-700 dark:text-gray-300">За отметку в соцсетях</span>
                       <span className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</span>
                     </div>
