@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { User, Loader2, Copy, CheckCircle, FileText } from "lucide-react";
 import { formatPhoneNumber, validatePhoneNumber } from "@/lib/utils";
 import PhoneInput from "./ui/phone-input";
-import OfferModal from "./offer-modal-simple";
+
 
 interface ClientModalProps {
   isOpen: boolean;
@@ -40,7 +40,6 @@ export default function ClientModal({
   const [loading, setLoading] = useState(false);
   const [subscriptionTitle, setSubscriptionTitle] = useState("");
   const [isCompleted, setIsCompleted] = useState(false);
-  const [showOfferModal, setShowOfferModal] = useState(false);
   const [offerSent, setOfferSent] = useState(false);
   const { toast } = useToast();
 
@@ -131,6 +130,39 @@ export default function ClientModal({
     try {
       // Создаем оферту
       const packageData = calculation.packages[selectedPackage];
+      
+      // Генерируем график платежей
+      const paymentSchedule = [];
+      if (selectedPackage === 'vip') {
+        // VIP - полная оплата
+        paymentSchedule.push({
+          date: new Date().toISOString().split('T')[0],
+          amount: packageData.finalCost,
+          description: 'Полная оплата'
+        });
+      } else {
+        // Стандарт/Эконом - рассрочка
+        paymentSchedule.push({
+          date: new Date().toISOString().split('T')[0],
+          amount: downPayment,
+          description: 'Первоначальный взнос'
+        });
+        
+        const remainingAmount = packageData.finalCost - downPayment;
+        const monthlyPayment = remainingAmount / installmentMonths;
+        
+        for (let i = 1; i <= installmentMonths; i++) {
+          const paymentDate = new Date();
+          paymentDate.setMonth(paymentDate.getMonth() + i);
+          
+          paymentSchedule.push({
+            date: paymentDate.toISOString().split('T')[0],
+            amount: monthlyPayment,
+            description: `Платеж ${i} из ${installmentMonths}`
+          });
+        }
+      }
+
       const offerData = {
         clientName,
         clientPhone: phone.replace(/\D/g, ''),
@@ -142,17 +174,16 @@ export default function ClientModal({
           price: service.priceMin,
           quantity: (service.quantity || 1) * procedureCount
         })),
-        calculation: {
-          baseCost: calculation.baseCost,
-          finalCost: packageData.finalCost,
-          totalSavings: packageData.totalSavings,
-          downPayment,
-          installmentMonths: selectedPackage === 'vip' ? undefined : installmentMonths,
-          monthlyPayment: selectedPackage === 'vip' ? undefined : packageData.monthlyPayment,
-          usedCertificate,
-          freeZones,
-          appliedDiscounts: packageData.appliedDiscounts
-        }
+        baseCost: calculation.baseCost,
+        finalCost: packageData.finalCost,
+        totalSavings: packageData.totalSavings,
+        downPayment,
+        installmentMonths: selectedPackage === 'vip' ? undefined : installmentMonths,
+        monthlyPayment: selectedPackage === 'vip' ? undefined : packageData.monthlyPayment,
+        paymentSchedule,
+        appliedDiscounts: packageData.appliedDiscounts || [],
+        freeZones: freeZones || [],
+        usedCertificate
       };
 
       const createResponse = await fetch("/api/offers", {
@@ -336,16 +367,6 @@ export default function ClientModal({
                 Отмена
               </Button>
               <Button
-                type="button"
-                variant="outline"
-                onClick={() => setShowOfferModal(true)}
-                className="flex-1"
-                disabled={loading || !selectedPackage}
-              >
-                <FileText className="w-4 h-4 mr-2" />
-                Договор-оферта
-              </Button>
-              <Button
                 type="submit"
                 className="flex-1 btn-primary"
                 disabled={loading}
@@ -363,21 +384,6 @@ export default function ClientModal({
           </form>
         )}
       </DialogContent>
-      
-      <OfferModal
-        isOpen={showOfferModal}
-        onClose={() => setShowOfferModal(false)}
-        calculation={calculation}
-        selectedPackage={selectedPackage}
-        selectedServices={selectedServices}
-        downPayment={downPayment}
-        installmentMonths={installmentMonths}
-        usedCertificate={usedCertificate}
-        freeZones={freeZones}
-        clientName={clientName}
-        clientPhone={phone}
-        clientEmail={email}
-      />
     </Dialog>
   );
 }
