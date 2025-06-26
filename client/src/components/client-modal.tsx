@@ -4,9 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { User, Loader2, Copy, CheckCircle } from "lucide-react";
+import { User, Loader2, Copy, CheckCircle, FileText } from "lucide-react";
 import { formatPhoneNumber, validatePhoneNumber } from "@/lib/utils";
 import PhoneInput from "./ui/phone-input";
+import OfferModal from "./offer-modal";
 
 interface ClientModalProps {
   isOpen: boolean;
@@ -38,6 +39,7 @@ export default function ClientModal({
   const [loading, setLoading] = useState(false);
   const [subscriptionTitle, setSubscriptionTitle] = useState("");
   const [isCompleted, setIsCompleted] = useState(false);
+  const [showOfferModal, setShowOfferModal] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -234,6 +236,16 @@ export default function ClientModal({
                 Отмена
               </Button>
               <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowOfferModal(true)}
+                className="flex-1"
+                disabled={loading || !selectedPackage}
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Договор-оферта
+              </Button>
+              <Button
                 type="submit"
                 className="flex-1 btn-primary"
                 disabled={loading}
@@ -251,6 +263,18 @@ export default function ClientModal({
           </form>
         )}
       </DialogContent>
+      
+      <OfferModal
+        isOpen={showOfferModal}
+        onClose={() => setShowOfferModal(false)}
+        calculation={calculation}
+        selectedPackage={selectedPackage}
+        selectedServices={selectedServices}
+        downPayment={downPayment}
+        installmentMonths={installmentMonths}
+        usedCertificate={usedCertificate}
+        freeZones={freeZones}
+      />
     </Dialog>
   );
 }

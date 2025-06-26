@@ -1,10 +1,11 @@
 import { 
-  users, config, services, subscriptionTypes, clients, sales, packages, perks, packagePerkValues,
+  users, config, services, subscriptionTypes, clients, sales, packages, perks, packagePerkValues, offers,
   type User, type InsertUser, type Config, type InsertConfig,
   type Service, type InsertService, type SubscriptionType, type InsertSubscriptionType,
   type Package, type InsertPackage, type Perk, type InsertPerk,
   type PackagePerkValue, type InsertPackagePerkValue,
-  type Client, type InsertClient, type Sale, type InsertSale
+  type Client, type InsertClient, type Sale, type InsertSale,
+  type Offer, type InsertOffer
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, and, sql, desc } from "drizzle-orm";
@@ -60,6 +61,13 @@ export interface IStorage {
   createSale(sale: InsertSale): Promise<Sale>;
   getSalesByMaster(masterId: number): Promise<Sale[]>;
   getSalesStats(): Promise<any>;
+  
+  // Offers
+  createOffer(offer: InsertOffer): Promise<Offer>;
+  getOfferByNumber(offerNumber: string): Promise<Offer | undefined>;
+  getOffersByMaster(masterId: number): Promise<Offer[]>;
+  updateOffer(id: number, updates: Partial<InsertOffer>): Promise<Offer | null>;
+  deleteOffer(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -444,6 +452,30 @@ export class DatabaseStorage implements IStorage {
 
       // Default perks and values are now created via SQL inserts above
     }
+  }
+
+  // Offers
+  async createOffer(offer: InsertOffer): Promise<Offer> {
+    const [createdOffer] = await db.insert(offers).values(offer).returning();
+    return createdOffer;
+  }
+
+  async getOfferByNumber(offerNumber: string): Promise<Offer | undefined> {
+    const [offer] = await db.select().from(offers).where(eq(offers.offerNumber, offerNumber));
+    return offer || undefined;
+  }
+
+  async getOffersByMaster(masterId: number): Promise<Offer[]> {
+    return await db.select().from(offers).where(eq(offers.masterId, masterId)).orderBy(desc(offers.createdAt));
+  }
+
+  async updateOffer(id: number, updates: Partial<InsertOffer>): Promise<Offer | null> {
+    const [updatedOffer] = await db.update(offers).set(updates).where(eq(offers.id, id)).returning();
+    return updatedOffer || null;
+  }
+
+  async deleteOffer(id: number): Promise<void> {
+    await db.delete(offers).where(eq(offers.id, id));
   }
 }
 

@@ -4,6 +4,11 @@
 ViVi-Calc is a comprehensive sales calculation tool designed for beauty salons. It helps calculate package deals, discounts, installment payments, and manages client data with different subscription types.
 
 ## Recent Changes
+- **2024-12-27**: Реализована полная система договоров-оферт с генерацией PDF и отправкой email
+- **2024-12-27**: Добавлены API endpoints для создания, отправки и управления офертами
+- **2024-12-27**: Создан модальный интерфейс для формирования индивидуальных предложений клиентам
+- **2024-12-27**: Интегрирована поддержка Nodemailer с Gmail, Yandex и Mail.ru для отправки email
+- **2024-12-27**: Добавлен генератор PDF договоров с использованием Puppeteer
 - **2024-12-26**: Successfully completed migration from Replit Agent to Replit environment
 - **2024-12-26**: Added 5 test services (laser hair removal procedures) and 5 test perks with package configurations
 - **2024-12-27**: Added 15 test services (laser hair removal and facial treatments) and 8 test perks with package configurations
@@ -71,6 +76,10 @@ ViVi-Calc is a comprehensive sales calculation tool designed for beauty salons. 
   - Client management
   - Sales tracking
   - Configurable perks and discounts
+  - Contract offers generation and email delivery
+  - PDF generation for individual client proposals
+  - Multi-provider email support (Gmail, Yandex, Mail.ru)
+  - Payment schedule automation
 
 ## User Preferences
 - Language: Russian

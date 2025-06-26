@@ -2,6 +2,8 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { createYclientsService } from "./services/yclients";
+import { pdfGenerator } from "./services/pdf-generator";
+import { EmailServiceFactory } from "./services/email-service";
 import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { db } from "./db";
@@ -9,6 +11,8 @@ import { users, services, insertUserSchema, insertConfigSchema, insertServiceSch
   insertSubscriptionTypeSchema, insertPerkSchema, insertPackagePerkValueSchema,
   insertPackageSchema, config, perks, packagePerkValues,
   packages as packagesTable } from "@shared/schema";
+import fs from 'fs/promises';
+import path from 'path';
 
 // Extend session types
 declare module 'express-session' {
@@ -48,6 +52,24 @@ const calculationSchema = z.object({
     serviceId: z.number(),
     quantity: z.number()
   })).default([])
+});
+
+const offerSchema = z.object({
+  clientName: z.string().min(1),
+  clientPhone: z.string().min(10),
+  clientEmail: z.string().email(),
+  selectedServices: z.array(z.any()),
+  selectedPackage: z.enum(['vip', 'standard', 'economy']),
+  baseCost: z.number(),
+  finalCost: z.number(),
+  totalSavings: z.number(),
+  downPayment: z.number(),
+  installmentMonths: z.number().optional(),
+  monthlyPayment: z.number().optional(),
+  paymentSchedule: z.array(z.any()),
+  appliedDiscounts: z.array(z.any()).optional(),
+  freeZones: z.array(z.any()).optional(),
+  usedCertificate: z.boolean().default(false)
 });
 
 const configSchema = z.object({
@@ -624,6 +646,218 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create directory for PDFs if it doesn't exist
+  const pdfDir = path.join(process.cwd(), 'pdfs');
+  try {
+    await fs.access(pdfDir);
+  } catch {
+    await fs.mkdir(pdfDir, { recursive: true });
+  }
+
+  // API endpoint for creating offers
+  app.post("/api/offers", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ message: "Не авторизован" });
+      }
+
+      const offerData = offerSchema.parse(req.body);
+      
+      // Generate unique offer number
+      const offerNumber = await generateUniqueOfferNumber();
+      
+      // Generate payment schedule
+      const paymentSchedule = generatePaymentSchedule(
+        offerData.downPayment,
+        offerData.finalCost,
+        offerData.installmentMonths
+      );
+
+      // Create or find client
+      let client = await storage.getClientByPhone(offerData.clientPhone);
+      if (!client) {
+        client = await storage.createClient({
+          phone: offerData.clientPhone,
+          email: offerData.clientEmail
+        });
+      }
+
+      // Set expiration date (7 days from now)
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 7);
+
+      // Create offer
+      const offer = await storage.createOffer({
+        clientId: client.id,
+        masterId: req.session.userId,
+        offerNumber,
+        selectedServices: offerData.selectedServices,
+        selectedPackage: offerData.selectedPackage,
+        baseCost: offerData.baseCost.toString(),
+        finalCost: offerData.finalCost.toString(),
+        totalSavings: offerData.totalSavings.toString(),
+        downPayment: offerData.downPayment.toString(),
+        installmentMonths: offerData.installmentMonths,
+        monthlyPayment: offerData.monthlyPayment?.toString(),
+        paymentSchedule,
+        appliedDiscounts: offerData.appliedDiscounts,
+        freeZones: offerData.freeZones,
+        usedCertificate: offerData.usedCertificate,
+        clientName: offerData.clientName,
+        clientPhone: offerData.clientPhone,
+        clientEmail: offerData.clientEmail,
+        status: 'draft',
+        expiresAt
+      });
+
+      res.json(offer);
+    } catch (error) {
+      console.error('Ошибка создания оферты:', error);
+      res.status(500).json({ message: "Ошибка создания оферты" });
+    }
+  });
+
+  // API endpoint for generating PDF and sending email
+  app.post("/api/offers/:id/send", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ message: "Не авторизован" });
+      }
+
+      const offerId = parseInt(req.params.id);
+      const { emailConfig } = req.body;
+
+      // Get offer
+      const offers = await storage.getOffersByMaster(req.session.userId);
+      const offer = offers.find(o => o.id === offerId);
+      
+      if (!offer) {
+        return res.status(404).json({ message: "Оферта не найдена" });
+      }
+
+      if (!offer.clientEmail) {
+        return res.status(400).json({ message: "Email клиента не указан" });
+      }
+
+      // Generate PDF
+      const pdfBuffer = await pdfGenerator.generateOfferPDF(offer);
+      
+      // Save PDF to file
+      const fileName = `offer_${offer.offerNumber}.pdf`;
+      const filePath = path.join(pdfDir, fileName);
+      await fs.writeFile(filePath, pdfBuffer);
+
+      // Create email service based on configuration
+      let emailService;
+      switch (emailConfig.provider) {
+        case 'gmail':
+          emailService = EmailServiceFactory.createGmailService(
+            emailConfig.email,
+            emailConfig.password
+          );
+          break;
+        case 'yandex':
+          emailService = EmailServiceFactory.createYandexService(
+            emailConfig.email,
+            emailConfig.password
+          );
+          break;
+        case 'mailru':
+          emailService = EmailServiceFactory.createMailRuService(
+            emailConfig.email,
+            emailConfig.password
+          );
+          break;
+        default:
+          return res.status(400).json({ message: "Неподдерживаемый провайдер email" });
+      }
+
+      // Test connection first
+      const connectionTest = await emailService.testConnection();
+      if (!connectionTest) {
+        return res.status(500).json({ message: "Ошибка подключения к почтовому серверу" });
+      }
+
+      // Send email
+      const emailSent = await emailService.sendOfferEmail(offer, pdfBuffer);
+      
+      if (emailSent) {
+        // Update offer status
+        await storage.updateOffer(offer.id, {
+          pdfPath: filePath,
+          emailSent: true,
+          emailSentAt: new Date(),
+          status: 'sent'
+        });
+
+        res.json({ 
+          success: true, 
+          message: "Оферта успешно отправлена",
+          pdfPath: filePath 
+        });
+      } else {
+        res.status(500).json({ message: "Ошибка отправки email" });
+      }
+    } catch (error) {
+      console.error('Ошибка отправки оферты:', error);
+      res.status(500).json({ message: "Ошибка отправки оферты" });
+    }
+  });
+
+  // API endpoint for getting offers
+  app.get("/api/offers", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ message: "Не авторизован" });
+      }
+
+      const offers = await storage.getOffersByMaster(req.session.userId);
+      res.json(offers);
+    } catch (error) {
+      console.error('Ошибка получения оферт:', error);
+      res.status(500).json({ message: "Ошибка получения оферт" });
+    }
+  });
+
+  // API endpoint for getting specific offer
+  app.get("/api/offers/:number", async (req, res) => {
+    try {
+      const offer = await storage.getOfferByNumber(req.params.number);
+      
+      if (!offer) {
+        return res.status(404).json({ message: "Оферта не найдена" });
+      }
+
+      res.json(offer);
+    } catch (error) {
+      console.error('Ошибка получения оферты:', error);
+      res.status(500).json({ message: "Ошибка получения оферты" });
+    }
+  });
+
+  // API endpoint for updating offer status
+  app.patch("/api/offers/:id", async (req, res) => {
+    try {
+      if (!req.session.userId) {
+        return res.status(401).json({ message: "Не авторизован" });
+      }
+
+      const offerId = parseInt(req.params.id);
+      const { status } = req.body;
+
+      const updatedOffer = await storage.updateOffer(offerId, { status });
+      
+      if (!updatedOffer) {
+        return res.status(404).json({ message: "Оферта не найдена" });
+      }
+
+      res.json(updatedOffer);
+    } catch (error) {
+      console.error('Ошибка обновления оферты:', error);
+      res.status(500).json({ message: "Ошибка обновления оферты" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
@@ -785,4 +1019,63 @@ function getFreezeLimitForPackage(packageType: string): number {
     economy: 90 // 3 months
   };
   return (limits as any)[packageType] || 0;
+}
+
+// Generate unique offer number
+async function generateUniqueOfferNumber(): Promise<string> {
+  const prefix = 'VV';
+  const year = new Date().getFullYear().toString().slice(-2);
+  const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
+  
+  // Find the highest number for this month
+  const existingOffers = await storage.getOffersByMaster(1); // Get all offers
+  const thisMonthPattern = new RegExp(`^${prefix}${year}${month}(\\d{3})$`);
+  
+  let maxNumber = 0;
+  existingOffers.forEach(offer => {
+    const match = offer.offerNumber.match(thisMonthPattern);
+    if (match) {
+      const num = parseInt(match[1]);
+      if (num > maxNumber) maxNumber = num;
+    }
+  });
+  
+  const nextNumber = (maxNumber + 1).toString().padStart(3, '0');
+  return `${prefix}${year}${month}${nextNumber}`;
+}
+
+// Generate payment schedule
+function generatePaymentSchedule(
+  downPayment: number, 
+  finalCost: number, 
+  installmentMonths?: number
+): { date: string; amount: number; description: string }[] {
+  const schedule = [];
+  const today = new Date();
+  
+  // First payment (down payment)
+  schedule.push({
+    date: today.toLocaleDateString('ru-RU'),
+    amount: downPayment,
+    description: 'Первоначальный взнос'
+  });
+  
+  // If there are installments
+  if (installmentMonths && installmentMonths > 1) {
+    const remainingAmount = finalCost - downPayment;
+    const monthlyPayment = remainingAmount / installmentMonths;
+    
+    for (let i = 1; i <= installmentMonths; i++) {
+      const paymentDate = new Date(today);
+      paymentDate.setMonth(paymentDate.getMonth() + i);
+      
+      schedule.push({
+        date: paymentDate.toLocaleDateString('ru-RU'),
+        amount: monthlyPayment,
+        description: `Платеж ${i} из ${installmentMonths}`
+      });
+    }
+  }
+  
+  return schedule;
 }
