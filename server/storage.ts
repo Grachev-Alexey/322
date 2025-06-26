@@ -163,24 +163,51 @@ export class DatabaseStorage implements IStorage {
   }
 
   async findSubscriptionType(services: any[], cost: number, packageType: string): Promise<SubscriptionType | undefined> {
-    // Create a normalized key for comparison
+    // Create a normalized key for comparison based on services
     const serviceKey = services
       .map(s => `${s.serviceId || s.id}:${s.count || s.quantity || 1}`)
       .sort()
       .join('|');
     
-    const subscriptionTypes = await this.getSubscriptionTypes();
+    console.log('Looking for subscription with service key:', serviceKey);
+    console.log('Target cost:', cost);
     
-    return subscriptionTypes.find(st => {
-      const stServiceKey = JSON.parse(st.services || '[]')
-        .map((s: any) => `${s.serviceId || s.id}:${s.count || s.quantity || 1}`)
+    const subscriptionTypes = await this.getSubscriptionTypes();
+    console.log(`Found ${subscriptionTypes.length} existing subscription types`);
+    
+    const foundSubscription = subscriptionTypes.find(st => {
+      // Check cost match first (within 1 unit tolerance)
+      const costMatch = Math.abs(parseFloat(st.cost.toString()) - cost) < 1;
+      
+      console.log(`Checking subscription "${st.title}" (ID: ${st.id}), cost: ${st.cost}, match: ${costMatch}`);
+      
+      if (!costMatch) return false;
+      
+      // Extract services from balanceContainer
+      const balanceContainer = st.balanceContainer as any;
+      if (!balanceContainer || !balanceContainer.links || !Array.isArray(balanceContainer.links)) {
+        console.log('  No valid balance container');
+        return false;
+      }
+      
+      // Create service key from balance container
+      const stServiceKey = balanceContainer.links
+        .map((link: any) => `${link.service?.id || link.service_id}:${link.count}`)
         .sort()
         .join('|');
       
-      return stServiceKey === serviceKey && 
-             Math.abs(st.cost - cost) < 1 && 
-             st.packageType === packageType;
+      console.log(`  Service key: ${stServiceKey}, target: ${serviceKey}, match: ${stServiceKey === serviceKey}`);
+      
+      return stServiceKey === serviceKey;
     });
+    
+    if (foundSubscription) {
+      console.log('Found matching subscription:', foundSubscription.title);
+    } else {
+      console.log('No matching subscription found');
+    }
+    
+    return foundSubscription;
   }
 
   async findSubscriptionByNumber(number: string): Promise<SubscriptionType | undefined> {

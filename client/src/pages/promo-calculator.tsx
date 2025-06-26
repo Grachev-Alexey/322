@@ -3,19 +3,32 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RangeSlider } from "@/components/ui/range-slider";
-import { X, Moon, Sun, Crown, Star, Leaf, Gift, Sparkles, Check } from "lucide-react";
+import {
+  X,
+  Moon,
+  Sun,
+  Crown,
+  Star,
+  Leaf,
+  Gift,
+  Sparkles,
+  Check,
+} from "lucide-react";
 import * as Icons from "lucide-react";
 import { useCalculator } from "@/hooks/use-calculator";
 import { formatPrice } from "@/lib/utils";
 import ServiceSelector from "@/components/service-selector";
 import ClientModal from "@/components/client-modal";
-import { usePackagePerks, type PackagePerkValue } from "@/hooks/use-package-perks";
+import {
+  usePackagePerks,
+  type PackagePerkValue,
+} from "@/hooks/use-package-perks";
 import ThreeBlockComparison from "@/components/three-block-comparison";
 
 interface User {
   id: number;
   name: string;
-  role: 'master' | 'admin';
+  role: "master" | "admin";
 }
 
 interface PromoCalculatorPageProps {
@@ -44,14 +57,17 @@ interface Package {
   bonusAccountPercent: string;
 }
 
-export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorPageProps) {
+export default function PromoCalculatorPage({
+  user,
+  onLogout,
+}: PromoCalculatorPageProps) {
   const [darkMode, setDarkMode] = useState(false);
   const [showClientModal, setShowClientModal] = useState(false);
   const [isEditingPayment, setIsEditingPayment] = useState(false);
-  const [tempPaymentValue, setTempPaymentValue] = useState('');
+  const [tempPaymentValue, setTempPaymentValue] = useState("");
   const [isEditingCorrection, setIsEditingCorrection] = useState(false);
-  const [tempCorrectionValue, setTempCorrectionValue] = useState('');
-  
+  const [tempCorrectionValue, setTempCorrectionValue] = useState("");
+
   const packagePerksQuery = usePackagePerks();
   const packagePerkValues = packagePerksQuery.data || [];
 
@@ -77,7 +93,7 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
     setSelectedPackage,
     isLoading,
     getMinDownPayment,
-    getMaxDownPayment
+    getMaxDownPayment,
   } = useCalculator();
 
   const toggleDarkMode = () => {
@@ -92,17 +108,19 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
   // Helper function to safely access calculation packages
   const getPackageData = (packageType: string): PackageData | null => {
     if (!calculation || !calculation.packages) return null;
-    return (calculation.packages as Record<string, PackageData>)[packageType] || null;
+    return (
+      (calculation.packages as Record<string, PackageData>)[packageType] || null
+    );
   };
 
-
-
   return (
-    <div className={`min-h-screen overflow-hidden promo-background glass-pattern ${darkMode ? 'dark' : ''}`}>
+    <div
+      className={`min-h-screen overflow-hidden promo-background glass-pattern ${darkMode ? "dark" : ""}`}
+    >
       {/* Background decorative elements */}
       <div className="floating-pattern top-10 left-10"></div>
       <div className="floating-pattern bottom-10 right-10"></div>
-      
+
       {/* Subtle exit button */}
       <div className="absolute top-2 right-2 z-50">
         <Button
@@ -142,14 +160,16 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                   Спецпредложение гостевого дня
                 </Badge>
               </div>
-              <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">Выбор услуг</h3>
+              <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">
+                Выбор услуг
+              </h3>
               <ServiceSelector
                 selectedServices={selectedServices}
                 onServicesChange={setSelectedServices}
                 onAddFreeZone={setFreeZones}
                 freeZones={freeZones}
               />
-              
+
               {/* Cost per procedure and subscription cost */}
               {calculation && calculation.baseCost > 0 && (
                 <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 space-y-2">
@@ -158,7 +178,9 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                       Стоимость за процедуру:
                     </span>
                     <span className="text-xs font-bold text-gray-800 dark:text-gray-200">
-                      {formatPrice(Math.round(calculation.baseCost / procedureCount))}
+                      {formatPrice(
+                        Math.round(calculation.baseCost / procedureCount),
+                      )}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
@@ -175,25 +197,37 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
 
             {/* Procedure count - компактный */}
             <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
-              <h4 className="font-bold text-gray-900 dark:text-white mb-2 text-sm">Количество процедур</h4>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-2 text-sm">
+                Количество процедур
+              </h4>
               <div className="text-center mb-1.5">
-                <div className="text-sm font-bold text-premium">{procedureCount}</div>
+                <div className="text-sm font-bold text-premium">
+                  {procedureCount}
+                </div>
                 <div className="text-xs text-gray-500">процедур</div>
               </div>
-              
+
               <RangeSlider
-                min={4}
+                min={3}
                 max={20}
                 value={procedureCount}
                 onChange={setProcedureCount}
                 className="dark:bg-gray-700"
               />
-              
-              {procedureCount >= (calculatorSettings?.bulkDiscountThreshold || 15) && (
+
+              {procedureCount >=
+                (calculatorSettings?.bulkDiscountThreshold || 15) && (
                 <div className="mt-1.5 p-1.5 bg-pink-50 dark:bg-pink-950 rounded-lg border border-pink-200 dark:border-pink-800">
                   <div className="flex items-center justify-center text-xs font-medium">
                     <div className="text-pink-600 dark:text-pink-400">
-                      <span>+Бонусная скидка {Math.round((calculatorSettings?.bulkDiscountPercentage || 0.025) * 100)}%</span>
+                      <span>
+                        +Бонусная скидка{" "}
+                        {Math.round(
+                          (calculatorSettings?.bulkDiscountPercentage ||
+                            0.025) * 100,
+                        )}
+                        %
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -203,60 +237,71 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             {/* Payment settings - минималистичный дизайн */}
             <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
               <h4 className="font-bold text-gray-900 dark:text-white text-sm mb-2">
-                {selectedPackage === 'vip' ? 'Полная предоплата' : 'Первый взнос'}
+                {selectedPackage === "vip"
+                  ? "Полная предоплата"
+                  : "Первый взнос"}
               </h4>
-              
+
               <div className="text-center mb-1.5">
-                {selectedPackage === 'vip' ? (
+                {selectedPackage === "vip" ? (
                   // VIP - показываем полную стоимость стандартным цветом
                   <div className="text-xs font-bold text-premium">
-                    {calculation?.packages?.vip ? formatPrice(calculation.packages.vip.finalCost) : formatPrice(calculation?.baseCost || 0)}
+                    {calculation?.packages?.vip
+                      ? formatPrice(calculation.packages.vip.finalCost)
+                      : formatPrice(calculation?.baseCost || 0)}
                   </div>
-                ) : (
-                  // Обычные пакеты - редактируемое поле
-                  isEditingPayment ? (
-                    <input
-                      type="number"
-                      value={tempPaymentValue}
-                      onChange={(e) => setTempPaymentValue(e.target.value)}
-                      onBlur={() => {
+                ) : // Обычные пакеты - редактируемое поле
+                isEditingPayment ? (
+                  <input
+                    type="number"
+                    value={tempPaymentValue}
+                    onChange={(e) => setTempPaymentValue(e.target.value)}
+                    onBlur={() => {
+                      const numericValue = parseInt(tempPaymentValue) || 0;
+                      const minPayment = getMinDownPayment();
+                      const maxPayment = getMaxDownPayment();
+                      const constrainedValue = Math.max(
+                        minPayment,
+                        Math.min(maxPayment, numericValue),
+                      );
+                      setDownPayment(constrainedValue);
+                      setIsEditingPayment(false);
+                    }}
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") {
                         const numericValue = parseInt(tempPaymentValue) || 0;
                         const minPayment = getMinDownPayment();
                         const maxPayment = getMaxDownPayment();
-                        const constrainedValue = Math.max(minPayment, Math.min(maxPayment, numericValue));
+                        const constrainedValue = Math.max(
+                          minPayment,
+                          Math.min(maxPayment, numericValue),
+                        );
                         setDownPayment(constrainedValue);
                         setIsEditingPayment(false);
-                      }}
-                      onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                          const numericValue = parseInt(tempPaymentValue) || 0;
-                          const minPayment = getMinDownPayment();
-                          const maxPayment = getMaxDownPayment();
-                          const constrainedValue = Math.max(minPayment, Math.min(maxPayment, numericValue));
-                          setDownPayment(constrainedValue);
-                          setIsEditingPayment(false);
-                        }
-                      }}
-                      autoFocus
-                      onFocus={(e) => e.target.select()}
-                      className="text-xs font-bold text-premium bg-transparent border-none text-center w-full focus:outline-none focus:ring-2 focus:ring-pink-500 rounded px-2 py-1"
-                      style={{ WebkitAppearance: 'none', MozAppearance: 'textfield' }}
-                    />
-                  ) : (
-                    <div
-                      onClick={() => {
-                        setTempPaymentValue(downPayment.toString());
-                        setIsEditingPayment(true);
-                      }}
-                      className="text-xs font-bold text-premium cursor-pointer hover:bg-pink-50 dark:hover:bg-pink-900/20 rounded px-2 py-1 transition-colors"
-                    >
-                      {formatPrice(downPayment)}
-                    </div>
-                  )
+                      }
+                    }}
+                    autoFocus
+                    onFocus={(e) => e.target.select()}
+                    className="text-xs font-bold text-premium bg-transparent border-none text-center w-full focus:outline-none focus:ring-2 focus:ring-pink-500 rounded px-2 py-1"
+                    style={{
+                      WebkitAppearance: "none",
+                      MozAppearance: "textfield",
+                    }}
+                  />
+                ) : (
+                  <div
+                    onClick={() => {
+                      setTempPaymentValue(downPayment.toString());
+                      setIsEditingPayment(true);
+                    }}
+                    className="text-xs font-bold text-premium cursor-pointer hover:bg-pink-50 dark:hover:bg-pink-900/20 rounded px-2 py-1 transition-colors"
+                  >
+                    {formatPrice(downPayment)}
+                  </div>
                 )}
               </div>
-              
-              {selectedPackage === 'vip' ? (
+
+              {selectedPackage === "vip" ? (
                 // VIP - нейтральный декоративный слайдер заблокирован на 100%
                 <div className="mb-2">
                   <div className="relative h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
@@ -279,36 +324,54 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                   disabled={!selectedPackage}
                 />
               )}
-              
-
             </div>
 
             {/* Installment configuration - компактный */}
-            {downPayment < (selectedPackage && calculation ? getPackageData(selectedPackage)?.finalCost || 25000 : 25000) && (
+            {downPayment <
+              (selectedPackage && calculation
+                ? getPackageData(selectedPackage)?.finalCost || 25000
+                : 25000) && (
               <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
-                <h4 className="font-bold text-gray-900 dark:text-white mb-2 text-sm">Рассрочка</h4>
-                
+                <h4 className="font-bold text-gray-900 dark:text-white mb-2 text-sm">
+                  Рассрочка
+                </h4>
+
                 <div className="text-center mb-1.5">
-                  <div className="text-sm font-bold text-premium">{installmentMonths}</div>
+                  <div className="text-sm font-bold text-premium">
+                    {installmentMonths}
+                  </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400">
-                    {installmentMonths === 1 ? 'месяц' : 
-                     installmentMonths <= 4 ? 'месяца' : 'месяцев'}
+                    {installmentMonths === 1
+                      ? "месяц"
+                      : installmentMonths <= 4
+                        ? "месяца"
+                        : "месяцев"}
                   </div>
                 </div>
-                
+
                 <RangeSlider
-                  min={Math.min(...(calculatorSettings?.installmentMonthsOptions || [2]))}
-                  max={Math.max(...(calculatorSettings?.installmentMonthsOptions || [6]))}
+                  min={Math.min(
+                    ...(calculatorSettings?.installmentMonthsOptions || [2]),
+                  )}
+                  max={Math.max(
+                    ...(calculatorSettings?.installmentMonthsOptions || [6]),
+                  )}
                   value={installmentMonths}
                   onChange={setInstallmentMonths}
                   className="dark:bg-gray-700"
                 />
-                
+
                 {selectedPackage && calculation && (
                   <div className="mt-1.5 text-center">
-                    <div className="text-xs text-gray-600 dark:text-gray-400">Ежемесячный платеж</div>
+                    <div className="text-xs text-gray-600 dark:text-gray-400">
+                      Ежемесячный платеж
+                    </div>
                     <div className="text-sm font-bold text-premium">
-                      {formatPrice(((getPackageData(selectedPackage)?.finalCost || 0) - downPayment) / installmentMonths)}
+                      {formatPrice(
+                        ((getPackageData(selectedPackage)?.finalCost || 0) -
+                          downPayment) /
+                          installmentMonths,
+                      )}
                     </div>
                   </div>
                 )}
@@ -319,9 +382,14 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
             <div className="bg-white dark:bg-gray-900 rounded-lg p-2.5 border border-gray-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="font-bold text-gray-900 dark:text-white text-sm">Сертификат</h4>
+                  <h4 className="font-bold text-gray-900 dark:text-white text-sm">
+                    Сертификат
+                  </h4>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    Скидка {calculatorSettings?.certificateDiscountAmount?.toLocaleString() || '3 000'}₽
+                    Скидка{" "}
+                    {calculatorSettings?.certificateDiscountAmount?.toLocaleString() ||
+                      "3 000"}
+                    ₽
                   </p>
                 </div>
                 <label className="relative inline-flex items-center cursor-pointer">
@@ -329,15 +397,25 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                     type="checkbox"
                     checked={usedCertificate}
                     onChange={(e) => setUsedCertificate(e.target.checked)}
-                    disabled={!calculation || calculation.baseCost < (calculatorSettings?.certificateMinCourseAmount || 25000)}
+                    disabled={
+                      !calculation ||
+                      calculation.baseCost <
+                        (calculatorSettings?.certificateMinCourseAmount ||
+                          25000)
+                    }
                     className="sr-only peer"
                   />
                   <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-0 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-premium peer-disabled:opacity-50 focus:outline-none focus:ring-0"></div>
                 </label>
               </div>
-              {!calculation || calculation.baseCost < (calculatorSettings?.certificateMinCourseAmount || 25000) ? (
+              {!calculation ||
+              calculation.baseCost <
+                (calculatorSettings?.certificateMinCourseAmount || 25000) ? (
                 <p className="text-xs text-red-500 dark:text-red-400 mt-2">
-                  Доступно при курсе от {calculatorSettings?.certificateMinCourseAmount?.toLocaleString() || '25 000'}₽
+                  Доступно при курсе от{" "}
+                  {calculatorSettings?.certificateMinCourseAmount?.toLocaleString() ||
+                    "25 000"}
+                  ₽
                 </p>
               ) : null}
             </div>
@@ -355,13 +433,19 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                     value={tempCorrectionValue}
                     onChange={(e) => setTempCorrectionValue(e.target.value)}
                     onBlur={() => {
-                      const value = Math.min(10, Math.max(0, parseFloat(tempCorrectionValue) || 0));
+                      const value = Math.min(
+                        10,
+                        Math.max(0, parseFloat(tempCorrectionValue) || 0),
+                      );
                       setCorrectionPercent(value);
                       setIsEditingCorrection(false);
                     }}
                     onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        const value = Math.min(10, Math.max(0, parseFloat(tempCorrectionValue) || 0));
+                      if (e.key === "Enter") {
+                        const value = Math.min(
+                          10,
+                          Math.max(0, parseFloat(tempCorrectionValue) || 0),
+                        );
                         setCorrectionPercent(value);
                         setIsEditingCorrection(false);
                       }
@@ -370,13 +454,17 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                     onFocus={(e) => e.target.select()}
                     className="w-16 text-sm text-center border border-gray-300 dark:border-gray-600 rounded px-2 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
                   />
-                  <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">%</span>
+                  <span className="text-sm text-gray-500 dark:text-gray-400 ml-1">
+                    %
+                  </span>
                 </div>
               ) : (
                 // Обычный режим - заголовок и переключатель
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="font-bold text-gray-900 dark:text-white text-sm">Коррекция</h4>
+                    <h4 className="font-bold text-gray-900 dark:text-white text-sm">
+                      Коррекция
+                    </h4>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
                     <input
@@ -384,7 +472,11 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                       checked={correctionPercent > 0}
                       onChange={(e) => {
                         if (e.target.checked) {
-                          setTempCorrectionValue(correctionPercent > 0 ? correctionPercent.toString() : '5');
+                          setTempCorrectionValue(
+                            correctionPercent > 0
+                              ? correctionPercent.toString()
+                              : "5",
+                          );
                           setIsEditingCorrection(true);
                         } else {
                           setCorrectionPercent(0);
@@ -416,12 +508,10 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
 
         {/* Right panel - Package comparison с адаптивной высотой */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden order-1 lg:order-2">
-
-
           {/* Three Block Comparison - теперь занимает оставшееся место */}
           {calculation && (
             <div className="flex-1 overflow-auto">
-              <ThreeBlockComparison 
+              <ThreeBlockComparison
                 calculation={calculation}
                 packages={packages}
                 selectedPackage={selectedPackage}
@@ -434,8 +524,12 @@ export default function PromoCalculatorPage({ user, onLogout }: PromoCalculatorP
                 calculatorSettings={calculatorSettings}
                 freeZones={freeZones}
                 selectedServices={selectedServices}
-                bulkDiscountThreshold={calculatorSettings?.bulkDiscountThreshold || 15}
-                bulkDiscountPercentage={calculatorSettings?.bulkDiscountPercentage || 0.025}
+                bulkDiscountThreshold={
+                  calculatorSettings?.bulkDiscountThreshold || 15
+                }
+                bulkDiscountPercentage={
+                  calculatorSettings?.bulkDiscountPercentage || 0.025
+                }
                 correctionPercent={correctionPercent}
               />
             </div>
