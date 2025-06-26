@@ -754,8 +754,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const emailConfig = emailSettings.value as any;
 
+      // Get package data from database
+      const packages = await storage.getPackages();
+      const packageData = packages.find(pkg => pkg.type === offer.selectedPackage);
+
       // Generate PDF
-      const pdfBuffer = await pdfGenerator.generateOfferPDF(offer);
+      const pdfBuffer = await pdfGenerator.generateOfferPDF(offer, packageData);
       
       // Save PDF to file
       const fileName = `offer_${offer.offerNumber}.pdf`;

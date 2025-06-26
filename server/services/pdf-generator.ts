@@ -11,7 +11,9 @@ interface PaymentScheduleItem {
 }
 
 export class PDFGenerator {
-  async generateOfferPDF(offer: Offer): Promise<Buffer> {
+  constructor(private storage?: any) {}
+
+  async generateOfferPDF(offer: Offer, packageData?: any): Promise<Buffer> {
     let executablePath;
     try {
       executablePath = execSync('which chromium', { encoding: 'utf8' }).trim();
@@ -41,7 +43,7 @@ export class PDFGenerator {
     try {
       const page = await browser.newPage();
       
-      const htmlContent = this.generateOfferHTML(offer);
+      const htmlContent = await this.generateOfferHTML(offer, packageData);
       await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
       
       const pdfBuffer = await page.pdf({
@@ -66,11 +68,29 @@ export class PDFGenerator {
   }
 
   private getTotalSessions(selectedServices: any[]): number {
-    // Правильно считаем общее количество сеансов из каждой услуги
-    return selectedServices.reduce((total, service) => {
-      const count = service.count || service.quantity || 1;
-      return total + count;
-    }, 0);
+    // Берем количество процедур из первой услуги (так как все услуги имеют одинаковое количество)
+    if (selectedServices.length > 0) {
+      return selectedServices[0].count || selectedServices[0].quantity || 1;
+    }
+    return 0;
+  }
+
+  private getGiftSessions(packageType: string): number {
+    switch (packageType) {
+      case 'vip': return 2;
+      case 'standard': return 1;
+      case 'economy': return 0;
+      default: return 0;
+    }
+  }
+
+  private getBonusPercent(packageType: string): number {
+    switch (packageType) {
+      case 'vip': return 0;
+      case 'standard': return 0;
+      case 'economy': return 0;
+      default: return 0;
+    }
   }
 
   private getPackageDiscount(packageType: string): number {
@@ -90,9 +110,7 @@ export class PDFGenerator {
           hasCard: true,
           card: 'Золотая карта',
           cardDiscount: '35',
-          giftSessions: '3/0',
-          freezeOption: 'Бессрочно',
-          bonusPercent: '20%/10%'
+          freezeOption: 'Бессрочно'
         };
       case 'standard':
         return {
@@ -100,9 +118,7 @@ export class PDFGenerator {
           hasCard: true,
           card: 'Серебряная карта',
           cardDiscount: '30',
-          giftSessions: '1/0',
-          freezeOption: '6 мес/3 мес',
-          bonusPercent: '10%/0%'
+          freezeOption: '6 мес'
         };
       case 'economy':
         return {
@@ -110,9 +126,7 @@ export class PDFGenerator {
           hasCard: false,
           card: '',
           cardDiscount: '',
-          giftSessions: '0',
-          freezeOption: '3 мес',
-          bonusPercent: '0%'
+          freezeOption: '3 мес'
         };
       default:
         return {
@@ -120,17 +134,17 @@ export class PDFGenerator {
           hasCard: false,
           card: '',
           cardDiscount: '',
-          giftSessions: '0',
-          freezeOption: '3 мес',
-          bonusPercent: '0%'
+          freezeOption: '3 мес'
         };
     }
   }
 
-  private generateOfferHTML(offer: Offer): string {
+  private async generateOfferHTML(offer: Offer, packageData?: any): Promise<string> {
     const selectedServices = offer.selectedServices as any[];
     const packagePerks = this.getPackagePerks(offer.selectedPackage);
-    const discountPercentage = this.getPackageDiscount(offer.selectedPackage);
+    const discountPercentage = packageData ? Math.round(packageData.discount * 100) : this.getPackageDiscount(offer.selectedPackage);
+    const giftSessions = packageData ? packageData.gift_sessions : this.getGiftSessions(offer.selectedPackage);
+    const bonusPercent = packageData ? Math.round(packageData.bonus_account_percent * 100) : this.getBonusPercent(offer.selectedPackage);
     const paymentSchedule = offer.paymentSchedule as PaymentScheduleItem[];
 
     return `
@@ -235,7 +249,7 @@ export class PDFGenerator {
     </div>
 
     <div class="section">
-        <div class="service-name">1. Наименование услуги <span class="highlight">"${this.getServiceNames(selectedServices)}"</span></div>
+        <div class="service-name">1. Наименование услуги "<span class="highlight">${this.getServiceNames(selectedServices)}</span>"</div>
     </div>
 
     <div class="section">
@@ -269,7 +283,7 @@ export class PDFGenerator {
     ` : ''}
 
     <div class="section">
-        <div class="details">${packagePerks.hasCard ? '6' : '5'}. Количество дополнительных подарочных сеансов: <span class="highlight">${packagePerks.giftSessions}</span></div>
+        <div class="details">${packagePerks.hasCard ? '6' : '5'}. Количество дополнительных подарочных сеансов: <span class="highlight">${giftSessions}</span></div>
     </div>
 
     <div class="section">
@@ -277,7 +291,7 @@ export class PDFGenerator {
     </div>
 
     <div class="section">
-        <div class="details">${packagePerks.hasCard ? '8' : '7'}. Начисление на бонусный счет: <span class="highlight">${packagePerks.bonusPercent}%</span> от стоимости абонемента</div>
+        <div class="details">${packagePerks.hasCard ? '8' : '7'}. Начисление на бонусный счет: <span class="highlight">${bonusPercent}%</span> от стоимости абонемента</div>
     </div>
 
     <div class="cost-section">
