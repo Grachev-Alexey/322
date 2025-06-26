@@ -352,97 +352,105 @@ export default function ClientModal({
           </div>
         ) : (
           <div className={`${selectedPackage && selectedPackage !== 'vip' ? 'grid grid-cols-1 lg:grid-cols-2 gap-6' : ''}`}>
-            {/* Левая колонка - форма данных клиента */}
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="clientName" className="block text-sm font-medium text-gray-700 mb-2">
-                  ФИО клиента *
-                </Label>
-                <Input
-                  id="clientName"
-                  value={clientName}
-                  onChange={(e) => setClientName(e.target.value)}
-                  className="input-premium"
-                  placeholder="Иванов Иван Иванович"
-                  required
-                />
+            {/* Левая колонка - Данные клиента */}
+            <div>
+              <div className="border-b border-gray-200 pb-3 mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">Данные клиента</h3>
               </div>
               
-              <div>
-                <Label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                  Номер телефона *
-                </Label>
-                <PhoneInput
-                  id="phone"
-                  value={phone}
-                  onChange={setPhone}
-                  placeholder="+7 (___) ___-__-__"
-                  required
-                />
-              </div>
-              
-              <div>
-                <Label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                  Email клиента *
-                </Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="input-premium"
-                  placeholder="client@example.com"
-                  required
-                />
-              </div>
-              
-              <div className="flex gap-3 pt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={handleClose}
-                  className="flex-1"
-                  disabled={loading}
-                >
-                  Отмена
-                </Button>
-                <Button
-                  type="submit"
-                  className="flex-1 btn-primary"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Создание...
-                    </>
-                  ) : (
-                    "Создать абонемент"
-                  )}
-                </Button>
-              </div>
-            </form>
-
-            {/* Правая колонка - график платежей (только для стандарт/эконом) */}
-            {selectedPackage && selectedPackage !== 'vip' && paymentSchedule.length > 0 && (
-              <div className="bg-gray-50 rounded-lg p-4">
-                <div className="flex items-center gap-2 mb-4">
-                  <Calendar className="w-5 h-5 text-purple-600" />
-                  <h3 className="text-lg font-semibold text-gray-900">График платежей</h3>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div>
+                  <Label htmlFor="clientName" className="block text-sm font-medium text-gray-700 mb-2">
+                    ФИО клиента *
+                  </Label>
+                  <Input
+                    id="clientName"
+                    value={clientName}
+                    onChange={(e) => setClientName(e.target.value)}
+                    className="input-premium"
+                    placeholder="Иванов Иван Иванович"
+                    required
+                  />
                 </div>
                 
-                <div className="space-y-3">
+                <div>
+                  <Label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                    Номер телефона *
+                  </Label>
+                  <PhoneInput
+                    id="phone"
+                    value={phone}
+                    onChange={setPhone}
+                    placeholder="+7 (___) ___-__-__"
+                    required
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    Email клиента *
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="input-premium"
+                    placeholder="client@example.com"
+                    required
+                  />
+                </div>
+                
+                <div className="flex gap-3 pt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleClose}
+                    className="flex-1"
+                    disabled={loading}
+                  >
+                    Отмена
+                  </Button>
+                  <Button
+                    type="submit"
+                    className="flex-1 btn-primary"
+                    disabled={loading}
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Создание...
+                      </>
+                    ) : (
+                      "Создать абонемент"
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </div>
+
+            {/* Правая колонка - График платежей (только для стандарт/эконом) */}
+            {selectedPackage && selectedPackage !== 'vip' && paymentSchedule.length > 0 && (
+              <div>
+                <div className="border-b border-gray-200 pb-3 mb-4">
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-pink-600" />
+                    <h3 className="text-lg font-semibold text-gray-900">График платежей</h3>
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
                   {paymentSchedule.map((payment, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-white rounded-md border border-gray-200">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                          <CreditCard className="w-4 h-4 text-purple-600" />
+                    <div key={index} className="flex items-center justify-between p-2 bg-pink-50 rounded border border-pink-200">
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 bg-pink-100 rounded-full flex items-center justify-center">
+                          <span className="text-xs font-bold text-pink-600">{index + 1}</span>
                         </div>
                         <div>
-                          <div className="font-medium text-gray-900">
+                          <div className="text-sm font-medium text-gray-900">
                             {payment.description}
                           </div>
-                          <div className="text-sm text-gray-500">
+                          <div className="text-xs text-gray-500">
                             {payment.date.toLocaleDateString('ru-RU', {
                               day: '2-digit',
                               month: '2-digit',
@@ -451,20 +459,18 @@ export default function ClientModal({
                           </div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="font-bold text-purple-600">
-                          {formatPrice(payment.amount)}
-                        </div>
+                      <div className="text-sm font-bold text-pink-600">
+                        {formatPrice(payment.amount)}
                       </div>
                     </div>
                   ))}
                 </div>
                 
                 {/* Итого */}
-                <div className="mt-4 pt-4 border-t border-gray-200">
+                <div className="mt-3 pt-3 border-t border-pink-200 bg-pink-50 rounded p-2">
                   <div className="flex items-center justify-between">
-                    <div className="font-semibold text-gray-900">Итого к оплате:</div>
-                    <div className="font-bold text-lg text-purple-600">
+                    <div className="text-sm font-semibold text-gray-900">Итого к оплате:</div>
+                    <div className="font-bold text-pink-600">
                       {formatPrice(paymentSchedule.reduce((sum, payment) => sum + payment.amount, 0))}
                     </div>
                   </div>
