@@ -583,24 +583,24 @@ export default function PromoCalculatorPage({
                   </h3>
                   
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between p-2 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
-                      <span className="text-xs text-gray-700 dark:text-gray-300">За подруг</span>
-                      <span className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</span>
+                    <div className="p-2 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
+                      <div className="text-xs text-gray-700 dark:text-gray-300 mb-1">За подруг</div>
+                      <div className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</div>
                     </div>
                     
-                    <div className="flex items-center justify-between p-2 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
-                      <span className="text-xs text-gray-700 dark:text-gray-300">За отзыв в Яндекс Картах</span>
-                      <span className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</span>
+                    <div className="p-2 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
+                      <div className="text-xs text-gray-700 dark:text-gray-300 mb-1">За отзыв в Яндекс Картах</div>
+                      <div className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</div>
                     </div>
                     
-                    <div className="flex items-center justify-between p-2 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
-                      <span className="text-xs text-gray-700 dark:text-gray-300">За отзыв в 2ГИС</span>
-                      <span className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</span>
+                    <div className="p-2 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
+                      <div className="text-xs text-gray-700 dark:text-gray-300 mb-1">За отзыв в 2ГИС</div>
+                      <div className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</div>
                     </div>
                     
-                    <div className="flex items-center justify-between p-2 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
-                      <span className="text-xs text-gray-700 dark:text-gray-300">За отметку в соцсетях</span>
-                      <span className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</span>
+                    <div className="p-2 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
+                      <div className="text-xs text-gray-700 dark:text-gray-300 mb-1">За отметку в соцсетях</div>
+                      <div className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</div>
                     </div>
                   </div>
                 </div>
