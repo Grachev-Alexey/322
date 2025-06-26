@@ -100,11 +100,11 @@ export class PDFGenerator {
     private getBonusPercent(packageType: string): number {
         switch (packageType) {
             case "vip":
-                return 0;
+                return 20;
             case "standard":
-                return 0;
+                return 15;
             case "economy":
-                return 0;
+                return 10;
             default:
                 return 0;
         }
@@ -173,12 +173,21 @@ export class PDFGenerator {
         const discountPercentage = packageData
             ? Math.round(packageData.discount * 100)
             : this.getPackageDiscount(offer.selectedPackage);
-        const giftSessions = packageData
-            ? packageData.gift_sessions
+        console.log('PDF generation data:', {
+            packageData,
+            selectedPackage: offer.selectedPackage,
+            giftSessionsFromData: packageData?.giftSessions,
+            bonusPercentFromData: packageData?.bonusAccountPercent
+        });
+
+        const giftSessions = packageData && packageData.giftSessions !== undefined
+            ? packageData.giftSessions
             : this.getGiftSessions(offer.selectedPackage);
-        const bonusPercent = packageData
-            ? Math.round(packageData.bonus_account_percent * 100)
+        const bonusPercent = packageData && packageData.bonusAccountPercent !== undefined
+            ? Math.round(parseFloat(packageData.bonusAccountPercent.toString()) * 100)
             : this.getBonusPercent(offer.selectedPackage);
+
+        console.log('Calculated values:', { giftSessions, bonusPercent });
         const paymentSchedule = offer.paymentSchedule as PaymentScheduleItem[];
 
         return `
@@ -216,7 +225,6 @@ export class PDFGenerator {
             margin-bottom: 12px;
         }
         .service-name {
-            font-weight: bold;
             margin-bottom: 8px;
         }
         .details {

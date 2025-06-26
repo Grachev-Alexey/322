@@ -1132,13 +1132,12 @@ function getFreezeLimitForPackage(packageType: string): number {
 
 // Generate unique offer number
 async function generateUniqueOfferNumber(): Promise<string> {
-  const prefix = 'VV';
   const year = new Date().getFullYear().toString().slice(-2);
   const month = (new Date().getMonth() + 1).toString().padStart(2, '0');
   
   // Find the highest number for this month
   const existingOffers = await storage.getOffersByMaster(1); // Get all offers
-  const thisMonthPattern = new RegExp(`^${prefix}${year}${month}(\\d{3})$`);
+  const thisMonthPattern = new RegExp(`^${year}${month}(\\d{3})$`);
   
   let maxNumber = 0;
   existingOffers.forEach(offer => {
@@ -1150,7 +1149,7 @@ async function generateUniqueOfferNumber(): Promise<string> {
   });
   
   const nextNumber = (maxNumber + 1).toString().padStart(3, '0');
-  return `${prefix}${year}${month}${nextNumber}`;
+  return `${year}${month}${nextNumber}`;
 }
 
 // Generate payment schedule
