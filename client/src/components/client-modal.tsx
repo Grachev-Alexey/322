@@ -41,6 +41,7 @@ export default function ClientModal({
   const [subscriptionTitle, setSubscriptionTitle] = useState("");
   const [isCompleted, setIsCompleted] = useState(false);
   const [showOfferModal, setShowOfferModal] = useState(false);
+  const [offerSent, setOfferSent] = useState(false);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -104,6 +105,9 @@ export default function ClientModal({
         const result = await response.json();
         setSubscriptionTitle(result.subscriptionType);
         setIsCompleted(true);
+        
+        // Автоматически создаем и отправляем договор-оферту
+        await createAndSendOffer();
       } else {
         const error = await response.json();
         throw new Error(error.message);
@@ -116,6 +120,75 @@ export default function ClientModal({
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const createAndSendOffer = async () => {
+    if (!selectedPackage || !calculation) {
+      return;
+    }
+
+    try {
+      // Создаем оферту
+      const packageData = calculation.packages[selectedPackage];
+      const offerData = {
+        clientName,
+        clientPhone: phone.replace(/\D/g, ''),
+        clientEmail: email,
+        selectedPackage,
+        selectedServices: selectedServices.map(service => ({
+          id: service.yclientsId,
+          name: service.title,
+          price: service.priceMin,
+          quantity: (service.quantity || 1) * procedureCount
+        })),
+        calculation: {
+          baseCost: calculation.baseCost,
+          finalCost: packageData.finalCost,
+          totalSavings: packageData.totalSavings,
+          downPayment,
+          installmentMonths: selectedPackage === 'vip' ? undefined : installmentMonths,
+          monthlyPayment: selectedPackage === 'vip' ? undefined : packageData.monthlyPayment,
+          usedCertificate,
+          freeZones,
+          appliedDiscounts: packageData.appliedDiscounts
+        }
+      };
+
+      const createResponse = await fetch("/api/offers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify(offerData)
+      });
+
+      if (createResponse.ok) {
+        const offer = await createResponse.json();
+        
+        // Отправляем оферту
+        const sendResponse = await fetch(`/api/offers/${offer.id}/send`, {
+          method: "POST",
+          credentials: "include"
+        });
+
+        if (sendResponse.ok) {
+          setOfferSent(true);
+          toast({
+            title: "Договор отправлен!",
+            description: `Договор-оферта успешно отправлен на ${email}`,
+          });
+        } else {
+          throw new Error("Не удалось отправить договор");
+        }
+      } else {
+        throw new Error("Не удалось создать договор");
+      }
+    } catch (error) {
+      console.error("Error creating/sending offer:", error);
+      // Не показываем ошибку пользователю, чтобы не портить успешное создание абонемента
+      // Просто логируем ошибку
     }
   };
 
@@ -138,8 +211,10 @@ export default function ClientModal({
   const handleClose = () => {
     setPhone("");
     setEmail("");
+    setClientName("");
     setSubscriptionTitle("");
     setIsCompleted(false);
+    setOfferSent(false);
     onClose();
   };
 
@@ -188,6 +263,15 @@ export default function ClientModal({
                 </Button>
               </div>
             </div>
+            
+            {offerSent && (
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-center gap-2 text-blue-800">
+                  <CheckCircle className="w-5 h-5" />
+                  <span className="font-medium">Договор-оферта отправлен на {email}</span>
+                </div>
+              </div>
+            )}
             
             <Button
               type="button"
