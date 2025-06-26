@@ -232,6 +232,17 @@ export function useCalculator() {
     debouncedCalculation();
   }, [debouncedCalculation]);
 
+  // Check if selected package is still available after calculation
+  useEffect(() => {
+    if (selectedPackage && calculation?.packages) {
+      const packageData = calculation.packages[selectedPackage as keyof typeof calculation.packages];
+      if (packageData && packageData.isAvailable === false) {
+        // Package is no longer available, deselect it
+        setSelectedPackage(null);
+      }
+    }
+  }, [calculation, selectedPackage]);
+
 
 
   return {

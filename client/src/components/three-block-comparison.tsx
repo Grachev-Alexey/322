@@ -204,25 +204,42 @@ export default function ThreeBlockComparison({
             {/* Package Headers - contained within grid cells */}
             {packageTypes.map((packageType) => {
               const Icon = getPackageIcon(packageType);
+              const packageData = getPackageData(packageType);
+              const isAvailable = packageData?.isAvailable !== false;
+              const unavailableReason = packageData?.unavailableReason || '';
               const isSelected =
                 selectedPackage === packageType && selectedPackage !== null;
 
               return (
                 <div key={packageType} className="text-center">
                   <div
-                    className="cursor-pointer transition-all duration-200 p-1"
-                    onClick={() => onPackageSelect(packageType)}
+                    className={`transition-all duration-200 p-1 ${
+                      isAvailable 
+                        ? 'cursor-pointer hover:opacity-80' 
+                        : 'cursor-not-allowed opacity-50'
+                    }`}
+                    onClick={() => isAvailable && onPackageSelect(packageType)}
+                    title={!isAvailable ? unavailableReason : ''}
                   >
                     <div
-                      className={`inline-flex items-center justify-center w-3.5 h-3.5 rounded bg-gradient-to-r ${getPackageColor(packageType)} mb-0.5`}
+                      className={`inline-flex items-center justify-center w-3.5 h-3.5 rounded bg-gradient-to-r ${getPackageColor(packageType)} mb-0.5 ${
+                        !isAvailable ? 'grayscale' : ''
+                      }`}
                     >
                       <Icon className="h-2 w-2 text-white" />
                     </div>
-                    <div className="font-bold text-gray-800 text-xs">
+                    <div className={`font-bold text-xs ${
+                      isAvailable ? 'text-gray-800' : 'text-gray-400'
+                    }`}>
                       {getPackageName(packageType)}
                     </div>
+                    {!isAvailable && (
+                      <div className="text-xs text-red-500 mt-0.5 leading-tight">
+                        Недоступен
+                      </div>
+                    )}
                     {/* Dot indicator under selected package */}
-                    {isSelected && (
+                    {isSelected && isAvailable && (
                       <div className="flex justify-center mt-1">
                         <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                       </div>
@@ -453,12 +470,15 @@ export default function ThreeBlockComparison({
             </div>
             {packageTypes.map((packageType) => {
               const packageData = getPackageData(packageType);
+              const isAvailable = packageData?.isAvailable !== false;
               const finalCost = packageData?.finalCost || 0;
 
               return (
                 <div key={packageType} className="text-center">
-                  <span className="text-sm font-bold text-pink-400">
-                    {formatPrice(finalCost)}
+                  <span className={`text-sm font-bold ${
+                    isAvailable ? 'text-pink-400' : 'text-gray-400'
+                  }`}>
+                    {isAvailable ? formatPrice(finalCost) : 'Недоступен'}
                   </span>
                 </div>
               );
@@ -515,10 +535,14 @@ export default function ThreeBlockComparison({
               }
             }
             
+            const isAvailable = packageData?.isAvailable !== false;
+            
             return (
               <div key={packageType} className="text-center">
-                <span className="text-xs text-gray-600">
-                  {formatPrice(displayAmount)}
+                <span className={`text-xs ${
+                  isAvailable ? 'text-gray-600' : 'text-gray-400'
+                }`}>
+                  {isAvailable ? formatPrice(displayAmount) : '-'}
                 </span>
               </div>
             );
@@ -545,10 +569,14 @@ export default function ThreeBlockComparison({
                 monthlyPayment = Math.round(remainingCost / minInstallmentMonths);
               }
 
+              const isAvailable = packageData?.isAvailable !== false;
+              
               return (
                 <div key={packageType} className="flex items-center justify-center">
                   {packageType === 'vip' ? (
                     <Minus className="w-3 h-3 text-red-500" strokeWidth={1} />
+                  ) : !isAvailable ? (
+                    <span className="text-xs text-gray-400">-</span>
                   ) : (
                     <span className="text-xs text-gray-600">
                       {formatPrice(monthlyPayment)}
