@@ -7,7 +7,7 @@ import {
   type Client, type InsertClient, type Sale, type InsertSale
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, and, sql } from "drizzle-orm";
+import { eq, and, sql, desc } from "drizzle-orm";
 
 export interface IStorage {
   // Users
@@ -202,8 +202,68 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getSalesStats(): Promise<any> {
-    // Implementation for sales statistics
-    return {};
+    const salesData = await db.select({
+      id: sales.id,
+      clientName: sql<string | null>`null`, // clients table doesn't have name field
+      clientPhone: clients.phone,
+      masterName: users.name,
+      subscriptionTitle: subscriptionTypes.title,
+      selectedPackage: sales.selectedPackage,
+      baseCost: sales.baseCost,
+      finalCost: sales.finalCost,
+      totalSavings: sales.totalSavings,
+      downPayment: sales.downPayment,
+      installmentMonths: sales.installmentMonths,
+      monthlyPayment: sales.monthlyPayment,
+      usedCertificate: sales.usedCertificate,
+      createdAt: sales.createdAt,
+      selectedServices: sales.selectedServices,
+      appliedDiscounts: sales.appliedDiscounts,
+      freeZones: sales.freeZones
+    })
+    .from(sales)
+    .leftJoin(clients, eq(sales.clientId, clients.id))
+    .leftJoin(users, eq(sales.masterId, users.id))
+    .leftJoin(subscriptionTypes, eq(sales.subscriptionTypeId, subscriptionTypes.id))
+    .orderBy(desc(sales.createdAt));
+
+    // Calculate summary statistics
+    const totalSales = salesData.length;
+    const totalRevenue = salesData.reduce((sum, sale) => sum + parseFloat(sale.finalCost || '0'), 0);
+    const totalSavingsGiven = salesData.reduce((sum, sale) => sum + parseFloat(sale.totalSavings || '0'), 0);
+    
+    // Group by package type
+    const packageStats = salesData.reduce((acc, sale) => {
+      const pkg = sale.selectedPackage || 'unknown';
+      if (!acc[pkg]) {
+        acc[pkg] = { count: 0, revenue: 0 };
+      }
+      acc[pkg].count++;
+      acc[pkg].revenue += parseFloat(sale.finalCost || '0');
+      return acc;
+    }, {} as Record<string, { count: number; revenue: number }>);
+
+    // Group by master
+    const masterStats = salesData.reduce((acc, sale) => {
+      const master = sale.masterName || 'Неизвестен';
+      if (!acc[master]) {
+        acc[master] = { count: 0, revenue: 0 };
+      }
+      acc[master].count++;
+      acc[master].revenue += parseFloat(sale.finalCost || '0');
+      return acc;
+    }, {} as Record<string, { count: number; revenue: number }>);
+
+    return {
+      sales: salesData,
+      summary: {
+        totalSales,
+        totalRevenue,
+        totalSavingsGiven,
+        packageStats,
+        masterStats
+      }
+    };
   }
 
   // Packages

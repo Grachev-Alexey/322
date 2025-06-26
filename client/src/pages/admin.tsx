@@ -8,9 +8,10 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Settings, Users, Database, Package, LogOut, Calculator } from "lucide-react";
+import { Settings, Users, Database, Package, LogOut, Calculator, TrendingUp } from "lucide-react";
 import AdminDashboard from "@/components/admin-dashboard";
 import AdminPerks from "@/components/admin-perks";
+import AdminSales from "@/components/admin-sales";
 
 interface User {
   id: number;
@@ -481,20 +482,25 @@ export default function AdminPage({ user, onLogout }: AdminPageProps) {
       <main className="flex-1 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 h-full">
           <Tabs defaultValue="dashboard" className="h-full flex flex-col">
-            <TabsList className="grid w-full grid-cols-7 flex-shrink-0">
+            <TabsList className="grid w-full grid-cols-9 flex-shrink-0">
               <TabsTrigger value="dashboard">Обзор</TabsTrigger>
+              <TabsTrigger value="sales">Продажи</TabsTrigger>
               <TabsTrigger value="users">Пользователи</TabsTrigger>
               <TabsTrigger value="services">Услуги</TabsTrigger>
               <TabsTrigger value="subscriptions">Абонементы</TabsTrigger>
               <TabsTrigger value="packages">Пакеты</TabsTrigger>
               <TabsTrigger value="perks">Преимущества</TabsTrigger>
               <TabsTrigger value="calculator">Настройки</TabsTrigger>
-              <TabsTrigger value="yclients">Yclients API</TabsTrigger>
+              <TabsTrigger value="yclients">API</TabsTrigger>
             </TabsList>
 
             <div className="flex-1 overflow-y-auto mt-6 max-h-[calc(100vh-200px)]">
               <TabsContent value="dashboard">
                 <AdminDashboard />
+              </TabsContent>
+
+              <TabsContent value="sales">
+                <AdminSales />
               </TabsContent>
 
               <TabsContent value="users">

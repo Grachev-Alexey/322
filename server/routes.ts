@@ -497,6 +497,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Sales statistics endpoint
+  app.get("/api/admin/sales", requireAdmin, async (req, res) => {
+    try {
+      const salesStats = await storage.getSalesStats();
+      res.json(salesStats);
+    } catch (error) {
+      console.error('Error fetching sales stats:', error);
+      res.status(500).json({ message: "Ошибка получения статистики продаж" });
+    }
+  });
+
   app.delete("/api/admin/package-perks/:id", requireAdmin, async (req, res) => {
     try {
       const { id } = req.params;
