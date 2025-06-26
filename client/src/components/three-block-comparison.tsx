@@ -229,6 +229,11 @@ export default function ThreeBlockComparison({
                     <div className="font-bold text-gray-800 text-xs">
                       {getPackageName(packageType)}
                     </div>
+                    {!isAvailable && (
+                      <div className="text-xs text-red-500 mt-0.5 leading-tight">
+                        Недоступен
+                      </div>
+                    )}
                     {/* Dot indicator under selected package */}
                     {isSelected && isAvailable && (
                       <div className="flex justify-center mt-1">
