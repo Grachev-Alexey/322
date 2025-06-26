@@ -259,20 +259,24 @@ export default function PromoCalculatorPage({
                     onBlur={() => {
                       const numericValue = parseInt(tempPaymentValue) || 0;
                       
-                      // Если сумма меньше минимального платежа для эконом пакета,
-                      // позволяем мастеру указать любую сумму
-                      const economyMinPayment = calculation?.packages?.economy?.isAvailable 
-                        ? Math.max(
-                            calculation.packages.economy.finalCost * 0.3, // минимальный процент для эконом пакета
-                            calculatorSettings?.minimumDownPayment || 5000
-                          )
-                        : calculatorSettings?.minimumDownPayment || 5000;
-                      
-                      if (numericValue < economyMinPayment && numericValue > 0) {
-                        // Разрешаем любую положительную сумму если она меньше минимума эконом пакета
-                        setDownPayment(numericValue);
+                      // Для пакета "эконом" позволяем ввод любой положительной суммы
+                      // если она меньше минимального платежа
+                      if (selectedPackage === "economy") {
+                        const minPayment = getMinDownPayment();
+                        if (numericValue < minPayment && numericValue > 0) {
+                          // Разрешаем любую положительную сумму для эконом пакета
+                          setDownPayment(numericValue);
+                        } else {
+                          // Обычная логика с ограничениями для эконом пакета
+                          const maxPayment = getMaxDownPayment();
+                          const constrainedValue = Math.max(
+                            minPayment,
+                            Math.min(maxPayment, numericValue),
+                          );
+                          setDownPayment(constrainedValue);
+                        }
                       } else {
-                        // Обычная логика с ограничениями
+                        // Для всех остальных пакетов - обычная логика с ограничениями
                         const minPayment = getMinDownPayment();
                         const maxPayment = getMaxDownPayment();
                         const constrainedValue = Math.max(
@@ -287,20 +291,24 @@ export default function PromoCalculatorPage({
                       if (e.key === "Enter") {
                         const numericValue = parseInt(tempPaymentValue) || 0;
                         
-                        // Если сумма меньше минимального платежа для эконом пакета,
-                        // позволяем мастеру указать любую сумму
-                        const economyMinPayment = calculation?.packages?.economy?.isAvailable 
-                          ? Math.max(
-                              calculation.packages.economy.finalCost * 0.3, // минимальный процент для эконом пакета
-                              calculatorSettings?.minimumDownPayment || 5000
-                            )
-                          : calculatorSettings?.minimumDownPayment || 5000;
-                        
-                        if (numericValue < economyMinPayment && numericValue > 0) {
-                          // Разрешаем любую положительную сумму если она меньше минимума эконом пакета
-                          setDownPayment(numericValue);
+                        // Для пакета "эконом" позволяем ввод любой положительной суммы
+                        // если она меньше минимального платежа
+                        if (selectedPackage === "economy") {
+                          const minPayment = getMinDownPayment();
+                          if (numericValue < minPayment && numericValue > 0) {
+                            // Разрешаем любую положительную сумму для эконом пакета
+                            setDownPayment(numericValue);
+                          } else {
+                            // Обычная логика с ограничениями для эконом пакета
+                            const maxPayment = getMaxDownPayment();
+                            const constrainedValue = Math.max(
+                              minPayment,
+                              Math.min(maxPayment, numericValue),
+                            );
+                            setDownPayment(constrainedValue);
+                          }
                         } else {
-                          // Обычная логика с ограничениями
+                          // Для всех остальных пакетов - обычная логика с ограничениями
                           const minPayment = getMinDownPayment();
                           const maxPayment = getMaxDownPayment();
                           const constrainedValue = Math.max(
