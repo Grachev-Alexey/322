@@ -299,22 +299,7 @@ export default function ThreeBlockComparison({
                       );
                     }
 
-                    const packageData = getPackageData(packageType);
-                    const isAvailable = packageData?.isAvailable !== false;
-                    const unavailableReason = packageData?.unavailableReason || '';
 
-                    if (!isAvailable) {
-                      return (
-                        <div key={packageType} className="flex items-center justify-center">
-                          <span 
-                            className="text-xs text-red-500 cursor-help"
-                            title={unavailableReason}
-                          >
-                            Недоступен
-                          </span>
-                        </div>
-                      );
-                    }
 
                     return (
                       <div
@@ -335,23 +320,6 @@ export default function ThreeBlockComparison({
                 Сеансы в подарок
               </div>
               {packageTypes.map((packageType) => {
-                const packageCalcData = getPackageData(packageType);
-                const isAvailable = packageCalcData?.isAvailable !== false;
-                const unavailableReason = packageCalcData?.unavailableReason || '';
-                
-                if (!isAvailable) {
-                  return (
-                    <div key={packageType} className="flex items-center justify-center">
-                      <span 
-                        className="text-xs text-red-500 cursor-help"
-                        title={unavailableReason}
-                      >
-                        Недоступен
-                      </span>
-                    </div>
-                  );
-                }
-
                 const packageData = packages.find(
                   (p) => p.type === packageType,
                 );
@@ -375,23 +343,6 @@ export default function ThreeBlockComparison({
             <div className="grid grid-cols-4 gap-2.5 py-1 border-b border-gray-100">
               <div className="text-xs font-medium text-gray-700">Скидка</div>
               {packageTypes.map((packageType) => {
-                const packageData = getPackageData(packageType);
-                const isAvailable = packageData?.isAvailable !== false;
-                const unavailableReason = packageData?.unavailableReason || '';
-                
-                if (!isAvailable) {
-                  return (
-                    <div key={packageType} className="flex items-center justify-center">
-                      <span 
-                        className="text-xs text-red-500 cursor-help"
-                        title={unavailableReason}
-                      >
-                        Недоступен
-                      </span>
-                    </div>
-                  );
-                }
-
                 const finalDiscountPercent = getFinalDiscountPercent(packageType);
 
                 return (
@@ -410,23 +361,6 @@ export default function ThreeBlockComparison({
                 Бонусный счет
               </div>
               {packageTypes.map((packageType) => {
-                const packageCalcData = getPackageData(packageType);
-                const isAvailable = packageCalcData?.isAvailable !== false;
-                const unavailableReason = packageCalcData?.unavailableReason || '';
-                
-                if (!isAvailable) {
-                  return (
-                    <div key={packageType} className="flex items-center justify-center">
-                      <span 
-                        className="text-xs text-red-500 cursor-help"
-                        title={unavailableReason}
-                      >
-                        Недоступен
-                      </span>
-                    </div>
-                  );
-                }
-
                 const packageData = packages.find(
                   (p) => p.type === packageType,
                 );
@@ -535,18 +469,9 @@ export default function ThreeBlockComparison({
 
               return (
                 <div key={packageType} className="text-center">
-                  {isAvailable ? (
-                    <span className="text-sm font-bold text-pink-400">
-                      {formatPrice(finalCost)}
-                    </span>
-                  ) : (
-                    <span 
-                      className="text-xs text-red-500 cursor-help"
-                      title={unavailableReason}
-                    >
-                      Недоступен
-                    </span>
-                  )}
+                  <span className="text-sm font-bold text-pink-400">
+                    {formatPrice(finalCost)}
+                  </span>
                 </div>
               );
             })}
@@ -602,14 +527,10 @@ export default function ThreeBlockComparison({
               }
             }
             
-            const isAvailable = packageData?.isAvailable !== false;
-            
             return (
               <div key={packageType} className="text-center">
-                <span className={`text-xs ${
-                  isAvailable ? 'text-gray-600' : 'text-gray-400'
-                }`}>
-                  {isAvailable ? formatPrice(displayAmount) : '-'}
+                <span className="text-xs text-gray-600">
+                  {formatPrice(displayAmount)}
                 </span>
               </div>
             );
@@ -636,14 +557,10 @@ export default function ThreeBlockComparison({
                 monthlyPayment = Math.round(remainingCost / minInstallmentMonths);
               }
 
-              const isAvailable = packageData?.isAvailable !== false;
-              
               return (
                 <div key={packageType} className="flex items-center justify-center">
                   {packageType === 'vip' ? (
                     <Minus className="w-3 h-3 text-red-500" strokeWidth={1} />
-                  ) : !isAvailable ? (
-                    <span className="text-xs text-gray-400">-</span>
                   ) : (
                     <span className="text-xs text-gray-600">
                       {formatPrice(monthlyPayment)}
