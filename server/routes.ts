@@ -5,12 +5,12 @@ import { createYclientsService } from "./services/yclients";
 import { pdfGenerator } from "./services/pdf-generator";
 import { EmailServiceFactory } from "./services/email-service";
 import { z } from "zod";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { db } from "./db";
 import { users, services, insertUserSchema, insertConfigSchema, insertServiceSchema, 
   insertSubscriptionTypeSchema, insertPerkSchema, insertPackagePerkValueSchema,
   insertPackageSchema, config, perks, packagePerkValues,
-  packages as packagesTable } from "@shared/schema";
+  packages as packagesTable, sales, clients, subscriptionTypes, offers } from "@shared/schema";
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -457,9 +457,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/admin/sales", requireAdmin, async (req, res) => {
     try {
-      const stats = await storage.getSalesStats();
-      res.json(stats);
+      // Get enhanced sales data with client names and offer information
+      const salesWithOffers = await db.select({
+        id: sales.id,
+        clientPhone: clients.phone,
+        clientEmail: clients.email,
+        masterName: users.name,
+        subscriptionTitle: subscriptionTypes.title,
+        selectedPackage: sales.selectedPackage,
+        baseCost: sales.baseCost,
+        finalCost: sales.finalCost,
+        totalSavings: sales.totalSavings,
+        downPayment: sales.downPayment,
+        installmentMonths: sales.installmentMonths,
+        monthlyPayment: sales.monthlyPayment,
+        usedCertificate: sales.usedCertificate,
+        createdAt: sales.createdAt,
+        selectedServices: sales.selectedServices,
+        appliedDiscounts: sales.appliedDiscounts,
+        freeZones: sales.freeZones,
+        // Offer data for client name and PDF path
+        clientName: offers.clientName,
+        pdfPath: offers.pdfPath,
+        offerNumber: offers.offerNumber,
+        emailSent: offers.emailSent
+      })
+      .from(sales)
+      .leftJoin(clients, eq(sales.clientId, clients.id))
+      .leftJoin(users, eq(sales.masterId, users.id))
+      .leftJoin(subscriptionTypes, eq(sales.subscriptionTypeId, subscriptionTypes.id))
+      .leftJoin(offers, eq(offers.clientId, sales.clientId))
+      .orderBy(desc(sales.createdAt));
+
+      // Calculate summary statistics
+      const totalSales = salesWithOffers.length;
+      const totalRevenue = salesWithOffers.reduce((sum, sale) => sum + parseFloat(sale.finalCost || '0'), 0);
+      const totalSavingsGiven = salesWithOffers.reduce((sum, sale) => sum + parseFloat(sale.totalSavings || '0'), 0);
+      
+      // Group by package type
+      const packageStats = salesWithOffers.reduce((acc, sale) => {
+        const pkg = sale.selectedPackage || 'unknown';
+        if (!acc[pkg]) {
+          acc[pkg] = { count: 0, revenue: 0 };
+        }
+        acc[pkg].count++;
+        acc[pkg].revenue += parseFloat(sale.finalCost || '0');
+        return acc;
+      }, {} as Record<string, { count: number; revenue: number }>);
+
+      // Group by master
+      const masterStats = salesWithOffers.reduce((acc, sale) => {
+        const master = sale.masterName || 'Неизвестен';
+        if (!acc[master]) {
+          acc[master] = { count: 0, revenue: 0 };
+        }
+        acc[master].count++;
+        acc[master].revenue += parseFloat(sale.finalCost || '0');
+        return acc;
+      }, {} as Record<string, { count: number; revenue: number }>);
+
+      res.json({
+        sales: salesWithOffers,
+        summary: {
+          totalSales,
+          totalRevenue,
+          totalSavingsGiven,
+          packageStats,
+          masterStats
+        }
+      });
     } catch (error) {
+      console.error('Error getting sales stats:', error);
       res.status(500).json({ message: "Ошибка получения статистики продаж" });
     }
   });

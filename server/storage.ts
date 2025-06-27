@@ -244,6 +244,7 @@ export class DatabaseStorage implements IStorage {
       id: sales.id,
       clientName: sql<string | null>`null`, // clients table doesn't have name field
       clientPhone: clients.phone,
+      clientEmail: clients.email,
       masterName: users.name,
       subscriptionTitle: subscriptionTypes.title,
       selectedPackage: sales.selectedPackage,
@@ -257,7 +258,8 @@ export class DatabaseStorage implements IStorage {
       createdAt: sales.createdAt,
       selectedServices: sales.selectedServices,
       appliedDiscounts: sales.appliedDiscounts,
-      freeZones: sales.freeZones
+      freeZones: sales.freeZones,
+      correctionPercent: sql<number | null>`null` // Will get from appliedDiscounts
     })
     .from(sales)
     .leftJoin(clients, eq(sales.clientId, clients.id))

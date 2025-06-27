@@ -29,6 +29,7 @@ interface SaleData {
   id: number;
   clientName: string | null;
   clientPhone: string;
+  clientEmail: string | null;
   masterName: string;
   subscriptionTitle: string;
   selectedPackage: string;
@@ -43,6 +44,9 @@ interface SaleData {
   selectedServices: any[];
   appliedDiscounts: any[];
   freeZones: any[];
+  pdfPath: string | null;
+  offerNumber: string | null;
+  emailSent: boolean | null;
 }
 
 interface SalesStats {
@@ -496,6 +500,29 @@ export default function AdminSales() {
 
 // Компонент детальной информации о продаже
 function SaleDetails({ sale }: { sale: SaleData }) {
+  // Функция для получения понятного названия скидки
+  const getDiscountName = (type: string) => {
+    switch (type) {
+      case 'package': return 'Скидка по пакету';
+      case 'correction': return 'Коррекция';
+      case 'gift_sessions': return 'Подарочные сеансы';
+      case 'certificate': return 'Сертификат';
+      case 'bulk': return 'Скидка за количество';
+      default: return type;
+    }
+  };
+
+  // Вычисляем процент коррекции из appliedDiscounts
+  const getCorrectionPercent = () => {
+    if (!sale.appliedDiscounts) return null;
+    const correctionDiscount = sale.appliedDiscounts.find((d: any) => d.type === 'correction');
+    if (!correctionDiscount) return null;
+    
+    const baseCost = parseFloat(sale.baseCost);
+    const correctionAmount = parseFloat(correctionDiscount.amount);
+    return Math.round((correctionAmount / baseCost) * 100);
+  };
+
   return (
     <div className="space-y-6">
       {/* Основная информация */}
@@ -514,6 +541,10 @@ function SaleDetails({ sale }: { sale: SaleData }) {
               <span className="font-medium">{sale.clientPhone}</span>
             </div>
             <div className="flex justify-between">
+              <span className="text-muted-foreground">Email:</span>
+              <span className="font-medium">{sale.clientEmail || 'Не указано'}</span>
+            </div>
+            <div className="flex justify-between">
               <span className="text-muted-foreground">Мастер:</span>
               <span className="font-medium">{sale.masterName}</span>
             </div>
@@ -523,6 +554,25 @@ function SaleDetails({ sale }: { sale: SaleData }) {
                 {format(new Date(sale.createdAt), 'dd.MM.yyyy HH:mm', { locale: ru })}
               </span>
             </div>
+            {sale.pdfPath && (
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground">PDF договор:</span>
+                <a 
+                  href={sale.pdfPath} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline font-medium"
+                >
+                  Скачать PDF
+                </a>
+              </div>
+            )}
+            {sale.emailSent && (
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Email отправлен:</span>
+                <Badge variant="default">Да</Badge>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -594,12 +644,25 @@ function SaleDetails({ sale }: { sale: SaleData }) {
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {sale.selectedServices.map((service, index) => (
-                <div key={index} className="flex justify-between items-center p-2 bg-muted rounded">
-                  <span>{service.title || service.name || `Услуга ${index + 1}`}</span>
-                  <span className="font-medium">{parseFloat(service.price || service.priceMin || 0).toLocaleString()} ₽</span>
-                </div>
-              ))}
+              {sale.selectedServices.map((service, index) => {
+                const price = service.price || service.priceMin || 0;
+                const quantity = service.quantity || 1;
+                const totalPrice = parseFloat(price) * quantity;
+                
+                return (
+                  <div key={index} className="flex justify-between items-center p-3 bg-muted rounded">
+                    <div className="flex-1">
+                      <div className="font-medium">{service.title || service.name || `Услуга ${index + 1}`}</div>
+                      <div className="text-sm text-muted-foreground">
+                        {parseFloat(price).toLocaleString()} ₽ × {quantity} сеанс{quantity > 1 ? (quantity > 4 ? 'ов' : 'а') : ''}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-bold">{totalPrice.toLocaleString()} ₽</span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
@@ -614,9 +677,16 @@ function SaleDetails({ sale }: { sale: SaleData }) {
           <CardContent>
             <div className="space-y-2">
               {sale.appliedDiscounts.map((discount, index) => (
-                <div key={index} className="flex justify-between items-center p-2 bg-muted rounded">
-                  <span>{discount.type || `Скидка ${index + 1}`}</span>
-                  <span className="font-medium text-green-600">-{parseFloat(discount.amount || 0).toLocaleString()} ₽</span>
+                <div key={index} className="flex justify-between items-center p-3 bg-muted rounded">
+                  <div className="flex-1">
+                    <div className="font-medium">{getDiscountName(discount.type)}</div>
+                    {discount.type === 'correction' && getCorrectionPercent() && (
+                      <div className="text-sm text-muted-foreground">
+                        Процент коррекции: {getCorrectionPercent()}%
+                      </div>
+                    )}
+                  </div>
+                  <span className="font-bold text-green-600">-{parseFloat(discount.amount || 0).toLocaleString()} ₽</span>
                 </div>
               ))}
             </div>
