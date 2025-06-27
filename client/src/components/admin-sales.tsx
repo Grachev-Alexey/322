@@ -611,14 +611,17 @@ function SaleDetails({ sale }: { sale: SaleData }) {
             {sale.pdfPath && (
               <div className="flex justify-between items-center">
                 <span className="text-muted-foreground">PDF договор:</span>
-                <a 
-                  href={sale.pdfPath} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-blue-600 hover:underline font-medium"
-                >
-                  Скачать PDF
-                </a>
+                <Button variant="outline" size="sm" asChild>
+                  <a 
+                    href={sale.pdfPath} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-600 hover:text-blue-700"
+                  >
+                    <Download className="h-4 w-4 mr-2" />
+                    Скачать PDF
+                  </a>
+                </Button>
               </div>
             )}
             {sale.emailSent && (
@@ -699,20 +702,21 @@ function SaleDetails({ sale }: { sale: SaleData }) {
           <CardContent>
             <div className="space-y-2">
               {sale.selectedServices.map((service, index) => {
-                const price = service.price || service.priceMin || 0;
-                const quantity = service.quantity || 1;
-                const totalPrice = parseFloat(price) * quantity;
+                // Получаем цену из разных возможных полей
+                const price = service.editedPrice || service.price || service.priceMin || service.cost || 0;
+                const quantity = service.quantity || service.count || 1;
+                const totalPrice = parseFloat(price.toString()) * quantity;
                 
                 return (
-                  <div key={index} className="flex justify-between items-center p-3 bg-muted rounded">
+                  <div key={index} className="flex justify-between items-center p-3 bg-muted rounded-lg border">
                     <div className="flex-1">
-                      <div className="font-medium">{service.title || service.name || `Услуга ${index + 1}`}</div>
+                      <div className="font-medium text-foreground">{service.title || service.name || `Услуга ${index + 1}`}</div>
                       <div className="text-sm text-muted-foreground">
-                        {parseFloat(price).toLocaleString()} ₽ × {quantity} сеанс{quantity > 1 ? (quantity > 4 ? 'ов' : 'а') : ''}
+                        {parseFloat(price.toString()).toLocaleString()} ₽ × {quantity} сеанс{quantity > 1 ? (quantity > 4 ? 'ов' : 'а') : ''}
                       </div>
                     </div>
                     <div className="text-right">
-                      <span className="font-bold">{totalPrice.toLocaleString()} ₽</span>
+                      <span className="font-bold text-lg">{totalPrice.toLocaleString()} ₽</span>
                     </div>
                   </div>
                 );
@@ -723,15 +727,17 @@ function SaleDetails({ sale }: { sale: SaleData }) {
       )}
 
       {/* Примененные скидки */}
-      {sale.appliedDiscounts?.length > 0 && (
+      {sale.appliedDiscounts?.filter(discount => discount.type !== 'gift_sessions').length > 0 && (
         <Card>
           <CardHeader>
             <CardTitle className="text-sm">Примененные скидки</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">
-              {sale.appliedDiscounts.map((discount, index) => (
-                <div key={index} className="flex justify-between items-center p-3 bg-muted rounded">
+              {sale.appliedDiscounts
+                .filter(discount => discount.type !== 'gift_sessions')
+                .map((discount, index) => (
+                <div key={index} className="flex justify-between items-center p-3 bg-muted rounded-lg border">
                   <div className="flex-1">
                     <div className="font-medium">{getDiscountName(discount.type)}</div>
                     {discount.type === 'correction' && getCorrectionPercent() && (
@@ -740,7 +746,7 @@ function SaleDetails({ sale }: { sale: SaleData }) {
                       </div>
                     )}
                   </div>
-                  <span className="font-bold text-green-600">-{parseFloat(discount.amount || 0).toLocaleString()} ₽</span>
+                  <span className="font-bold text-green-600 text-lg">-{parseFloat(discount.amount || 0).toLocaleString()} ₽</span>
                 </div>
               ))}
             </div>

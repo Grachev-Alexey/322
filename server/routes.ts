@@ -898,9 +898,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const emailSent = await emailService.sendOfferEmail(offer, pdfBuffer);
       
       if (emailSent) {
-        // Update offer status
+        // Update offer status with API path for PDF download
         await storage.updateOffer(offer.id, {
-          pdfPath: filePath,
+          pdfPath: `/api/pdf/${fileName}`,
           emailSent: true,
           emailSentAt: new Date(),
           status: 'sent'
@@ -948,6 +948,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Ошибка получения оферты:', error);
       res.status(500).json({ message: "Ошибка получения оферты" });
+    }
+  });
+
+  // API endpoint for downloading PDF files
+  app.get("/api/pdf/:filename", async (req, res) => {
+    try {
+      const { filename } = req.params;
+      const filePath = path.join(pdfDir, filename);
+      
+      // Check if file exists
+      try {
+        await fs.access(filePath);
+      } catch {
+        return res.status(404).json({ message: "PDF файл не найден" });
+      }
+      
+      // Set headers for PDF download
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      
+      // Send file
+      res.sendFile(filePath);
+    } catch (error) {
+      console.error('Ошибка скачивания PDF:', error);
+      res.status(500).json({ message: "Ошибка скачивания PDF" });
     }
   });
 
