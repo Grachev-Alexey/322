@@ -1,14 +1,16 @@
 {
-  "name": "ViVi-Calc",
-  "version": "1.0.0",
+  "name": "vivi-calc",
+  "version": "1.0.1",
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "NODE_ENV=development tsx server/index.ts",
-    "build": "vite build && esbuild server/index.ts --platform=node --bundle --format=esm --outdir=dist --external:pg-native --external:lightningcss",
-    "start": "NODE_ENV=production node dist/index.js",
+    "dev": "tsx server/index.ts",
+    "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",
+    "start": "node dist/index.js",
     "check": "tsc",
-    "db:push": "drizzle-kit push"
+    "db:push": "drizzle-kit push",
+    "db:migrate": "drizzle-kit migrate",
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -78,7 +80,9 @@
     "wouter": "^3.3.5",
     "ws": "^8.18.0",
     "zod": "^3.24.2",
-    "zod-validation-error": "^3.4.0"
+    "zod-validation-error": "^3.4.0",
+    "dotenv": "^16.4.5",
+    "pg": "^8.13.1"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.24.7",
@@ -102,7 +106,9 @@
     "tailwindcss": "^3.4.17",
     "tsx": "^4.20.3",
     "typescript": "5.6.3",
-    "vite": "^5.4.19"
+    "vite": "^5.4.19",
+    "@tailwindcss/vite": "^4.1.3",
+    "@types/pg": "^8.11.10"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.8"
