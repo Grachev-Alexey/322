@@ -34,4 +34,7 @@ export default defineConfig({
       deny: ["**/.*"],
     },
   },
+  css: {
+    transformer: "postcss"
+  }
 });
