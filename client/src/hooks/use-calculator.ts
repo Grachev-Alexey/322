@@ -11,6 +11,7 @@ interface Service {
 
 interface SelectedService extends Service {
   quantity: number;
+  customPrice?: string; // Добавляем возможность кастомной цены
 }
 
 interface FreeZone {
@@ -139,7 +140,9 @@ export function useCalculator() {
       for (const selectedService of servicesData) {
         const service = serviceMap.get(selectedService.yclientsId);
         if (service) {
-          baseCost += parseFloat(service.priceMin) * selectedService.quantity * procedures;
+          // Use custom price if available, otherwise use service's priceMin
+          const price = selectedService.customPrice ? parseFloat(selectedService.customPrice) : parseFloat(service.priceMin);
+          baseCost += price * selectedService.quantity * procedures;
         }
       }
       

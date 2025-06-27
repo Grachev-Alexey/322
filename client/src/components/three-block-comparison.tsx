@@ -35,6 +35,7 @@ interface SelectedService {
   title: string;
   pricePerProcedure: number;
   quantity: number;
+  customPrice?: string;
 }
 
 interface ThreeBlockComparisonProps {
@@ -148,7 +149,9 @@ export default function ThreeBlockComparison({
     if (giftSessions === 0) return 0;
 
     const totalBaseCost = selectedServices.reduce((sum, service) => {
-      return sum + service.pricePerProcedure * service.quantity;
+      // Use custom price if available, otherwise use pricePerProcedure
+      const price = service.customPrice ? parseFloat(service.customPrice) : service.pricePerProcedure;
+      return sum + price * service.quantity;
     }, 0);
 
     return totalBaseCost * giftSessions;

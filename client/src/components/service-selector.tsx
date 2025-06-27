@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { X, Gift, Plus, Search, ChevronDown } from "lucide-react";
+import { X, Gift, Plus, Search, ChevronDown, Edit3 } from "lucide-react";
 import { formatPrice } from "@/lib/utils";
 
 interface Service {
@@ -16,6 +16,7 @@ interface Service {
 
 interface SelectedService extends Service {
   quantity: number;
+  customPrice?: string; // Добавляем возможность кастомной цены
 }
 
 interface FreeZone {
@@ -41,6 +42,8 @@ export default function ServiceSelector({
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [dropdownPosition, setDropdownPosition] = useState<{top: number, left: number, width: number} | null>(null);
+  const [editingPrice, setEditingPrice] = useState<number | null>(null);
+  const [tempPrice, setTempPrice] = useState<string>("");
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   
@@ -130,6 +133,31 @@ export default function ServiceSelector({
 
   const removeFreeZone = (serviceId: number) => {
     onAddFreeZone(freeZones.filter(z => z.serviceId !== serviceId));
+  };
+
+  const startEditingPrice = (serviceId: number, currentPrice: string) => {
+    setEditingPrice(serviceId);
+    setTempPrice(currentPrice);
+  };
+
+  const savePrice = (serviceId: number) => {
+    const updatedServices = selectedServices.map(service => 
+      service.yclientsId === serviceId 
+        ? { ...service, customPrice: tempPrice }
+        : service
+    );
+    onServicesChange(updatedServices);
+    setEditingPrice(null);
+    setTempPrice("");
+  };
+
+  const cancelEditingPrice = () => {
+    setEditingPrice(null);
+    setTempPrice("");
+  };
+
+  const getCurrentPrice = (service: SelectedService) => {
+    return service.customPrice || service.priceMin;
   };
 
   if (isLoading) {
@@ -256,9 +284,44 @@ export default function ServiceSelector({
           >
             <div className="flex items-center min-w-0 flex-1">
               <span className="text-xs font-medium text-gray-900 dark:text-white truncate">{service.title}</span>
-              <span className="ml-2 text-xs text-gray-500 dark:text-gray-400 flex-shrink-0">
-                {formatPrice(parseFloat(service.priceMin))}
-              </span>
+              <div className="ml-2 flex items-center gap-1 flex-shrink-0">
+                {editingPrice === service.yclientsId ? (
+                  <>
+                    <Input
+                      type="number"
+                      value={tempPrice}
+                      onChange={(e) => setTempPrice(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          savePrice(service.yclientsId);
+                        } else if (e.key === 'Escape') {
+                          cancelEditingPrice();
+                        }
+                      }}
+                      className="w-16 h-5 text-xs p-1 text-center"
+                      autoFocus
+                      onBlur={() => savePrice(service.yclientsId)}
+                    />
+                    <span className="text-xs text-gray-500">₽</span>
+                  </>
+                ) : (
+                  <>
+                    <span 
+                      className={`text-xs cursor-pointer hover:bg-gray-200 px-1 py-0.5 rounded transition-colors ${
+                        service.customPrice ? 'text-purple-600 font-semibold' : 'text-gray-500 dark:text-gray-400'
+                      }`}
+                      onClick={() => startEditingPrice(service.yclientsId, getCurrentPrice(service))}
+                      title="Нажмите для изменения цены"
+                    >
+                      {formatPrice(parseFloat(getCurrentPrice(service)))}
+                    </span>
+                    <Edit3 
+                      className="w-3 h-3 text-gray-400 hover:text-purple-500 cursor-pointer transition-colors" 
+                      onClick={() => startEditingPrice(service.yclientsId, getCurrentPrice(service))}
+                    />
+                  </>
+                )}
+              </div>
             </div>
             <Button
               variant="ghost"
