@@ -714,12 +714,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
+      // Enrich services data with current prices before saving
+      const enrichedServices = calculation.services.map((service: any) => ({
+        ...service,
+        price: service.editedPrice || service.price || service.priceMin || service.cost || 0,
+        priceMin: service.priceMin || service.price || service.editedPrice || service.cost || 0,
+        quantity: service.quantity || service.count || 1,
+        title: service.title || service.name || 'Услуга'
+      }));
+
+      console.log('Original calculation.services:', calculation.services);
+      console.log('Saving enriched services:', enrichedServices);
+
       // Save sale to database
       const sale = await storage.createSale({
         clientId: client.id,
         masterId: (req as any).session.userId,
         subscriptionTypeId: subscriptionType.id,
-        selectedServices: calculation.services,
+        selectedServices: enrichedServices,
         selectedPackage: calculation.packageType,
         baseCost: calculation.baseCost.toString(),
         finalCost: calculation.finalCost.toString(),
@@ -955,21 +967,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/pdf/:filename", async (req, res) => {
     try {
       const { filename } = req.params;
+      
+      // Validate filename
+      if (filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
+        return res.status(400).json({ message: "Недопустимое имя файла" });
+      }
+      
       const filePath = path.join(pdfDir, filename);
+      const absolutePath = path.resolve(filePath);
+      
+      console.log('PDF download request:', { 
+        filename, 
+        pdfDir, 
+        filePath, 
+        absolutePath,
+        exists: require('fs').existsSync(absolutePath)
+      });
       
       // Check if file exists
       try {
-        await fs.access(filePath);
-      } catch {
+        await fs.access(absolutePath);
+        const stats = await fs.stat(absolutePath);
+        console.log('PDF file found:', { size: stats.size, path: absolutePath });
+      } catch (error) {
+        console.error('PDF file not found:', { error: error.message, path: absolutePath });
         return res.status(404).json({ message: "PDF файл не найден" });
       }
       
       // Set headers for PDF download
       res.setHeader('Content-Type', 'application/pdf');
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader('Cache-Control', 'no-cache');
       
       // Send file
-      res.sendFile(filePath);
+      res.sendFile(absolutePath, (err) => {
+        if (err) {
+          console.error('Error sending PDF file:', err);
+          if (!res.headersSent) {
+            res.status(500).json({ message: "Ошибка отправки файла" });
+          }
+        } else {
+          console.log('PDF file sent successfully:', filename);
+        }
+      });
     } catch (error) {
       console.error('Ошибка скачивания PDF:', error);
       res.status(500).json({ message: "Ошибка скачивания PDF" });

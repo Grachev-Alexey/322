@@ -75,8 +75,15 @@ export default function ClientModal({
         calculation: {
           services: selectedServices.map(service => ({
             id: service.yclientsId,
+            serviceId: service.yclientsId,
             name: service.title,
-            quantity: (service.quantity || 1) * procedureCount
+            title: service.title,
+            price: service.editedPrice || service.price || service.priceMin || service.cost || 0,
+            priceMin: service.priceMin || service.price || service.editedPrice || service.cost || 0,
+            editedPrice: service.editedPrice || service.price || service.priceMin || service.cost || 0,
+            cost: service.cost || service.price || service.priceMin || service.editedPrice || 0,
+            quantity: (service.quantity || 1) * procedureCount,
+            count: (service.quantity || 1) * procedureCount
           })),
           packageType: selectedPackage,
           baseCost: calculation.baseCost,

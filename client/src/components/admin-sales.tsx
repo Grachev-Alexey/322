@@ -703,9 +703,16 @@ function SaleDetails({ sale }: { sale: SaleData }) {
             <div className="space-y-2">
               {sale.selectedServices.map((service, index) => {
                 // Получаем цену из разных возможных полей
-                const price = service.editedPrice || service.price || service.priceMin || service.cost || 0;
+                let price = service.editedPrice || service.price || service.priceMin || service.cost;
+                
+                // Если цена все еще 0 или undefined, попробуем найти цену из общего списка услуг
+                if (!price || price === 0) {
+                  // Здесь можно добавить запрос к API для получения актуальной цены
+                  price = service.originalPrice || 0;
+                }
+                
                 const quantity = service.quantity || service.count || 1;
-                const totalPrice = parseFloat(price.toString()) * quantity;
+                const totalPrice = parseFloat(price?.toString() || '0') * quantity;
                 
                 return (
                   <div key={index} className="flex justify-between items-center p-3 bg-muted rounded-lg border">
