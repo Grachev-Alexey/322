@@ -245,7 +245,7 @@ export default function PromoCalculatorPage({
                     onChange={(e) => setTempPaymentValue(e.target.value)}
                     onBlur={() => {
                       const numericValue = parseInt(tempPaymentValue) || 0;
-                      
+
                       // Для пакета "эконом" позволяем ввод любой положительной суммы
                       // если она меньше минимального платежа
                       if (selectedPackage === "economy") {
@@ -277,7 +277,7 @@ export default function PromoCalculatorPage({
                     onKeyPress={(e) => {
                       if (e.key === "Enter") {
                         const numericValue = parseInt(tempPaymentValue) || 0;
-                        
+
                         // Для пакета "эконом" позволяем ввод любой положительной суммы
                         // если она меньше минимального платежа
                         if (selectedPackage === "economy") {
@@ -561,33 +561,52 @@ export default function PromoCalculatorPage({
                   correctionPercent={correctionPercent}
                 />
               </div>
-              
+
               {/* Блок "Бесплатные зоны" - компактная версия */}
               <div className="w-40 flex-shrink-0">
-                <div className="bg-white dark:bg-gray-900 p-2 border border-pink-300/50 h-fit" style={{ borderRadius: "6px" }}>
+                <div
+                  className="bg-white dark:bg-gray-900 p-2 border border-pink-300/50 h-fit"
+                  style={{ borderRadius: "6px" }}
+                >
                   <h3 className="text-xs font-bold text-gray-900 dark:text-white mb-2 text-center">
                     Бесплатные зоны
                   </h3>
-                  
+
                   <div className="space-y-1.5">
                     <div className="p-1.5 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
-                      <div className="text-xs text-gray-700 dark:text-gray-300 mb-0.5">За подруг</div>
-                      <div className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</div>
+                      <div className="text-xs text-gray-700 dark:text-gray-300 mb-0.5">
+                        За подруг
+                      </div>
+                      <div className="text-xs font-bold text-pink-600 dark:text-pink-400">
+                        1 зона
+                      </div>
                     </div>
-                    
+
                     <div className="p-1.5 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
-                      <div className="text-xs text-gray-700 dark:text-gray-300 mb-0.5">За отзыв в Яндекс Картах</div>
-                      <div className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</div>
+                      <div className="text-xs text-gray-700 dark:text-gray-300 mb-0.5">
+                        За отзыв в Яндекс Картах
+                      </div>
+                      <div className="text-xs font-bold text-pink-600 dark:text-pink-400">
+                        1 зона
+                      </div>
                     </div>
-                    
+
                     <div className="p-1.5 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
-                      <div className="text-xs text-gray-700 dark:text-gray-300 mb-0.5">За отзыв в 2ГИС</div>
-                      <div className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</div>
+                      <div className="text-xs text-gray-700 dark:text-gray-300 mb-0.5">
+                        За отзыв в 2ГИС
+                      </div>
+                      <div className="text-xs font-bold text-pink-600 dark:text-pink-400">
+                        1 зона
+                      </div>
                     </div>
-                    
+
                     <div className="p-1.5 bg-white dark:bg-gray-900 rounded border border-gray-200 dark:border-gray-700">
-                      <div className="text-xs text-gray-700 dark:text-gray-300 mb-0.5">За отметку в соцсетях</div>
-                      <div className="text-xs font-bold text-pink-600 dark:text-pink-400">1 зона</div>
+                      <div className="text-xs text-gray-700 dark:text-gray-300 mb-0.5">
+                        За рекомендации в соцсетях
+                      </div>
+                      <div className="text-xs font-bold text-pink-600 dark:text-pink-400">
+                        1 зона
+                      </div>
                     </div>
                   </div>
                 </div>

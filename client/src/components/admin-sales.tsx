@@ -1,9 +1,27 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TrendingUp, Users, Package, DollarSign, Calendar, Phone, User } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { 
+  TrendingUp, 
+  Users, 
+  Package, 
+  DollarSign, 
+  Calendar, 
+  Phone, 
+  User, 
+  Search, 
+  Eye, 
+  ChevronLeft, 
+  ChevronRight,
+  Filter,
+  Download
+} from "lucide-react";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
 
@@ -38,11 +56,87 @@ interface SalesStats {
   };
 }
 
+const ITEMS_PER_PAGE = 10;
+
 export default function AdminSales() {
+  const [searchQuery, setSearchQuery] = useState("");
+  const [packageFilter, setPackageFilter] = useState("all");
+  const [masterFilter, setMasterFilter] = useState("all");
+  const [dateFilter, setDateFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedSale, setSelectedSale] = useState<SaleData | null>(null);
+
   const { data: salesData, isLoading } = useQuery<SalesStats>({
     queryKey: ['/api/admin/sales'],
     enabled: true
   });
+
+  // Фильтрация и поиск
+  const filteredSales = useMemo(() => {
+    if (!salesData?.sales) return [];
+
+    let filtered = salesData.sales;
+
+    // Поиск по тексту
+    if (searchQuery) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(sale => 
+        sale.clientName?.toLowerCase().includes(query) ||
+        sale.clientPhone.includes(query) ||
+        sale.masterName.toLowerCase().includes(query) ||
+        sale.subscriptionTitle.toLowerCase().includes(query)
+      );
+    }
+
+    // Фильтр по пакету
+    if (packageFilter !== "all") {
+      filtered = filtered.filter(sale => sale.selectedPackage === packageFilter);
+    }
+
+    // Фильтр по мастеру
+    if (masterFilter !== "all") {
+      filtered = filtered.filter(sale => sale.masterName === masterFilter);
+    }
+
+    // Фильтр по дате
+    if (dateFilter !== "all") {
+      const now = new Date();
+      const saleDate = new Date();
+      
+      switch (dateFilter) {
+        case "today":
+          filtered = filtered.filter(sale => {
+            const date = new Date(sale.createdAt);
+            return date.toDateString() === now.toDateString();
+          });
+          break;
+        case "week":
+          const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+          filtered = filtered.filter(sale => new Date(sale.createdAt) >= weekAgo);
+          break;
+        case "month":
+          const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+          filtered = filtered.filter(sale => new Date(sale.createdAt) >= monthAgo);
+          break;
+      }
+    }
+
+    // Сортировка по дате (новые сначала)
+    return filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }, [salesData?.sales, searchQuery, packageFilter, masterFilter, dateFilter]);
+
+  // Пагинация
+  const totalPages = Math.ceil(filteredSales.length / ITEMS_PER_PAGE);
+  const paginatedSales = filteredSales.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  // Уникальные мастера для фильтра
+  const uniqueMasters = useMemo(() => {
+    if (!salesData?.sales) return [];
+    return Array.from(new Set(salesData.sales.map(sale => sale.masterName)));
+  }, [salesData?.sales]);
 
   if (isLoading) {
     return <div className="p-6">Загрузка статистики продаж...</div>;
@@ -52,7 +146,7 @@ export default function AdminSales() {
     return <div className="p-6">Нет данных о продажах</div>;
   }
 
-  const { sales, summary } = salesData;
+  const { summary } = salesData;
 
   const getPackageName = (packageType: string) => {
     switch (packageType) {
@@ -72,6 +166,14 @@ export default function AdminSales() {
     }
   };
 
+  const resetFilters = () => {
+    setSearchQuery("");
+    setPackageFilter("all");
+    setMasterFilter("all");
+    setDateFilter("all");
+    setCurrentPage(1);
+  };
+
   return (
     <div className="space-y-6">
       {/* Summary Cards */}
@@ -83,6 +185,9 @@ export default function AdminSales() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{summary.totalSales}</div>
+            <div className="text-xs text-muted-foreground">
+              Найдено: {filteredSales.length}
+            </div>
           </CardContent>
         </Card>
 
@@ -93,6 +198,9 @@ export default function AdminSales() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{summary.totalRevenue.toLocaleString()} ₽</div>
+            <div className="text-xs text-muted-foreground">
+              Отфильтровано: {filteredSales.reduce((sum, sale) => sum + parseFloat(sale.finalCost), 0).toLocaleString()} ₽
+            </div>
           </CardContent>
         </Card>
 
@@ -129,74 +237,189 @@ export default function AdminSales() {
         <TabsContent value="sales" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Последние продажи</CardTitle>
+              <CardTitle className="flex items-center justify-between">
+                <span>Продажи</span>
+                <div className="flex items-center space-x-2">
+                  <Button variant="outline" size="sm" onClick={resetFilters}>
+                    <Filter className="h-4 w-4 mr-2" />
+                    Сбросить фильтры
+                  </Button>
+                </div>
+              </CardTitle>
+              
+              {/* Фильтры и поиск */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Поиск по клиенту, телефону, мастеру..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-8"
+                  />
+                </div>
+                
+                <Select value={packageFilter} onValueChange={setPackageFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Все пакеты" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Все пакеты</SelectItem>
+                    <SelectItem value="vip">VIP</SelectItem>
+                    <SelectItem value="standard">Стандарт</SelectItem>
+                    <SelectItem value="economy">Эконом</SelectItem>
+                  </SelectContent>
+                </Select>
+
+                <Select value={masterFilter} onValueChange={setMasterFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Все мастера" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Все мастера</SelectItem>
+                    {uniqueMasters.map(master => (
+                      <SelectItem key={master} value={master}>{master}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select value={dateFilter} onValueChange={setDateFilter}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Все даты" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Все даты</SelectItem>
+                    <SelectItem value="today">Сегодня</SelectItem>
+                    <SelectItem value="week">За неделю</SelectItem>
+                    <SelectItem value="month">За месяц</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </CardHeader>
+            
             <CardContent>
               <div className="space-y-4">
-                {sales.length === 0 ? (
-                  <p className="text-muted-foreground text-center py-8">Продаж пока нет</p>
+                {paginatedSales.length === 0 ? (
+                  <p className="text-muted-foreground text-center py-8">
+                    {filteredSales.length === 0 && searchQuery ? 
+                      "По вашему запросу ничего не найдено" : 
+                      "Продаж пока нет"
+                    }
+                  </p>
                 ) : (
-                  sales.map((sale) => (
-                    <div key={sale.id} className="border rounded-lg p-4 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-3">
-                          <Badge className={`${getPackageBadgeColor(sale.selectedPackage)} text-white`}>
-                            {getPackageName(sale.selectedPackage)}
-                          </Badge>
-                          <span className="font-medium">{sale.subscriptionTitle}</span>
+                  <>
+                    {paginatedSales.map((sale) => (
+                      <div key={sale.id} className="border rounded-lg p-4 space-y-3 hover:bg-muted/50 transition-colors">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <Badge className={`${getPackageBadgeColor(sale.selectedPackage)} text-white`}>
+                              {getPackageName(sale.selectedPackage)}
+                            </Badge>
+                            <span className="font-medium">{sale.subscriptionTitle}</span>
+                          </div>
+                          <div className="flex items-center space-x-3">
+                            <div className="text-right">
+                              <div className="font-bold text-lg">{parseFloat(sale.finalCost).toLocaleString()} ₽</div>
+                              <div className="text-sm text-muted-foreground">
+                                Экономия: {parseFloat(sale.totalSavings).toLocaleString()} ₽
+                              </div>
+                            </div>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="outline" size="sm">
+                                  <Eye className="h-4 w-4" />
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                                <DialogHeader>
+                                  <DialogTitle>Детали продажи #{sale.id}</DialogTitle>
+                                </DialogHeader>
+                                <SaleDetails sale={sale} />
+                              </DialogContent>
+                            </Dialog>
+                          </div>
                         </div>
-                        <div className="text-right">
-                          <div className="font-bold text-lg">{parseFloat(sale.finalCost).toLocaleString()} ₽</div>
-                          <div className="text-sm text-muted-foreground">
-                            Экономия: {parseFloat(sale.totalSavings).toLocaleString()} ₽
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                          <div className="flex items-center space-x-2">
+                            <User className="h-4 w-4 text-muted-foreground" />
+                            <span>{sale.clientName || 'Клиент'}</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Phone className="h-4 w-4 text-muted-foreground" />
+                            <span>{sale.clientPhone}</span>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Users className="h-4 w-4 text-muted-foreground" />
+                            <span>Мастер: {sale.masterName}</span>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
+                          <div>Базовая стоимость: {parseFloat(sale.baseCost).toLocaleString()} ₽</div>
+                          <div>Первый взнос: {parseFloat(sale.downPayment).toLocaleString()} ₽</div>
+                          {sale.installmentMonths && (
+                            <div>Рассрочка: {sale.installmentMonths} мес.</div>
+                          )}
+                          {sale.monthlyPayment && (
+                            <div>Ежемесячно: {parseFloat(sale.monthlyPayment).toLocaleString()} ₽</div>
+                          )}
+                        </div>
+
+                        <div className="flex items-center justify-between text-sm">
+                          <div className="flex items-center space-x-4">
+                            {sale.usedCertificate && (
+                              <Badge variant="outline">Сертификат</Badge>
+                            )}
+                            {sale.freeZones && sale.freeZones.length > 0 && (
+                              <Badge variant="outline">Бесплатные зоны</Badge>
+                            )}
+                            {sale.selectedServices?.length > 0 && (
+                              <Badge variant="outline">{sale.selectedServices.length} услуг</Badge>
+                            )}
+                          </div>
+                          <div className="flex items-center space-x-2 text-muted-foreground">
+                            <Calendar className="h-4 w-4" />
+                            <span>
+                              {format(new Date(sale.createdAt), 'dd.MM.yyyy HH:mm', { locale: ru })}
+                            </span>
                           </div>
                         </div>
                       </div>
-                      
-                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                        <div className="flex items-center space-x-2">
-                          <User className="h-4 w-4 text-muted-foreground" />
-                          <span>{sale.clientName || 'Клиент'}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Phone className="h-4 w-4 text-muted-foreground" />
-                          <span>{sale.clientPhone}</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Users className="h-4 w-4 text-muted-foreground" />
-                          <span>Мастер: {sale.masterName}</span>
-                        </div>
-                      </div>
+                    ))}
 
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 text-sm text-muted-foreground">
-                        <div>Базовая стоимость: {parseFloat(sale.baseCost).toLocaleString()} ₽</div>
-                        <div>Первый взнос: {parseFloat(sale.downPayment).toLocaleString()} ₽</div>
-                        {sale.installmentMonths && (
-                          <div>Рассрочка: {sale.installmentMonths} мес.</div>
-                        )}
-                        {sale.monthlyPayment && (
-                          <div>Ежемесячно: {parseFloat(sale.monthlyPayment).toLocaleString()} ₽</div>
-                        )}
-                      </div>
-
-                      <div className="flex items-center justify-between text-sm">
-                        <div className="flex items-center space-x-4">
-                          {sale.usedCertificate && (
-                            <Badge variant="outline">Сертификат</Badge>
-                          )}
-                          {sale.freeZones && sale.freeZones.length > 0 && (
-                            <Badge variant="outline">Бесплатные зоны</Badge>
-                          )}
+                    {/* Пагинация */}
+                    {totalPages > 1 && (
+                      <div className="flex items-center justify-between pt-4">
+                        <div className="text-sm text-muted-foreground">
+                          Показано {(currentPage - 1) * ITEMS_PER_PAGE + 1}-{Math.min(currentPage * ITEMS_PER_PAGE, filteredSales.length)} из {filteredSales.length}
                         </div>
-                        <div className="flex items-center space-x-2 text-muted-foreground">
-                          <Calendar className="h-4 w-4" />
-                          <span>
-                            {format(new Date(sale.createdAt), 'dd.MM.yyyy HH:mm', { locale: ru })}
+                        <div className="flex items-center space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                            disabled={currentPage === 1}
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                            Назад
+                          </Button>
+                          <span className="text-sm">
+                            Страница {currentPage} из {totalPages}
                           </span>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                            disabled={currentPage === totalPages}
+                          >
+                            Далее
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
                         </div>
                       </div>
-                    </div>
-                  ))
+                    )}
+                  </>
                 )}
               </div>
             </CardContent>
@@ -209,20 +432,25 @@ export default function AdminSales() {
               <CardTitle>Статистика по пакетам</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="space-y-4">
                 {Object.entries(summary.packageStats).map(([packageType, stats]) => (
-                  <div key={packageType} className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
+                  <div key={packageType} className="flex items-center justify-between p-4 border rounded-lg">
+                    <div className="flex items-center space-x-3">
                       <Badge className={`${getPackageBadgeColor(packageType)} text-white`}>
                         {getPackageName(packageType)}
                       </Badge>
-                      <span className="text-2xl font-bold">{stats.count}</span>
+                      <div>
+                        <div className="font-medium">{stats.count} продаж</div>
+                        <div className="text-sm text-muted-foreground">
+                          Средний чек: {stats.count > 0 ? Math.round(stats.revenue / stats.count).toLocaleString() : 0} ₽
+                        </div>
+                      </div>
                     </div>
-                    <div className="text-sm text-muted-foreground">
-                      Выручка: {stats.revenue.toLocaleString()} ₽
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Средний чек: {stats.count > 0 ? Math.round(stats.revenue / stats.count).toLocaleString() : 0} ₽
+                    <div className="text-right">
+                      <div className="font-bold text-lg">{stats.revenue.toLocaleString()} ₽</div>
+                      <div className="text-sm text-muted-foreground">
+                        {((stats.revenue / summary.totalRevenue) * 100).toFixed(1)}% от общей выручки
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -239,15 +467,20 @@ export default function AdminSales() {
             <CardContent>
               <div className="space-y-4">
                 {Object.entries(summary.masterStats).map(([masterName, stats]) => (
-                  <div key={masterName} className="flex items-center justify-between border rounded-lg p-4">
+                  <div key={masterName} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex items-center space-x-3">
-                      <Users className="h-5 w-5 text-muted-foreground" />
-                      <span className="font-medium">{masterName}</span>
+                      <Users className="h-8 w-8 text-muted-foreground" />
+                      <div>
+                        <div className="font-medium">{masterName}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {stats.count} продаж • Средний чек: {stats.count > 0 ? Math.round(stats.revenue / stats.count).toLocaleString() : 0} ₽
+                        </div>
+                      </div>
                     </div>
                     <div className="text-right">
-                      <div className="text-lg font-bold">{stats.count} продаж</div>
+                      <div className="font-bold text-lg">{stats.revenue.toLocaleString()} ₽</div>
                       <div className="text-sm text-muted-foreground">
-                        {stats.revenue.toLocaleString()} ₽
+                        {((stats.revenue / summary.totalRevenue) * 100).toFixed(1)}% от общей выручки
                       </div>
                     </div>
                   </div>
@@ -257,6 +490,162 @@ export default function AdminSales() {
           </Card>
         </TabsContent>
       </Tabs>
+    </div>
+  );
+}
+
+// Компонент детальной информации о продаже
+function SaleDetails({ sale }: { sale: SaleData }) {
+  return (
+    <div className="space-y-6">
+      {/* Основная информация */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Информация о клиенте</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Имя:</span>
+              <span className="font-medium">{sale.clientName || 'Не указано'}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Телефон:</span>
+              <span className="font-medium">{sale.clientPhone}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Мастер:</span>
+              <span className="font-medium">{sale.masterName}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Дата продажи:</span>
+              <span className="font-medium">
+                {format(new Date(sale.createdAt), 'dd.MM.yyyy HH:mm', { locale: ru })}
+              </span>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Финансовая информация</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Базовая стоимость:</span>
+              <span className="font-medium">{parseFloat(sale.baseCost).toLocaleString()} ₽</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Итоговая стоимость:</span>
+              <span className="font-bold text-lg">{parseFloat(sale.finalCost).toLocaleString()} ₽</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Общая экономия:</span>
+              <span className="font-medium text-green-600">{parseFloat(sale.totalSavings).toLocaleString()} ₽</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Первый взнос:</span>
+              <span className="font-medium">{parseFloat(sale.downPayment).toLocaleString()} ₽</span>
+            </div>
+            {sale.installmentMonths > 0 && (
+              <>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Рассрочка:</span>
+                  <span className="font-medium">{sale.installmentMonths} месяцев</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Ежемесячный платеж:</span>
+                  <span className="font-medium">{parseFloat(sale.monthlyPayment).toLocaleString()} ₽</span>
+                </div>
+              </>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Абонемент и пакет */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm">Абонемент</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex justify-between items-center">
+            <span className="text-muted-foreground">Название:</span>
+            <span className="font-medium">{sale.subscriptionTitle}</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-muted-foreground">Пакет:</span>
+            <Badge className={`${
+              sale.selectedPackage === 'vip' ? 'bg-purple-500' :
+              sale.selectedPackage === 'standard' ? 'bg-blue-500' : 'bg-green-500'
+            } text-white`}>
+              {sale.selectedPackage === 'vip' ? 'VIP' :
+               sale.selectedPackage === 'standard' ? 'Стандарт' : 'Эконом'}
+            </Badge>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Выбранные услуги */}
+      {sale.selectedServices?.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Выбранные услуги ({sale.selectedServices.length})</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {sale.selectedServices.map((service, index) => (
+                <div key={index} className="flex justify-between items-center p-2 bg-muted rounded">
+                  <span>{service.title || service.name || `Услуга ${index + 1}`}</span>
+                  <span className="font-medium">{parseFloat(service.price || service.priceMin || 0).toLocaleString()} ₽</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Примененные скидки */}
+      {sale.appliedDiscounts?.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Примененные скидки</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {sale.appliedDiscounts.map((discount, index) => (
+                <div key={index} className="flex justify-between items-center p-2 bg-muted rounded">
+                  <span>{discount.type || `Скидка ${index + 1}`}</span>
+                  <span className="font-medium text-green-600">-{parseFloat(discount.amount || 0).toLocaleString()} ₽</span>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Дополнительные опции */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm">Дополнительные опции</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-muted-foreground">Использован сертификат:</span>
+              <Badge variant={sale.usedCertificate ? "default" : "secondary"}>
+                {sale.usedCertificate ? "Да" : "Нет"}
+              </Badge>
+            </div>
+            {sale.freeZones?.length > 0 && (
+              <div className="flex justify-between items-center">
+                <span className="text-muted-foreground">Бесплатные зоны:</span>
+                <Badge variant="outline">{sale.freeZones.length} зон</Badge>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
