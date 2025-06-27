@@ -170,7 +170,7 @@ export default function ClientModal({
         selectedPackage,
         selectedServices: selectedServices.map(service => ({
           id: service.yclientsId,
-          name: service.title,
+          title: service.title,
           price: service.priceMin,
           quantity: (service.quantity || 1) * procedureCount
         })),
