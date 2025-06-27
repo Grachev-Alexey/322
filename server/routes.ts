@@ -55,6 +55,7 @@ const calculationSchema = z.object({
 });
 
 const offerSchema = z.object({
+  saleId: z.number().optional(), // Связь с продажей
   clientName: z.string().min(1),
   clientPhone: z.string().min(10),
   clientEmail: z.string().email(),
@@ -807,6 +808,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const offer = await storage.createOffer({
         clientId: client.id,
         masterId: req.session.userId,
+        saleId: offerData.saleId, // Связываем оферту с продажей
         offerNumber,
         selectedServices: offerData.selectedServices,
         selectedPackage: offerData.selectedPackage,

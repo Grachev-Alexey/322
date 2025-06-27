@@ -112,8 +112,8 @@ export default function ClientModal({
         setSubscriptionTitle(result.subscriptionType);
         setIsCompleted(true);
         
-        // Автоматически создаем и отправляем договор-оферту
-        await createAndSendOffer();
+        // Автоматически создаем и отправляем договор-оферту, передавая ID продажи
+        await createAndSendOffer(result.saleId);
       } else {
         const error = await response.json();
         throw new Error(error.message);
@@ -129,7 +129,7 @@ export default function ClientModal({
     }
   };
 
-  const createAndSendOffer = async () => {
+  const createAndSendOffer = async (saleId?: number) => {
     if (!selectedPackage || !calculation) {
       return;
     }
@@ -171,6 +171,7 @@ export default function ClientModal({
       }
 
       const offerData = {
+        saleId, // Связываем оферту с продажей
         clientName,
         clientPhone: phone.replace(/\D/g, ''),
         clientEmail: email,
@@ -178,7 +179,7 @@ export default function ClientModal({
         selectedServices: selectedServices.map(service => ({
           id: service.yclientsId,
           title: service.title,
-          price: service.priceMin,
+          price: service.editedPrice || service.customPrice || service.priceMin,
           quantity: (service.quantity || 1) * procedureCount
         })),
         baseCost: calculation.baseCost,

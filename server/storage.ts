@@ -266,7 +266,7 @@ export class DatabaseStorage implements IStorage {
     .leftJoin(clients, eq(sales.clientId, clients.id))
     .leftJoin(users, eq(sales.masterId, users.id))
     .leftJoin(subscriptionTypes, eq(sales.subscriptionTypeId, subscriptionTypes.id))
-    .groupBy(sales.id, clients.phone, clients.email, users.name, subscriptionTypes.title, sales.selectedPackage, sales.baseCost, sales.finalCost, sales.totalSavings, sales.downPayment, sales.installmentMonths, sales.monthlyPayment, sales.usedCertificate, sales.createdAt, sales.selectedServices, sales.appliedDiscounts, sales.freeZones)
+
     .orderBy(desc(sales.createdAt));
 
     // Calculate summary statistics

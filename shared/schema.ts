@@ -124,6 +124,7 @@ export const offers = pgTable("offers", {
   id: serial("id").primaryKey(),
   clientId: integer("client_id").references(() => clients.id).notNull(),
   masterId: integer("master_id").references(() => users.id).notNull(),
+  saleId: integer("sale_id").references(() => sales.id), // связь с продажей
   offerNumber: text("offer_number").notNull().unique(),
   selectedServices: json("selected_services").notNull(),
   selectedPackage: text("selected_package").notNull(),
@@ -149,7 +150,7 @@ export const offers = pgTable("offers", {
 });
 
 // Relations
-export const salesRelations = relations(sales, ({ one }) => ({
+export const salesRelations = relations(sales, ({ one, many }) => ({
   client: one(clients, {
     fields: [sales.clientId],
     references: [clients.id],
@@ -162,6 +163,7 @@ export const salesRelations = relations(sales, ({ one }) => ({
     fields: [sales.subscriptionTypeId],
     references: [subscriptionTypes.id],
   }),
+  offers: many(offers),
 }));
 
 export const offersRelations = relations(offers, ({ one }) => ({
@@ -172,6 +174,10 @@ export const offersRelations = relations(offers, ({ one }) => ({
   master: one(users, {
     fields: [offers.masterId],
     references: [users.id],
+  }),
+  sale: one(sales, {
+    fields: [offers.saleId],
+    references: [sales.id],
   }),
 }));
 
