@@ -205,8 +205,8 @@ export class EmailService {
         <div class="offer-details">
             <h3 style="margin-top: 0; color: #e91e63;">Детали вашего абонемента:</h3>
             <div class="offer-item">
-                <span>Пакет услуг:</span>
-                <span><strong>${packageName}</strong></span>
+                <span>Услуги:</span>
+                <span><strong>${this.getServiceNames(Array.isArray(offer.selectedServices) ? offer.selectedServices : [])}</strong></span>
             </div>
             <div class="offer-item">
                 <span>Базовая стоимость:</span>
@@ -260,6 +260,14 @@ export class EmailService {
             default:
                 return packageType;
         }
+    }
+
+    private getServiceNames(selectedServices: any[]): string {
+        if (!selectedServices || selectedServices.length === 0) {
+            return "Не указаны";
+        }
+        
+        return selectedServices.map(service => service.title).join(", ");
     }
 
     private formatAmount(amount: string | number): string {

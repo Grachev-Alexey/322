@@ -170,9 +170,12 @@ export class PDFGenerator {
     ): Promise<string> {
         const selectedServices = offer.selectedServices as any[];
         const packagePerks = this.getPackagePerks(offer.selectedPackage);
-        const discountPercentage = packageData
-            ? Math.round(packageData.discount * 100)
-            : this.getPackageDiscount(offer.selectedPackage);
+        // Calculate actual discount from offer data instead of package settings
+        const baseCost = parseFloat(offer.baseCost.toString());
+        const finalCost = parseFloat(offer.finalCost.toString());
+        const actualDiscountPercentage = baseCost > 0 
+            ? Math.round(((baseCost - finalCost) / baseCost) * 100)
+            : 0;
         console.log('PDF generation data:', {
             packageData,
             selectedPackage: offer.selectedPackage,
@@ -298,7 +301,7 @@ export class PDFGenerator {
     </div>
 
     <div class="section">
-        <div class="details">2. Индивидуальная скидка от стоимости прайса-листа: <span class="highlight">${discountPercentage}%</span></div>
+        <div class="details">2. Индивидуальная скидка от стоимости прайса-листа: <span class="highlight">${actualDiscountPercentage}%</span></div>
     </div>
 
     <div class="section">
@@ -311,7 +314,7 @@ export class PDFGenerator {
     </div>
 
     <div class="section">
-        <div class="details">4. ${packagePerks.massage}</div>
+        <div class="details">4. Курс массажа вокруг глаз на аппарате Bork D617 - <span class="highlight">${this.getTotalSessions(selectedServices)}</span> сеансов</div>
     </div>
 
     ${
@@ -327,17 +330,29 @@ export class PDFGenerator {
             : ""
     }
 
+    ${
+        offer.selectedPackage !== "economy" 
+            ? `
     <div class="section">
         <div class="details">${packagePerks.hasCard ? "6" : "5"}. Количество дополнительных подарочных сеансов: <span class="highlight">${giftSessions}</span></div>
     </div>
+    `
+            : ""
+    }
 
     <div class="section">
-        <div class="details">${packagePerks.hasCard ? "7" : "6"}. Возможность заморозки карты: <span class="highlight">${packagePerks.freezeOption}</span></div>
+        <div class="details">${offer.selectedPackage === "economy" ? (packagePerks.hasCard ? "6" : "5") : (packagePerks.hasCard ? "7" : "6")}. Возможность заморозки карты: <span class="highlight">${packagePerks.freezeOption}</span></div>
     </div>
 
+    ${
+        offer.selectedPackage !== "economy" 
+            ? `
     <div class="section">
         <div class="details">${packagePerks.hasCard ? "8" : "7"}. Начисление на бонусный счет: <span class="highlight">${bonusPercent}%</span> от стоимости абонемента</div>
     </div>
+    `
+            : ""
+    }
 
     <div class="cost-section">
         <div class="cost-item">Стоимость абонемента: <span class="highlight">${this.formatAmount(offer.finalCost)} руб.</span></div>
@@ -382,6 +397,14 @@ export class PDFGenerator {
 
     <div class="footer-note">
         Условия действуют только при своевременной оплате. При просрочке платежа более чем на 5 дней стоимость посещения пересчитывается по стандартному прайсу и дополнительные условия (скидки, пакеты, бонусы и привилегии) аннулируются.
+    </div>
+
+    <div class="section" style="margin-top: 30px; border-top: 1px solid #ccc; padding-top: 20px;">
+        <div class="details"><strong>Данные клиента:</strong></div>
+        <div class="details">ФИО: <span class="highlight">${offer.clientName || "Не указано"}</span></div>
+        <div class="details">Телефон: <span class="highlight">${offer.clientPhone || "Не указан"}</span></div>
+        <div class="details">Email: <span class="highlight">${offer.clientEmail || "Не указан"}</span></div>
+        <div class="details">Дата: <span class="highlight">${format(new Date(), "dd.MM.yyyy", { locale: ru })}</span></div>
     </div>
 </body>
 </html>
