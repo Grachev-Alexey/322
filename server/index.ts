@@ -81,7 +81,7 @@ app.use((req, res, next) => {
     log('Development mode: using Vite middleware');
   }
 
-  const port = process.env.PORT || 3000;
+  const port = process.env.PORT || 5000;
   server.listen(port, "0.0.0.0", () => {
     console.log(`📱 Frontend: http://localhost:${port}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
