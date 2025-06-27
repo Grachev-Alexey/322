@@ -405,116 +405,116 @@ export default function PromoCalculatorPage({
               </div>
             )}
 
-            {/* Certificate and Correction toggles - компактная версия */}
-            <div className="flex gap-1">
-              {/* Certificate block - компактная версия */}
-              <div className="flex-1 bg-white dark:bg-gray-900 rounded-lg p-2 border border-gray-200">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-bold text-gray-900 dark:text-white text-xs">
-                      Сертификат
-                    </h4>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                      -3000 ₽
-                    </div>
-                  </div>
-                  <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={usedCertificate}
-                      onChange={(e) => setUsedCertificate(e.target.checked)}
-                      disabled={
-                        !calculation ||
-                        calculation.baseCost <
-                          (calculatorSettings?.certificateMinCourseAmount ||
-                            25000)
-                      }
-                      className="sr-only peer"
-                    />
-                    <div className="w-8 h-4 bg-gray-200 peer-focus:outline-none peer-focus:ring-0 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-gray-600 peer-checked:bg-premium peer-disabled:opacity-50 focus:outline-none focus:ring-0"></div>
-                  </label>
-                </div>
-                {!calculation ||
-                calculation.baseCost <
-                  (calculatorSettings?.certificateMinCourseAmount || 25000) ? (
-                  <p className="text-xs text-red-500 dark:text-red-400 mt-1">
-                    Доступно при курсе от{" "}
-                    {calculatorSettings?.certificateMinCourseAmount?.toLocaleString() ||
-                      "25 000"}
+            {/* Certificate option - компактная версия */}
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-2 border border-gray-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-bold text-gray-900 dark:text-white text-xs">
+                    Сертификат
+                  </h4>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Скидка{" "}
+                    {calculatorSettings?.certificateDiscountAmount?.toLocaleString() ||
+                      "3 000"}
                     ₽
                   </p>
-                ) : null}
+                </div>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={usedCertificate}
+                    onChange={(e) => setUsedCertificate(e.target.checked)}
+                    disabled={
+                      !calculation ||
+                      calculation.baseCost <
+                        (calculatorSettings?.certificateMinCourseAmount ||
+                          25000)
+                    }
+                    className="sr-only peer"
+                  />
+                  <div className="w-8 h-4 bg-gray-200 peer-focus:outline-none peer-focus:ring-0 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-gray-600 peer-checked:bg-premium peer-disabled:opacity-50 focus:outline-none focus:ring-0"></div>
+                </label>
               </div>
+              {!calculation ||
+              calculation.baseCost <
+                (calculatorSettings?.certificateMinCourseAmount || 25000) ? (
+                <p className="text-xs text-red-500 dark:text-red-400 mt-1">
+                  Доступно при курсе от{" "}
+                  {calculatorSettings?.certificateMinCourseAmount?.toLocaleString() ||
+                    "25 000"}
+                  ₽
+                </p>
+              ) : null}
+            </div>
 
-              {/* Correction block - компактная версия */}
-              <div className="flex-1 bg-white dark:bg-gray-900 rounded-lg p-2 border border-gray-200">
-                {isEditingCorrection ? (
-                  // Режим редактирования - только поле ввода по центру
-                  <div className="flex items-center justify-center">
-                    <input
-                      type="number"
-                      min="0"
-                      max="10"
-                      step="0.1"
-                      value={tempCorrectionValue}
-                      onChange={(e) => setTempCorrectionValue(e.target.value)}
-                      onBlur={() => {
+            {/* Correction block - компактная версия */}
+            <div className="bg-white dark:bg-gray-900 rounded-lg p-2 border border-gray-200">
+              {isEditingCorrection ? (
+                // Режим редактирования - только поле ввода по центру
+                <div className="flex items-center justify-center">
+                  <input
+                    type="number"
+                    min="0"
+                    max="10"
+                    step="0.1"
+                    value={tempCorrectionValue}
+                    onChange={(e) => setTempCorrectionValue(e.target.value)}
+                    onBlur={() => {
+                      const value = Math.min(
+                        10,
+                        Math.max(0, parseFloat(tempCorrectionValue) || 0),
+                      );
+                      setCorrectionPercent(value);
+                      setIsEditingCorrection(false);
+                    }}
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter") {
                         const value = Math.min(
                           10,
                           Math.max(0, parseFloat(tempCorrectionValue) || 0),
                         );
                         setCorrectionPercent(value);
                         setIsEditingCorrection(false);
-                      }}
-                      onKeyPress={(e) => {
-                        if (e.key === "Enter") {
-                          const value = Math.min(
-                            10,
-                            Math.max(0, parseFloat(tempCorrectionValue) || 0),
+                      }
+                    }}
+                    autoFocus
+                    onFocus={(e) => e.target.select()}
+                    className="w-12 text-xs text-center border border-gray-300 dark:border-gray-600 rounded px-1 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+                  />
+                  <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
+                    %
+                  </span>
+                </div>
+              ) : (
+                // Обычный режим - заголовок и переключатель
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="font-bold text-gray-900 dark:text-white text-xs">
+                      Коррекция
+                    </h4>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={correctionPercent > 0}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setTempCorrectionValue(
+                            correctionPercent > 0
+                              ? correctionPercent.toString()
+                              : "5",
                           );
-                          setCorrectionPercent(value);
-                          setIsEditingCorrection(false);
+                          setIsEditingCorrection(true);
+                        } else {
+                          setCorrectionPercent(0);
                         }
                       }}
-                      autoFocus
-                      onFocus={(e) => e.target.select()}
-                      className="w-12 text-xs text-center border border-gray-300 dark:border-gray-600 rounded px-1 py-1 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-pink-500"
+                      className="sr-only peer"
                     />
-                    <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
-                      %
-                    </span>
-                  </div>
-                ) : (
-                  // Обычный режим - заголовок и переключатель
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-bold text-gray-900 dark:text-white text-xs">
-                        Коррекция
-                      </h4>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={correctionPercent > 0}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setTempCorrectionValue(
-                              correctionPercent > 0
-                                ? correctionPercent.toString()
-                                : "5",
-                            );
-                            setIsEditingCorrection(true);
-                          } else {
-                            setCorrectionPercent(0);
-                          }
-                        }}
-                        className="sr-only peer"
-                      />
-                      <div className="w-8 h-4 bg-gray-200 peer-focus:outline-none peer-focus:ring-0 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-gray-600 peer-checked:bg-premium focus:outline-none focus:ring-0"></div>
-                    </label>
-                  </div>
-                )}
-              </div>
+                    <div className="w-8 h-4 bg-gray-200 peer-focus:outline-none peer-focus:ring-0 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-gray-600 peer-checked:bg-premium focus:outline-none focus:ring-0"></div>
+                  </label>
+                </div>
+              )}
             </div>
           </div>
 
