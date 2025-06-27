@@ -137,7 +137,8 @@ export default function ServiceSelector({
 
   const startEditingPrice = (serviceId: number, currentPrice: string) => {
     setEditingPrice(serviceId);
-    setTempPrice(currentPrice);
+    // Remove decimal points and convert to integer for editing
+    setTempPrice(Math.round(parseFloat(currentPrice)).toString());
   };
 
   const savePrice = (serviceId: number) => {
@@ -248,7 +249,7 @@ export default function ServiceSelector({
                       <div className="flex items-center ml-1">
                         <div className="bg-gradient-to-r from-purple-100 to-indigo-100 dark:from-purple-900/30 dark:to-indigo-900/30 px-1.5 py-0.5 rounded-full">
                           <span className="text-xs font-semibold text-purple-700 dark:text-purple-300">
-                            {formatPrice(parseFloat(service.priceMin))}
+                            {Math.round(parseFloat(service.priceMin)).toLocaleString()} ₽
                           </span>
                         </div>
                         <Plus className="h-3 w-3 text-gray-400 ml-1 group-hover/item:text-purple-500 transition-colors" />
@@ -282,9 +283,9 @@ export default function ServiceSelector({
             onDoubleClick={() => handleDoubleClick(service)}
             title={freeZones.length > 0 ? "Можно добавить только одну бесплатную зону" : "Двойной клик для добавления бесплатной зоны"}
           >
-            <div className="flex items-center min-w-0 flex-1">
-              <span className="text-xs font-medium text-gray-900 dark:text-white truncate">{service.title}</span>
-              <div className="ml-2 flex items-center gap-1 flex-shrink-0">
+            <div className="flex items-center justify-between min-w-0 flex-1">
+              <span className="text-xs font-medium text-gray-900 dark:text-white truncate mr-2">{service.title}</span>
+              <div className="flex items-center gap-1 flex-shrink-0">
                 {editingPrice === service.yclientsId ? (
                   <>
                     <Input
@@ -298,28 +299,28 @@ export default function ServiceSelector({
                           cancelEditingPrice();
                         }
                       }}
-                      className="w-16 h-5 text-xs p-1 text-center"
+                      className="w-20 h-6 text-xs p-1 text-center"
                       autoFocus
+                      onFocus={(e) => e.target.select()}
                       onBlur={() => savePrice(service.yclientsId)}
+                      onClick={(e) => e.stopPropagation()}
+                      onDoubleClick={(e) => e.stopPropagation()}
                     />
                     <span className="text-xs text-gray-500">₽</span>
                   </>
                 ) : (
-                  <>
-                    <span 
-                      className={`text-xs cursor-pointer hover:bg-gray-200 px-1 py-0.5 rounded transition-colors ${
-                        service.customPrice ? 'text-purple-600 font-semibold' : 'text-gray-500 dark:text-gray-400'
-                      }`}
-                      onClick={() => startEditingPrice(service.yclientsId, getCurrentPrice(service))}
-                      title="Нажмите для изменения цены"
-                    >
-                      {formatPrice(parseFloat(getCurrentPrice(service)))}
-                    </span>
-                    <Edit3 
-                      className="w-3 h-3 text-gray-400 hover:text-purple-500 cursor-pointer transition-colors" 
-                      onClick={() => startEditingPrice(service.yclientsId, getCurrentPrice(service))}
-                    />
-                  </>
+                  <span 
+                    className={`text-xs cursor-pointer hover:bg-gray-200 px-1 py-0.5 rounded transition-colors ${
+                      service.customPrice ? 'text-purple-600 font-semibold' : 'text-gray-500 dark:text-gray-400'
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      startEditingPrice(service.yclientsId, getCurrentPrice(service));
+                    }}
+                    title="Нажмите для изменения цены"
+                  >
+                    {Math.round(parseFloat(getCurrentPrice(service))).toLocaleString()} ₽
+                  </span>
                 )}
               </div>
             </div>
