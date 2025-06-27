@@ -53,6 +53,7 @@ interface Package {
   minCost: string;
   minDownPaymentPercent: string;
   requiresFullPayment: boolean;
+  giftSessions: number;
   bonusAccountPercent: string;
 }
 
@@ -133,7 +134,7 @@ export default function PromoCalculatorPage({
       </div>
 
       {/* Main content - адаптивная сетка */}
-      <div className="h-screen flex flex-col lg:flex-row gap-1 lg:gap-2 p-1 lg:p-2 overflow-hidden">
+      <div className="h-screen flex flex-col lg:flex-row gap-1 lg:gap-3 p-1 lg:p-3 overflow-hidden">
         {/* Left panel - Controls - компактная версия */}
         <div className="w-full lg:w-64 xl:w-72 flex flex-col h-auto lg:h-full order-2 lg:order-1">
           {/* Scrollable content area with custom scrollbar */}
@@ -496,24 +497,25 @@ export default function PromoCalculatorPage({
                       <input
                         type="checkbox"
                         checked={correctionPercent > 0}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setTempCorrectionValue(
-                              correctionPercent > 0
-                                ? correctionPercent.toString()
-                                : "5",
-                            );
-                            setIsEditingCorrection(true);
-                          } else {
-                            setCorrectionPercent(0);
-                          }
-                        }}
-                        className="sr-only peer"
-                      />
-                      <div className="w-8 h-4 bg-gray-200 peer-focus:outline-none peer-focus:ring-0 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-gray-600 peer-checked:bg-premium focus:outline-none focus:ring-0"></div>
-                    </label>
-                  </div>
-                )}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setTempCorrectionValue(
+                            correctionPercent > 0
+                              ? correctionPercent.toString()
+                              : "5",
+                          );
+                          setIsEditingCorrection(true);
+                        } else {
+                          setCorrectionPercent(0);
+                        }
+                      }}
+                      className="sr-only peer"
+                    />
+                    <div className="w-8 h-4 bg-gray-200 peer-focus:outline-none peer-focus:ring-0 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all dark:border-gray-600 peer-checked:bg-premium focus:outline-none focus:ring-0"></div>
+                      </label>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -537,7 +539,7 @@ export default function PromoCalculatorPage({
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden order-1 lg:order-2">
           {/* Three Block Comparison - теперь занимает оставшееся место */}
           {calculation && (
-            <div className="flex gap-2 h-full">
+            <div className="flex gap-3 h-full">
               <div className="flex-1 overflow-auto">
                 <ThreeBlockComparison
                   calculation={calculation}
