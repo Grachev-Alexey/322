@@ -61,6 +61,7 @@ export interface IStorage {
   createSale(sale: InsertSale): Promise<Sale>;
   getSalesByMaster(masterId: number): Promise<Sale[]>;
   getSalesStats(): Promise<any>;
+  deleteSale(id: number): Promise<void>;
   
   // Offers
   createOffer(offer: InsertOffer): Promise<Offer>;
@@ -304,6 +305,10 @@ export class DatabaseStorage implements IStorage {
         masterStats
       }
     };
+  }
+
+  async deleteSale(id: number): Promise<void> {
+    await db.delete(sales).where(eq(sales.id, id));
   }
 
   // Packages

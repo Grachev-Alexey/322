@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,10 +20,13 @@ import {
   ChevronLeft, 
   ChevronRight,
   Filter,
-  Download
+  Download,
+  Trash2
 } from "lucide-react";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 interface SaleData {
   id: number;
@@ -69,11 +72,51 @@ export default function AdminSales() {
   const [dateFilter, setDateFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSale, setSelectedSale] = useState<SaleData | null>(null);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: salesData, isLoading } = useQuery<SalesStats>({
     queryKey: ['/api/admin/sales'],
     enabled: true
   });
+
+  const deleteSaleMutation = useMutation({
+    mutationFn: async (saleId: number) => {
+      const response = await fetch(`/api/admin/sales/${saleId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Ошибка удаления продажи');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/admin/sales'] });
+      toast({
+        title: "Продажа удалена",
+        description: "Продажа успешно удалена из системы",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        variant: "destructive",
+        title: "Ошибка",
+        description: error.message || "Не удалось удалить продажу",
+      });
+    }
+  });
+
+  const handleDeleteSale = (saleId: number) => {
+    if (confirm("Вы уверены, что хотите удалить эту продажу? Это действие нельзя отменить.")) {
+      deleteSaleMutation.mutate(saleId);
+    }
+  };
 
   // Фильтрация и поиск
   const filteredSales = useMemo(() => {
@@ -328,19 +371,30 @@ export default function AdminSales() {
                                 Экономия: {parseFloat(sale.totalSavings).toLocaleString()} ₽
                               </div>
                             </div>
-                            <Dialog>
-                              <DialogTrigger asChild>
-                                <Button variant="outline" size="sm">
-                                  <Eye className="h-4 w-4" />
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-                                <DialogHeader>
-                                  <DialogTitle>Детали продажи #{sale.id}</DialogTitle>
-                                </DialogHeader>
-                                <SaleDetails sale={sale} />
-                              </DialogContent>
-                            </Dialog>
+                            <div className="flex items-center space-x-2">
+                              <Dialog>
+                                <DialogTrigger asChild>
+                                  <Button variant="outline" size="sm">
+                                    <Eye className="h-4 w-4" />
+                                  </Button>
+                                </DialogTrigger>
+                                <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                                  <DialogHeader>
+                                    <DialogTitle>Детали продажи #{sale.id}</DialogTitle>
+                                  </DialogHeader>
+                                  <SaleDetails sale={sale} />
+                                </DialogContent>
+                              </Dialog>
+                              <Button 
+                                variant="outline" 
+                                size="sm"
+                                onClick={() => handleDeleteSale(sale.id)}
+                                disabled={deleteSaleMutation.isPending}
+                                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
                           </div>
                         </div>
                         

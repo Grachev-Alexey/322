@@ -532,6 +532,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.delete("/api/admin/sales/:id", requireAdmin, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const saleId = parseInt(id);
+      
+      if (!saleId) {
+        return res.status(400).json({ message: "Неверный ID продажи" });
+      }
+      
+      await storage.deleteSale(saleId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error deleting sale:', error);
+      res.status(500).json({ message: "Ошибка удаления продажи" });
+    }
+  });
+
   app.put("/api/admin/packages/:id", requireAdmin, async (req, res) => {
     try {
       const { id } = req.params;
