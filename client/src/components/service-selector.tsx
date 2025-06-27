@@ -144,7 +144,7 @@ export default function ServiceSelector({
   const savePrice = (serviceId: number) => {
     const updatedServices = selectedServices.map(service => 
       service.yclientsId === serviceId 
-        ? { ...service, customPrice: tempPrice }
+        ? { ...service, customPrice: tempPrice, editedPrice: tempPrice }
         : service
     );
     onServicesChange(updatedServices);

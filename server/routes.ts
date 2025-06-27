@@ -980,8 +980,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         filename, 
         pdfDir, 
         filePath, 
-        absolutePath,
-        exists: require('fs').existsSync(absolutePath)
+        absolutePath
       });
       
       // Check if file exists

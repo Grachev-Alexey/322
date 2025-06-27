@@ -4,6 +4,10 @@
 ViVi-Calc is a comprehensive sales calculation tool designed for beauty salons. It helps calculate package deals, discounts, installment payments, and manages client data with different subscription types.
 
 ## Recent Changes
+- **2025-06-27**: ✅ Исправлено отображение измененных мастером цен услуг - добавлена поддержка editedPrice и customPrice полей
+- **2025-06-27**: ✅ Исправлена ошибка PDF скачивания - заменен require на async/await для проверки существования файлов
+- **2025-06-27**: ✅ Устранено дублирование продаж в админке - добавлен GROUP BY в SQL запрос для предотвращения дублей
+- **2025-06-27**: ✅ Улучшена передача данных о ценах услуг - в service-selector добавлено сохранение как customPrice, так и editedPrice
 - **2025-06-27**: ✅ Добавлена возможность удаления продаж в админке - кнопка удаления с подтверждением для каждой продажи
 - **2025-06-27**: ✅ Исправлены проблемы с PDF скачиванием - добавлен endpoint для скачивания PDF файлов через API
 - **2025-06-27**: ✅ Убраны "Подарочные сеансы" из отображения примененных скидок в детальном просмотре продаж

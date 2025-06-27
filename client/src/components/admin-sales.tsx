@@ -702,13 +702,12 @@ function SaleDetails({ sale }: { sale: SaleData }) {
           <CardContent>
             <div className="space-y-2">
               {sale.selectedServices.map((service, index) => {
-                // Получаем цену из разных возможных полей
-                let price = service.editedPrice || service.price || service.priceMin || service.cost;
+                // Получаем цену из разных возможных полей (включая customPrice для обратной совместимости)
+                let price = service.editedPrice || service.customPrice || service.price || service.priceMin || service.cost;
                 
-                // Если цена все еще 0 или undefined, попробуем найти цену из общего списка услуг
+                // Если цена все еще 0 или undefined, используем базовую цену
                 if (!price || price === 0) {
-                  // Здесь можно добавить запрос к API для получения актуальной цены
-                  price = service.originalPrice || 0;
+                  price = service.priceMin || service.price || 0;
                 }
                 
                 const quantity = service.quantity || service.count || 1;
