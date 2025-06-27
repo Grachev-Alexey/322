@@ -320,30 +320,32 @@ export default function ThreeBlockComparison({
               );
             })}
 
-            {/* Free Sessions Row */}
-            <div className="grid grid-cols-4 gap-2.5 py-1 border-b border-gray-100">
-              <div className="text-xs font-medium text-gray-700">
-                Сеансы в подарок
-              </div>
-              {packageTypes.map((packageType) => {
-                const packageData = packages.find(
-                  (p) => p.type === packageType,
-                );
-                const giftSessions = packageData?.giftSessions || 0;
+            {/* Free Sessions Row - Show only when 10+ procedures */}
+            {procedureCount >= 10 && (
+              <div className="grid grid-cols-4 gap-2.5 py-1 border-b border-gray-100">
+                <div className="text-xs font-medium text-gray-700">
+                  Сеансы в подарок
+                </div>
+                {packageTypes.map((packageType) => {
+                  const packageData = packages.find(
+                    (p) => p.type === packageType,
+                  );
+                  const giftSessions = packageData?.giftSessions || 0;
 
-                return (
-                  <div key={packageType} className="flex items-center justify-center">
-                    {giftSessions > 0 ? (
-                      <span className="text-sm font-bold text-gray-800">
-                        {giftSessions}
-                      </span>
-                    ) : (
-                      <Minus className="w-3 h-3 text-red-500" strokeWidth={1} />
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+                  return (
+                    <div key={packageType} className="flex items-center justify-center">
+                      {giftSessions > 0 ? (
+                        <span className="text-sm font-bold text-gray-800">
+                          {giftSessions}
+                        </span>
+                      ) : (
+                        <Minus className="w-3 h-3 text-red-500" strokeWidth={1} />
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
 
             {/* Discount Row */}
             <div className="grid grid-cols-4 gap-2.5 py-1 border-b border-gray-100">
@@ -598,11 +600,12 @@ export default function ThreeBlockComparison({
             <div></div>
           </div>
 
-          {/* Gift Procedures Cost Row - using original table logic */}
-          <div className="grid grid-cols-4 gap-2.5 py-1 border-b border-gray-100">
-            <div className="text-xs font-medium text-gray-700">
-              Подарочные процедуры
-            </div>
+          {/* Gift Procedures Cost Row - Show only when 10+ procedures */}
+          {procedureCount >= 10 && (
+            <div className="grid grid-cols-4 gap-2.5 py-1 border-b border-gray-100">
+              <div className="text-xs font-medium text-gray-700">
+                Подарочные процедуры
+              </div>
             {packageTypes.map((packageType) => {
               const packageData = packages.find((p) => p.type === packageType);
               const giftSessions = packageData?.giftSessions || 0;
@@ -651,7 +654,8 @@ export default function ThreeBlockComparison({
                 </div>
               );
             })}
-          </div>
+            </div>
+          )}
 
           {/* Free Zones Cost Rows - Show each free zone separately like in original */}
           {freeZones &&
